@@ -22,7 +22,6 @@ public class Settings extends JFrame implements GlobalDesign{
 	private JPanel scButtons;
 	private JTextField textField;
 	private JTextField textField_1;
-	private JButton btnOdustani;
 
 	/**
 	 * Launch the application.
@@ -71,6 +70,15 @@ public class Settings extends JFrame implements GlobalDesign{
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
+		//button change username
+		JButton changeUsername = new JButton("Change username");
+		changeUsername.setForeground(Color.BLACK);
+		changeUsername.setFont(secFont);
+		changeUsername.setBounds(317, 369, 203, 33);
+		changeUsername.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		changeUsername.setBackground(new Color(248, 248, 255));
+		contentPane.add(changeUsername);
+		
 
 		JLabel lblEmail = new JLabel("Email:");
 		lblEmail.setForeground(new Color(255, 255, 255));
@@ -89,6 +97,30 @@ public class Settings extends JFrame implements GlobalDesign{
 		lbPassword.setBounds(36, 412, 177, 24);
 		contentPane.add(lbPassword);
 		
+		//button change password
+		JButton changePassword = new JButton("Change password");
+		changePassword.setForeground(Color.BLACK);
+		changePassword.setBackground(new Color(248, 248, 255));
+		changePassword.setFont(secFont);
+		changePassword.setBounds(36, 446, 203, 33);
+		contentPane.add(changePassword);
+				
+		//button cancel
+		JButton cancel = new JButton("Cancel");
+		cancel.setForeground(Color.BLACK);
+		cancel.setBackground(new Color(248, 248, 255));
+		cancel.setFont(secFont);
+		cancel.setBounds(592, 513, 98, 33);
+		scButtons.add(cancel);
+				
+		//button save changes
+		JButton save = new JButton("Save changes");
+		save.setForeground(Color.BLACK);
+		save.setBackground(new Color(248, 248, 255));
+		save.setFont(secFont);
+		save.setBounds(713, 513, 159, 33);
+		scButtons.add(save);
+				
 		JLabel lblDefaultSlika = new JLabel("default slika");
 		//tu nesto ne dela
 		/* Image defaultSlika = new ImageIcon(this.getClass().getResource("default.png")).getImage();
