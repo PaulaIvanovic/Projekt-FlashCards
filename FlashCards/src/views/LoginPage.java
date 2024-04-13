@@ -1,7 +1,5 @@
 package views;
-
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -11,23 +9,21 @@ import javax.swing.JButton;
 import javax.swing.JPasswordField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 public class LoginPage extends JFrame {
-
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField user;
 	private JPasswordField pass;
-
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+			//ako postoji frame zatvori ga
+
 				try {
 					LoginPage frame = new LoginPage();
 					frame.setVisible(true);
@@ -37,7 +33,6 @@ public class LoginPage extends JFrame {
 			}
 		});
 	}
-
 	/**
 	 * Create the frame.
 	 */
@@ -47,7 +42,6 @@ public class LoginPage extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(0, 0, 128));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
@@ -73,7 +67,7 @@ public class LoginPage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String un = user.getText();
 				String pas = pass.getText();
-				
+
 				if(un.equals("admin") && pass.equals("123")) {
 					JOptionPane.showMessageDialog(null, "Login successful");
 				}else {
@@ -88,7 +82,7 @@ public class LoginPage extends JFrame {
 		pass.setBounds(175, 180, 239, 19);
 		panel_1.add(pass);
 		
-		JLabel lblNewLabel = new JLabel("UserName:");
+		JLabel lblNewLabel = new JLabel("Username:");
 		lblNewLabel.setBounds(25, 138, 85, 19);
 		panel_1.add(lblNewLabel);
 		
@@ -100,8 +94,15 @@ public class LoginPage extends JFrame {
 		lblNewLabel_2.setForeground(new Color(255, 0, 0));
 		lblNewLabel_2.setBounds(51, 294, 205, 13);
 		panel_1.add(lblNewLabel_2);
-		
+
 		JButton btnNewButton = new JButton("Register");
+		btnNewButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				RegisterPage register = new RegisterPage();
+				register.setVisible(true);
+				dispose();
+			}
+		});
 		btnNewButton.setBounds(329, 290, 85, 21);
 		panel_1.add(btnNewButton);
 	}
