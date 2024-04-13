@@ -1,119 +1,123 @@
 package views;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
 public class RegisterPage extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField user;
-	private JTextField textField_3;
-	private JPasswordField pass;
-	private JLabel textusername;
-	private JLabel textemail;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RegisterPage frame = new RegisterPage();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	/**
-	 * Create the frame.
-	 */
-	public RegisterPage() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 804, 534);
-		contentPane = new JPanel();
-		contentPane.setBackground(new Color(0, 0, 128));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		JPanel panel = new JPanel();
-		panel.setBackground(new Color(1, 89, 254));
-		panel.setBounds(10, 10, 770, 477);
-		contentPane.add(panel);
-		panel.setLayout(null);
-		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBackground(new Color(128, 207, 255));
-		panel_1.setBounds(220, 0, 550, 477);
-		panel.add(panel_1);
-		panel_1.setLayout(null);
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private JTextField usernameField;
+    private JTextField emailField;
+    private JPasswordField passwordField;
 
-		JLabel text = new JLabel("Username:");
-		text.setBounds(25, 101, 85, 19);
-		JLabel textusername;
-		textusername = new JLabel("Username:");
-		textusername.setBounds(25, 55, 85, 19);
-		panel_1.add(textusername);
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    RegisterPage frame = new RegisterPage();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
-		JLabel textass = new JLabel("Password:");
-		textass.setBounds(25, 137, 85, 13);
-		textass.setBounds(25, 89, 85, 13);
-		panel_1.add(textass);
+    public RegisterPage() {
+        setTitle("REGISTER PAGE");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 800, 530);
+        contentPane = new JPanel();
+        contentPane.setBackground(new Color(69, 62, 130));
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
 
-		JLabel lblNewLabel_2 = new JLabel("Already have an account?");
-		lblNewLabel_2.setForeground(new Color(255, 0, 0));
-		lblNewLabel_2.setBounds(51, 294, 205, 13);
-		panel_1.add(lblNewLabel_2);
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(69, 62, 130));
+        panel.setBounds(188, 29, 496, 464);
+        contentPane.add(panel);
+        panel.setLayout(null);
 
-		JButton btnNewButton = new JButton("Login");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				LoginPage login = new LoginPage();
-				login.setVisible(true);
-				dispose();
-			}
-		});
-		btnNewButton.setBounds(329, 290, 85, 21);
-		panel_1.add(btnNewButton);
+        JLabel lblFlashCards = new JLabel("FLASH CARDS");
+        lblFlashCards.setForeground(new Color(255, 255, 255));
+        lblFlashCards.setFont(new Font("Nirmala UI", Font.BOLD, 54));
+        lblFlashCards.setBounds(112, 30, 374, 81);
+        panel.add(lblFlashCards);
 
-		JLabel lblNewLabel_1 = new JLabel("Email");
-		lblNewLabel_1.setBounds(25, 171, 45, 13);
-		JLabel lblNewLabel_11;
-		textemail = new JLabel("Email:");
-		textemail.setBounds(25, 120, 45, 13);
-		panel_1.add(textemail);
+        JLabel photoLabel = new JLabel("");
+        Image IMG = new ImageIcon(this.getClass().getResource("/logo.png")).getImage().getScaledInstance(90, 90, Image.SCALE_DEFAULT);
+        photoLabel.setIcon(new ImageIcon(IMG));
+        photoLabel.setBounds(10, 30, 78, 81);
+        panel.add(photoLabel);
 
-		JButton btnNewButton_1 = new JButton("Register");
-		btnNewButton_1.setBounds(342, 197, 85, 21);
-		btnNewButton_1.setBounds(342, 158, 85, 21);
-		panel_1.add(btnNewButton_1);
+        JLabel lblUsername = new JLabel("Username:");
+        lblUsername.setForeground(Color.WHITE);
+        lblUsername.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lblUsername.setBounds(88, 126, 160, 25);
+        panel.add(lblUsername);
 
-		user = new JTextField();
-		user.setColumns(10);
-		user.setBounds(154, 101, 273, 19);
-		user.setBounds(154, 55, 273, 19);
-		panel_1.add(user);
+        JLabel lblEmail = new JLabel("Email:");
+        lblEmail.setForeground(Color.WHITE);
+        lblEmail.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lblEmail.setBounds(88, 190, 160, 25);
+        panel.add(lblEmail);
 
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(154, 168, 273, 19);
-		textField_3.setBounds(154, 117, 273, 19);
-		panel_1.add(textField_3);
+        JLabel lblPassword = new JLabel("Password:");
+        lblPassword.setForeground(Color.WHITE);
+        lblPassword.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lblPassword.setBounds(88, 254, 160, 25);
+        panel.add(lblPassword);
 
-		pass = new JPasswordField();
-		pass.setBounds(154, 134, 273, 19);
-		pass.setBounds(154, 89, 273, 19);
-		panel_1.add(pass);
-	}
-	}
+        usernameField = new JTextField();
+        usernameField.setBounds(88, 161, 250, 19);
+        panel.add(usernameField);
+        usernameField.setColumns(10);
+
+        emailField = new JTextField();
+        emailField.setBounds(88, 225, 250, 19);
+        panel.add(emailField);
+        emailField.setColumns(10);
+        
+        JLabel lblNewLabel_2 = new JLabel("Already have an account?");
+        lblNewLabel_2.setForeground(new Color(255, 0, 0));
+        lblNewLabel_2.setBounds(47, 396, 205, 13);
+        panel.add(lblNewLabel_2);
+
+        passwordField = new JPasswordField();
+        passwordField.setBounds(88, 289, 250, 19);
+        panel.add(passwordField);
+
+        JButton btnRegister = new JButton("Register");
+        btnRegister.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Add registration functionality here
+            }
+        });
+        btnRegister.setBounds(262, 339, 85, 21);
+        panel.add(btnRegister);
+
+        JButton btnLogin = new JButton("Login");
+        btnLogin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                LoginPage login = new LoginPage();
+                login.setVisible(true);
+                dispose();
+            }
+        });
+        btnLogin.setBounds(262, 392, 85, 21);
+        panel.add(btnLogin);
+    }
+}
