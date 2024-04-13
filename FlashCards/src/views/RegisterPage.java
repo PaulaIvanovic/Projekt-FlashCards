@@ -1,10 +1,8 @@
 package views;
-
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,16 +11,15 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-
 public class RegisterPage extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField name;
 	private JTextField user;
 	private JTextField textField_3;
 	private JPasswordField pass;
-
+	private JLabel textusername;
+	private JLabel textemail;
 	/**
 	 * Launch the application.
 	 */
@@ -38,7 +35,6 @@ public class RegisterPage extends JFrame {
 			}
 		});
 	}
-
 	/**
 	 * Create the frame.
 	 */
@@ -48,7 +44,6 @@ public class RegisterPage extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(0, 0, 128));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
@@ -63,53 +58,62 @@ public class RegisterPage extends JFrame {
 		panel_1.setBounds(220, 0, 550, 477);
 		panel.add(panel_1);
 		panel_1.setLayout(null);
-		
-		JLabel text = new JLabel("UserName:");
+
+		JLabel text = new JLabel("Username:");
 		text.setBounds(25, 101, 85, 19);
-		panel_1.add(text);
-		
-		JLabel textpass = new JLabel("Password:");
-		textpass.setBounds(25, 137, 85, 13);
-		panel_1.add(textpass);
-		
+		JLabel textusername;
+		textusername = new JLabel("Username:");
+		textusername.setBounds(25, 55, 85, 19);
+		panel_1.add(textusername);
+
+		JLabel textass = new JLabel("Password:");
+		textass.setBounds(25, 137, 85, 13);
+		textass.setBounds(25, 89, 85, 13);
+		panel_1.add(textass);
+
 		JLabel lblNewLabel_2 = new JLabel("Already have an account?");
 		lblNewLabel_2.setForeground(new Color(255, 0, 0));
 		lblNewLabel_2.setBounds(51, 294, 205, 13);
 		panel_1.add(lblNewLabel_2);
-		
+
 		JButton btnNewButton = new JButton("Login");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LoginPage login = new LoginPage();
+				login.setVisible(true);
+				dispose();
+			}
+		});
 		btnNewButton.setBounds(329, 290, 85, 21);
 		panel_1.add(btnNewButton);
-		
-		JLabel lblNewLabel = new JLabel("Name:");
-		lblNewLabel.setBounds(25, 71, 45, 13);
-		panel_1.add(lblNewLabel);
-		
+
 		JLabel lblNewLabel_1 = new JLabel("Email");
 		lblNewLabel_1.setBounds(25, 171, 45, 13);
-		panel_1.add(lblNewLabel_1);
-		
+		JLabel lblNewLabel_11;
+		textemail = new JLabel("Email:");
+		textemail.setBounds(25, 120, 45, 13);
+		panel_1.add(textemail);
+
 		JButton btnNewButton_1 = new JButton("Register");
 		btnNewButton_1.setBounds(342, 197, 85, 21);
+		btnNewButton_1.setBounds(342, 158, 85, 21);
 		panel_1.add(btnNewButton_1);
-		
-		name = new JTextField();
-		name.setBounds(154, 68, 273, 19);
-		panel_1.add(name);
-		name.setColumns(10);
-		
+
 		user = new JTextField();
 		user.setColumns(10);
 		user.setBounds(154, 101, 273, 19);
+		user.setBounds(154, 55, 273, 19);
 		panel_1.add(user);
-		
+
 		textField_3 = new JTextField();
 		textField_3.setColumns(10);
 		textField_3.setBounds(154, 168, 273, 19);
+		textField_3.setBounds(154, 117, 273, 19);
 		panel_1.add(textField_3);
-		
+
 		pass = new JPasswordField();
 		pass.setBounds(154, 134, 273, 19);
+		pass.setBounds(154, 89, 273, 19);
 		panel_1.add(pass);
 	}
 	}
