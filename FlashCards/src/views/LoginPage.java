@@ -1,4 +1,4 @@
-package login;
+package views;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -8,7 +8,7 @@ import javax.swing.border.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class LoginPage extends JFrame implements Template{
+public class LoginPage extends JFrame implements GlobalDesign{
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
