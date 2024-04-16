@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
@@ -98,15 +99,18 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         public void paint(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             
-            int rectWidth = 200;
-            int rectHeight = 120;
-            int gap = 70; 
+            int rectWidth = 230;
+            int rectHeight = 140;
+            int gap = 50; 
             int startX = 100; 
             int startY = 150; 
             
             //to make rectangle edges rounded
             int arcWidth = 30;
             int arcHeight = 30;
+            
+            Font font = secFont;
+            g2.setFont(font);
 
             for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < 5; j++) {
@@ -115,8 +119,21 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
                     
                     RoundRectangle2D roundedRectangle = new RoundRectangle2D.Double(x, y, rectWidth, rectHeight, arcWidth, arcHeight);
                     
-                    g2.setColor(groupColors[i * 5 + j]);
+                    g2.setColor(groupColors[i * 5 + j]);		//color when drawing the rectangle
                     g2.fill(roundedRectangle);
+
+                    g2.setColor(Color.BLACK);					//color when writing out name of group
+
+                    // calculations to get group name in center of rectangle
+                    String text = "Naziv grupe";
+                    FontMetrics metrics = g2.getFontMetrics();
+                    int textWidth = metrics.stringWidth(text);
+                    int textHeight = metrics.getHeight();
+                    int centerX = x + (rectWidth - textWidth) / 2;
+                    int centerY = y + (rectHeight - textHeight) / 2 + metrics.getAscent();
+
+                    // Draw text in the center of the rectangle
+                    g2.drawString(text, centerX, centerY);
                 }
             }
         }
