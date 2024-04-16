@@ -5,8 +5,11 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.RoundRectangle2D;
 
-
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,15 +19,12 @@ import javax.swing.border.EmptyBorder;
 public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
 	private JPanel contentPane;
-	private RoundButton editButton;
-
-
 
     public GroupOfCardsPage() {
         this.setTitle("GROUP OF CARDS PAGE");
         this.setSize(900, 700);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setBounds(100, 100, 800, 530);
+        this.setLocationRelativeTo(null);	//to center the frame on screen
         
         //main panel
         contentPane = new JPanel();
@@ -48,11 +48,11 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		mainTitleLabel.setBorder(new EmptyBorder(15, 15, 15, 15));
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
 		
-		// Create a panel to hold the buttons
+		// panel with all required buttons
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
-		flowLayout.setHgap(10); // Set horizontal gap between buttons
+		flowLayout.setHgap(10); 
 		buttonPanel.setLayout(flowLayout);
 
 		//edit button in toolbar
@@ -82,11 +82,46 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		userIcon.setFont(new Font("Tahoma", Font.BOLD, 10));
 		userIcon.setForeground(backgroundColor);
 		buttonPanel.add(userIcon);
-
-		// Add the button panel to the east side of the toolbar panel
+		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
-		 
+		
+		
+		//rectangles representing groups of cards
+		contentPane.add(new DrawGroupRectangles());
+		
+		
     }
+    
+    //class to draw group rectangles (5 rectangles in 1 row)
+    class DrawGroupRectangles extends JComponent {
+    	  
+        public void paint(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            
+            int rectWidth = 200;
+            int rectHeight = 120;
+            int gap = 70; 
+            int startX = 100; 
+            int startY = 150; 
+            
+            //to make rectangle edges rounded
+            int arcWidth = 30;
+            int arcHeight = 30;
+
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < 5; j++) {
+                    int x = startX + j * (rectWidth + gap);
+                    int y = startY + i * (rectHeight + gap);
+                    
+                    RoundRectangle2D roundedRectangle = new RoundRectangle2D.Double(x, y, rectWidth, rectHeight, arcWidth, arcHeight);
+                    
+                    g2.setColor(groupColors[i * 5 + j]);
+                    g2.fill(roundedRectangle);
+                }
+            }
+        }
+    }
+    
     
 	public static void main(String[] args){
 		EventQueue.invokeLater(new Runnable() {
