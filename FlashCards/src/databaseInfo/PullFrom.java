@@ -3,16 +3,17 @@ package databaseInfo;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.ResultSetMetaData;
+
 
 public class PullFrom {
 	
 	public static void main(String []args) {
 		 String url = "jdbc:mysql://localhost:3306/flashcards";
 		 Connection connection = null;
-		 Statement st = null; //korististi Prepared statement za izbjegavanje sql injectiona (login,reg,edit etc.)
+		 Statement st = null; //use Prepared statement for SQLInjection defense
 		 String query = "SELECT * from user";
 		 ResultSet rs = null;
 		 ResultSetMetaData rsmd = null;
@@ -31,9 +32,9 @@ public class PullFrom {
 		 Integer empId = -1;
 		 String firstName = null;
 		 try {
-			 st = connection.createStatement(); //izvrsavanje upita
+			 st = connection.createStatement();
 			 rs =  st.executeQuery(query);
-			 rsmd = rs.getMetaData();
+			 rsmd = rs.getMetaData(); //extra help with manipulating data 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
