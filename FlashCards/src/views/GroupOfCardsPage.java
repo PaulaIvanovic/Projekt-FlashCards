@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JComponent;
@@ -85,74 +87,101 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
-		
-		
+		 
 		//rectangles representing groups of cards
-		contentPane.add(new DrawGroupRectangles());
-		
-		
+        DrawGroupRectangles drawRectangles = new DrawGroupRectangles();
+        contentPane.add(drawRectangles);
+
+        // mouse listener to detect when a group rectangle is clicked
+        drawRectangles.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            	int clickedIndex = drawRectangles.getClickedRectangleIndex(e.getX(), e.getY());
+                if (clickedIndex != -1) {
+                    //opens a new window with the corresponding group name
+                    new GroupPage(groupNames[clickedIndex], groupColors[clickedIndex] ).setVisible(true);
+                }           
+            }
+        });
     }
-    
+
     //class to draw group rectangles (5 rectangles in 1 row)
     class DrawGroupRectangles extends JComponent {
-    	  
+        private final int RECTANGLES_PER_ROW = 5;
+        private final int RECT_WIDTH = 230;
+        private final int RECT_HEIGHT = 140;
+        private final int GAP = 50;
+        private final int ARC_WIDTH = 30;
+        private final int ARC_HEIGHT = 30;
+        private final int START_X = 100;
+        private final int START_Y = 150;
+
         public void paint(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
-            
-            int rectWidth = 230;
-            int rectHeight = 140;
-            int gap = 50; 
-            int startX = 100; 
-            int startY = 150; 
-            
-            //to make rectangle edges rounded
-            int arcWidth = 30;
-            int arcHeight = 30;
-            
+
             Font font = secFont;
             g2.setFont(font);
 
             for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < 5; j++) {
-                    int x = startX + j * (rectWidth + gap);
-                    int y = startY + i * (rectHeight + gap);
+                for (int j = 0; j < RECTANGLES_PER_ROW; j++) {
+                    int x = START_X + j * (RECT_WIDTH + GAP);
+                    int y = START_Y + i * (RECT_HEIGHT + GAP);
                     
-                    RoundRectangle2D roundedRectangle = new RoundRectangle2D.Double(x, y, rectWidth, rectHeight, arcWidth, arcHeight);
+                    int index = i * RECTANGLES_PER_ROW + j;		//index of groupName
                     
-                    g2.setColor(groupColors[i * 5 + j]);		//color when drawing the rectangle
+                    //to make the rectangles have rounded edges
+                    RoundRectangle2D roundedRectangle = new RoundRectangle2D.Double(x, y, RECT_WIDTH, RECT_HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+
+                    g2.setColor(groupColors[index]);
                     g2.fill(roundedRectangle);
 
-                    g2.setColor(Color.BLACK);					//color when writing out name of group
+                    g2.setColor(Color.BLACK);
 
-                    // calculations to get group name in center of rectangle
-                    String text = "Naziv grupe";
-                    FontMetrics metrics = g2.getFontMetrics();
-                    int textWidth = metrics.stringWidth(text);
-                    int textHeight = metrics.getHeight();
-                    int centerX = x + (rectWidth - textWidth) / 2;
-                    int centerY = y + (rectHeight - textHeight) / 2 + metrics.getAscent();
-
-                    // Draw text in the center of the rectangle
-                    g2.drawString(text, centerX, centerY);
+                    String text = groupNames[index];
+                    drawCenteredString(g2, text, x, y, RECT_WIDTH, RECT_HEIGHT);
                 }
             }
         }
+
+        //writes out name of group (centered within the rectangle)
+        private void drawCenteredString(Graphics2D g2, String text, int x, int y, int width, int height) {
+            FontMetrics metrics = g2.getFontMetrics();
+            int textWidth = metrics.stringWidth(text);
+            int textHeight = metrics.getHeight();
+            int centerX = x + (width - textWidth) / 2;
+            int centerY = y + (height - textHeight) / 2 + metrics.getAscent();
+            g2.drawString(text, centerX, centerY);
+        }
+        
+        //gets index of clicked group, to use it when displaying group name in new window 
+        //makes sure mouse is inside rectangle coordinates (outside clicks don't count)
+        public int getClickedRectangleIndex(int mouseX, int mouseY) {
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < RECTANGLES_PER_ROW; j++) {
+                    int x = START_X + j * (RECT_WIDTH + GAP);
+                    int y = START_Y + i * (RECT_HEIGHT + GAP);
+
+                    if (mouseX >= x && mouseX <= x + RECT_WIDTH && mouseY >= y && mouseY <= y + RECT_HEIGHT) {
+                        return i * RECTANGLES_PER_ROW + j;
+                    }
+                }
+            }
+            return -1; // if clicked outside the rectangles
+        }
     }
-    
-    
-	public static void main(String[] args){
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GroupOfCardsPage frame = new GroupOfCardsPage();
-					frame.setVisible(true);
 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-    
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    GroupOfCardsPage frame = new GroupOfCardsPage();
+                    frame.setVisible(true);
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }

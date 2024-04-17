@@ -24,6 +24,10 @@ public interface GlobalDesign {
 			new Color(0x5148FF),
 			new Color(0x67E1A7)
 			};
+	
+	//test names of groups to be used when clicked on certain group:
+	public String[] groupNames = {"Maths", "Physics", "Biology", "Geography", "Arts", "History",
+			"Chemistry", "English", "Latin", "Music"};
 	        
 		
 }
