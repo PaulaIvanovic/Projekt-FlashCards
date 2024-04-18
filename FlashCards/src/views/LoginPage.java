@@ -16,6 +16,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
     private JPasswordField pass;
     private JLabel passPlaceholder; 
 
+    //launching a GUI application
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -28,117 +29,17 @@ public class LoginPage extends JFrame implements GlobalDesign{
             }
         });
     }
-
-    class RoundButton extends JButton {
-        public RoundButton(String label) {
-            super(label);
-            Dimension size = getPreferredSize();
-            size.width = size.height = Math.max(size.width, size.height);
-            setPreferredSize(size);
-            setContentAreaFilled(false);
-        }
-
-        protected void paintComponent(Graphics g) {
-            if (getModel().isArmed()) {
-                g.setColor(Color.lightGray);
-            } else {
-                g.setColor(getBackground());
-            }
-            g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-            super.paintComponent(g);
-        }
-
-        protected void paintBorder(Graphics g) {
-            g.setColor(getForeground());
-            g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-        }
-
-        Shape shape;
-
-        public boolean contains(int x, int y) {
-            if (shape == null || !shape.getBounds().equals(getBounds())) {
-                shape = new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-            }
-            return shape.contains(x, y);
-        }
-    }
-
-    class RoundTextField extends JTextField {
-        private Shape shape;
-        private Color borderColor = Color.BLACK;
-
-        public RoundTextField(int size) {
-            super(size);
-            setOpaque(false); // da se boja pozadine ne crta ispod teksta
-            setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // postavljanje praznog ruba kako bi tekst bio pomaknut od ruba
-        }
-
-        protected void paintComponent(Graphics g) {
-            g.setColor(getBackground());
-            g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-            super.paintComponent(g);
-        }
-
-        protected void paintBorder(Graphics g) {
-            g.setColor(borderColor);
-            g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-        }
-
-        public boolean contains(int x, int y) {
-            if (shape == null || !shape.getBounds().equals(getBounds())) {
-                shape = new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-            }
-            return shape.contains(x, y);
-        }
-
-        public void setBorderColor(Color color) {
-            this.borderColor = color;
-            repaint();
-        }
-    }
-
-    class RoundPasswordField extends JPasswordField {
-        private Shape shape;
-        private Color borderColor = Color.BLACK;
-
-        public RoundPasswordField(int size) {
-            super(size);
-            setOpaque(false);
-            setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        }
-
-        protected void paintComponent(Graphics g) {
-            g.setColor(getBackground());
-            g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-            super.paintComponent(g);
-        }
-
-        protected void paintBorder(Graphics g) {
-            g.setColor(borderColor);
-            g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-        }
-
-        public boolean contains(int x, int y) {
-            if (shape == null || !shape.getBounds().equals(getBounds())) {
-                shape = new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
-            }
-            return shape.contains(x, y);
-        }
-
-        public void setBorderColor(Color color) {
-            this.borderColor = color;
-            repaint();
-        }
-    }
-
+   
     public LoginPage() {
+    	//adding a name to the title bar
         setTitle("LOGIN PAGE");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 800, 530);
+        setResizable(false); 
 
         contentPane = new JPanel();
-        contentPane = (JPanel) getContentPane(); // Dodajte ovu liniju
-        contentPane.setBackground(new Color(69, 62, 130));
+        contentPane = (JPanel) getContentPane();
+        contentPane.setBackground(backgroundColor);
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(null);
         setContentPane(contentPane);
@@ -150,32 +51,36 @@ public class LoginPage extends JFrame implements GlobalDesign{
         panel_1.setLayout(new GridBagLayout());
         panel_1.setLayout(null);
         
+        //username:
         JLabel usernameText = new JLabel("Username:");
         usernameText.setFont(new Font("Tahoma", Font.BOLD, 12));
         usernameText.setForeground(Color.WHITE);
-        usernameText.setBounds(82, 161, 160, 25);
+        usernameText.setBounds(82, 165, 160, 25);
         panel_1.add(usernameText);
         
+        //password:
         JLabel textpass = new JLabel("Password:");
         textpass.setFont(new Font("Tahoma", Font.BOLD, 12));
         textpass.setForeground(Color.WHITE);
-        textpass.setBounds(82, 224, 85, 13);
+        textpass.setBounds(82, 229, 85, 13);
         panel_1.add(textpass);
         
+        //message Already have an account?
         JLabel lblNewLabel_2 = new JLabel("Already have an account?");
-        lblNewLabel_2.setForeground(new Color(255, 0, 0));
-        lblNewLabel_2.setBounds(46, 391, 207, 13);
+        lblNewLabel_2.setForeground(new Color(255, 255, 255));
+        lblNewLabel_2.setBounds(82, 391, 207, 13);
         panel_1.add(lblNewLabel_2);
         
-        RoundButton loginBtn = new RoundButton("Login");
+        //login button
+        RoundedButton loginBtn = new RoundedButton("Login");
         loginBtn.setForeground(Color.BLACK);
-        loginBtn.setFont(secFont);
-        loginBtn.setBounds(283, 330, 85, 21);
+        //loginBtn.setFont(secFont);
+        loginBtn.setBounds(270, 330, 85, 21);
         panel_1.add(loginBtn);
         
-        RoundButton registerBtn = new RoundButton("Register");
+        //register button function
+        RoundedButton registerBtn = new RoundedButton("Register");
         registerBtn.setForeground(Color.BLACK);
-        registerBtn.setFont(secFont);
         registerBtn.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 RegisterPage register = new RegisterPage();
@@ -183,22 +88,24 @@ public class LoginPage extends JFrame implements GlobalDesign{
                 dispose();
             }
         });
-        registerBtn.setBounds(283, 388, 85, 21);
+        registerBtn.setBounds(270, 388, 85, 21);
         panel_1.add(registerBtn);
         
         user = new RoundTextField(10);
         user.setBounds(82, 195, 273, 25);
         user.setText("Enter your name");
+        
+        //text inside of username: field
         user.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (user.getText().equals("Enter your name")) {
-                    user.setText(""); // Briše tekst samo ako je "Upiši svoje ime" prisutno
+                    user.setText(""); 
                 }
             }
 
             public void focusLost(FocusEvent e) {
                 if (user.getText().isEmpty()) {
-                    user.setText("Enter your name"); // Postavlja tekst samo ako nema unosa
+                    user.setText("Enter your name");
                 }
             }
         });
@@ -261,12 +168,19 @@ public class LoginPage extends JFrame implements GlobalDesign{
 
         JLabel lblNewLabel = new JLabel("FLASH CARDS");
         lblNewLabel.setForeground(new Color(255, 255, 255));
-        lblNewLabel.setFont(new Font("Nirmala UI", Font.BOLD, 54));
+        lblNewLabel.setFont(mainTitle);
         lblNewLabel.setBounds(112, 30, 374, 81);
         panel_1.add(lblNewLabel);
         
+        //message these fields can not be empty
+      	JLabel lblNewLabel_3 = new JLabel("* these fields can not be empty");
+      	lblNewLabel_3.setBounds(82, 280, 192, 25);
+      	panel_1.add(lblNewLabel_3);
+      	lblNewLabel_3.setFont(new Font("Dialog", Font.PLAIN, 12));
+      	lblNewLabel_3.setForeground(textRed);
+      		
         JLabel photoLabel = new JLabel("");
-        Image IMG = new ImageIcon(this.getClass().getResource("/logo.png")).getImage().getScaledInstance(90, 90,Image.SCALE_DEFAULT);
+        Image IMG = new ImageIcon(this.getClass().getResource("logo.png")).getImage().getScaledInstance(90, 90,Image.SCALE_DEFAULT);
 		photoLabel.setIcon(new ImageIcon(IMG));
         photoLabel.setBounds(10, 30, 78, 81);
         panel_1.add(photoLabel);
@@ -274,6 +188,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
         centerFrame(this);
     }
     
+    //center a window on the screen
     private static void centerFrame(Window window) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension windowSize = window.getSize();

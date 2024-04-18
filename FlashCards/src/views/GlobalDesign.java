@@ -11,6 +11,7 @@ public interface GlobalDesign {
 	public Color textRed = new Color(255,124,124);
 	public Font mainFont = new Font("Canva Sans", Font.PLAIN , 24);
 	public Font secFont = new Font("Canva Sans", Font.PLAIN , 18);
+	public Font mainTitle = new Font("Nirmala UI", Font.BOLD, 54);
 	        
 		
 }
