@@ -41,13 +41,11 @@ public class RoundButton extends JButton {
     }
     
     //function to get the image location, scale it down to fit the button, then set it as icon
-    protected void setButtonIcon(String imageName) {
+    protected void setButtonIcon(String imageName, int scaledWidth, int scaledHeight) {
  
         java.net.URL IconURL = getClass().getResource(imageName);
         ImageIcon Icon = new ImageIcon(IconURL);
-        
-        int scaledWidth = 27; 
-        int scaledHeight = 27; 
+      
         Image resizedChangesIcon = Icon.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
 
         ImageIcon resizedChangesIconImage = new ImageIcon(resizedChangesIcon);

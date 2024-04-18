@@ -60,28 +60,28 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 
 		//edit button in toolbar
 		RoundButton editButton = new RoundButton("", 35, 35);
-		editButton.setButtonIcon("edit.png");
+		editButton.setButtonIcon("edit.png", 27, 27);
 		editButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		editButton.setForeground(backgroundColor);
 		buttonPanel.add(editButton);
 
 		//add new group button in toolbar
 		RoundButton addGroupButton = new RoundButton("", 35, 35);
-		addGroupButton.setButtonIcon("add.png");
+		addGroupButton.setButtonIcon("add.png", 27, 27);
 		addGroupButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		addGroupButton.setForeground(backgroundColor);
 		buttonPanel.add(addGroupButton);
 		
 		//settings button in toolbar
 		RoundButton settingsButton = new RoundButton("", 35, 35);
-		settingsButton.setButtonIcon("settings.png");
+		settingsButton.setButtonIcon("settings.png", 27, 27);
 		settingsButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		settingsButton.setForeground(backgroundColor);
 		buttonPanel.add(settingsButton);
 		
 		//user icon / button in toolbar
 		RoundButton userIcon = new RoundButton("", 50, 50);
-		userIcon.setButtonIcon("user.png");
+		userIcon.setButtonIcon("user.png", 27, 27);
 		userIcon.setFont(new Font("Tahoma", Font.BOLD, 10));
 		userIcon.setForeground(backgroundColor);
 		buttonPanel.add(userIcon);
