@@ -1,3 +1,5 @@
+package views;
+
 
 
 import java.awt.EventQueue;
@@ -24,7 +26,7 @@ import javax.swing.GroupLayout.Alignment;
 import java.awt.FlowLayout;
 
 
-public class Settings extends JFrame implements Template{
+public class Settings extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -71,28 +73,37 @@ public class Settings extends JFrame implements Template{
 
         // Array of image paths 
         String[] imagePaths = {
-            "/nika.png",
-            "/slika.jpg",
-            "/slika.jpg",
-            "/slika.jpg",
-            "/slika.jpg",
-            "/slika.jpg"
+            "nika.png",
+            "slika.jpg",
+            "slika.jpg",
+            "slika.jpg",
+            "slika.jpg",
+            "slika.jpg"
         };
 
-        int buttonSize = 80; // Size of each round button
+       // int buttonSize = 80; // Size of each round button
 
+/*
         for (int i = 0; i < Math.min(imagePaths.length, 6); i++) {
             ImageIcon icon = new ImageIcon(getClass().getResource(imagePaths[i]));
             Image img = icon.getImage().getScaledInstance(buttonSize, buttonSize, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(img);
 
-            JButton roundButton = new JButton(scaledIcon);
+            RoundButton roundButton = new RoundButton(scaledIcon);
             roundButton.setPreferredSize(new Dimension(buttonSize, buttonSize)); // Set button size
             roundButton.setBorderPainted(false); // Remove button border
             roundButton.setContentAreaFilled(false); // Remove default button background
             buttonPanel.add(roundButton);
         }
-		
+*/	
+        
+
+        for (int i = 0; i < Math.min(imagePaths.length, 6); i++) {
+           RoundButton userIcon = new RoundButton("", 50, 50);
+           userIcon.setButtonIcon(imagePaths[i], 50, 50);
+           buttonPanel.add(userIcon);
+        }
+        
 		JPanel scButtons = new JPanel();
 		scButtons.setBackground(backgroundColor);
 		scButtons.setLayout(new BorderLayout());
@@ -170,6 +181,5 @@ public class Settings extends JFrame implements Template{
 	
 		scButtons.add(buttons, BorderLayout.EAST);
 		contentPane.add(scButtons, BorderLayout.SOUTH);
-	
 	}
 }
