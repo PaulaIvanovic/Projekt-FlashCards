@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
@@ -16,16 +18,32 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.border.EmptyBorder;
 
 
 public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
 	private JPanel contentPane;
+	
+	private final int ARC_WIDTH = 30;
+    private final int ARC_HEIGHT = 30;
+    
+    private final int START_X = 80;
+    private final int START_Y = 150;
+    
+    private final int HORIZONTAL_GAP_PERCENTAGE = 3; 
+    private final int VERTICAL_GAP_PERCENTAGE = 3; 
+    
+    private final int MAX_RECTANGLE_HEIGHT = 180;
+    private final int MAX_RECTANGLE_WIDTH = 320;
+	
+	private int currentPage = 0;
+	private int groupsPerPage = 10;
 
     public GroupOfCardsPage() {
         this.setTitle("GROUP OF CARDS PAGE");
-        this.setSize(900, 700);
+        this.setSize(900, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);	//to center the frame on screen
         
@@ -61,28 +79,24 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		//edit button in toolbar
 		RoundButton editButton = new RoundButton("", 35, 35);
 		editButton.setButtonIcon("edit.png", 27, 27);
-		editButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		editButton.setForeground(backgroundColor);
 		buttonPanel.add(editButton);
 
 		//add new group button in toolbar
 		RoundButton addGroupButton = new RoundButton("", 35, 35);
 		addGroupButton.setButtonIcon("add.png", 27, 27);
-		addGroupButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		addGroupButton.setForeground(backgroundColor);
 		buttonPanel.add(addGroupButton);
 		
 		//settings button in toolbar
 		RoundButton settingsButton = new RoundButton("", 35, 35);
 		settingsButton.setButtonIcon("settings.png", 27, 27);
-		settingsButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		settingsButton.setForeground(backgroundColor);
 		buttonPanel.add(settingsButton);
 		
 		//user icon / button in toolbar
 		RoundButton userIcon = new RoundButton("", 50, 50);
 		userIcon.setButtonIcon("user.png", 27, 27);
-		userIcon.setFont(new Font("Tahoma", Font.BOLD, 10));
 		userIcon.setForeground(backgroundColor);
 		buttonPanel.add(userIcon);
 		
@@ -90,58 +104,120 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		 
 		//rectangles representing groups of cards
         DrawGroupRectangles drawRectangles = new DrawGroupRectangles();
-        contentPane.add(drawRectangles);
+        contentPane.add(drawRectangles, BorderLayout.CENTER);
+        
+        
+        //panel with buttons to navigate through pages
+        JPanel navigationPanel = new JPanel();
+        navigationPanel.setOpaque(false);
+		FlowLayout navFlowLayout = new FlowLayout(FlowLayout.CENTER);
+		navFlowLayout.setHgap(10); 
+		navigationPanel.setLayout(navFlowLayout);
+		
+        RoundButton arrowLeft = new RoundButton("", 40, 40);
+        arrowLeft.setButtonIcon("left.png", 25, 25);
+        arrowLeft.setForeground(Color.black);
+        navigationPanel.add(arrowLeft);
+        
+        JLabel currentPageLabel = new JLabel("1");
+        currentPageLabel.setFont(secFont);
+        currentPageLabel.setForeground(Color.black);
+        navigationPanel.add(currentPageLabel);
+        
+        RoundButton arrowRight = new RoundButton("", 35, 35);
+        arrowRight.setButtonIcon("right.png", 25, 25);
+        arrowRight.setForeground(Color.black);
+        navigationPanel.add(arrowRight);
+        
+        contentPane.add(navigationPanel, BorderLayout.SOUTH);
 
-        // mouse listener to detect when a group rectangle is clicked
+        //mouse listener to detect when a group rectangle is clicked
         drawRectangles.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
-            	int clickedIndex = drawRectangles.getClickedRectangleIndex(e.getX(), e.getY());
+                int clickedIndex = getClickedRectangleIndex(e.getX(), e.getY());
                 if (clickedIndex != -1) {
-                    //opens a new window with the corresponding group name
-                    new GroupPage(groupNames[clickedIndex], groupColors[clickedIndex] ).setVisible(true);
-                }           
+                    // Opens a new window with the corresponding group name
+                    new GroupPage(groupNames[clickedIndex], groupColors[clickedIndex]).setVisible(true);
+                }
             }
         });
+        
+        
+        //mouse listeners for arrows (navigation through pages):
+        arrowLeft.addActionListener(e -> {
+            if (currentPage > 0) {
+                currentPage--;
+                currentPageLabel.setText(Integer.toString(currentPage + 1));
+                drawRectangles.repaint(); // Repaint the component to reflect the updated current page
+            }
+        });
+        
+        arrowRight.addActionListener(e -> {
+            int totalPages = (int) Math.ceil((double) groupNames.length / groupsPerPage );
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                currentPageLabel.setText(Integer.toString(currentPage + 1));
+                drawRectangles.repaint(); // Repaint the component to reflect the updated current page
+            }
+        });
+        
+        
     }
 
-    //class to draw group rectangles (5 rectangles in 1 row)
     class DrawGroupRectangles extends JComponent {
-        private final int RECTANGLES_PER_ROW = 5;
-        private final int RECT_WIDTH = 230;
-        private final int RECT_HEIGHT = 140;
-        private final int GAP = 50;
-        private final int ARC_WIDTH = 30;
-        private final int ARC_HEIGHT = 30;
-        private final int START_X = 100;
-        private final int START_Y = 150;
+        
+        
+        
 
         public void paint(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
 
+            g2.setColor(backgroundColor);
+            g2.fillRect(0, 0, getWidth(), getHeight());
+
             Font font = secFont;
             g2.setFont(font);
 
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < RECTANGLES_PER_ROW; j++) {
-                    int x = START_X + j * (RECT_WIDTH + GAP);
-                    int y = START_Y + i * (RECT_HEIGHT + GAP);
-                    
-                    int index = i * RECTANGLES_PER_ROW + j;		//index of groupName
-                    
-                    //to make the rectangles have rounded edges
-                    RoundRectangle2D roundedRectangle = new RoundRectangle2D.Double(x, y, RECT_WIDTH, RECT_HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+            int frameWidth = getWidth();
+            int frameHeight = getHeight();
+            
+            int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
+            int verticalGap = (int) (frameHeight * VERTICAL_GAP_PERCENTAGE / 100.0);
 
-                    g2.setColor(groupColors[index]);
-                    g2.fill(roundedRectangle);
 
-                    g2.setColor(Color.BLACK);
+            // Calculate the index range for the current page
+            int startIndex = currentPage * groupsPerPage;
+            int endIndex = Math.min(startIndex + groupsPerPage, groupNames.length);
 
-                    String text = groupNames[index];
-                    drawCenteredString(g2, text, x, y, RECT_WIDTH, RECT_HEIGHT);
-                }
-            }
+            // Calculate the number of rows and columns for the current page
+            int numCols = Math.min(groupNames.length - startIndex, 5);
+            int numRows = (numCols - 1) / 5 + 1;
+
+            // Calculate the width and height of each rectangle
+            int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
+            int rectangleHeight = Math.min((frameHeight - START_Y * 2 - (numRows - 1) * verticalGap) / numRows, MAX_RECTANGLE_HEIGHT);
+
+
+            for (int i = startIndex; i < endIndex; i++) {
+                int row = (i - startIndex) / 5;
+                int col = (i - startIndex) % 5;
+
+                int x = START_X + col * (rectangleWidth + horizontalGap);
+                int y = START_Y + row * (rectangleHeight + verticalGap);
+
+                // To make the rectangles have rounded edges
+                RoundRectangle2D roundedRectangle = new RoundRectangle2D.Double(x, y, rectangleWidth, rectangleHeight, ARC_WIDTH, ARC_HEIGHT);
+
+                g2.setColor(groupColors[i]);
+                g2.fill(roundedRectangle);
+
+                g2.setColor(Color.BLACK);
+
+                String text = groupNames[i];
+                drawCenteredString(g2, text, x, y, rectangleWidth, rectangleHeight);
+               }     
+        	}
         }
 
         //writes out name of group (centered within the rectangle)
@@ -153,23 +229,42 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
             int centerY = y + (height - textHeight) / 2 + metrics.getAscent();
             g2.drawString(text, centerX, centerY);
         }
-        
-        //gets index of clicked group, to use it when displaying group name in new window 
-        //makes sure mouse is inside rectangle coordinates (outside clicks don't count)
-        public int getClickedRectangleIndex(int mouseX, int mouseY) {
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < RECTANGLES_PER_ROW; j++) {
-                    int x = START_X + j * (RECT_WIDTH + GAP);
-                    int y = START_Y + i * (RECT_HEIGHT + GAP);
 
-                    if (mouseX >= x && mouseX <= x + RECT_WIDTH && mouseY >= y && mouseY <= y + RECT_HEIGHT) {
-                        return i * RECTANGLES_PER_ROW + j;
-                    }
-                }
-            }
-            return -1; // if clicked outside the rectangles
+      // gets index of clicked group, to use it when displaying group name in new window
+      // makes sure mouse is inside rectangle coordinates (outside clicks don't count)
+      private int getClickedRectangleIndex(int mouseX, int mouseY) {
+        int frameWidth = getWidth();
+        int frameHeight = getHeight();
+        int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
+        int verticalGap = (int) (frameHeight * VERTICAL_GAP_PERCENTAGE / 100.0);
+
+        // Calculate the index range for the current page
+        int startIndex = currentPage * groupsPerPage;
+        int endIndex = Math.min(startIndex + groupsPerPage, groupNames.length);
+
+        // Calculate the number of rows and columns for the current page
+       int numCols = Math.min(groupNames.length - startIndex, 5);
+       int numRows = (numCols - 1) / 5 + 1;
+
+       // Calculate the width and height of each rectangle
+        int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
+        int rectangleHeight = Math.min((frameHeight - START_Y * 2 - (numRows - 1) * verticalGap) / numRows, MAX_RECTANGLE_HEIGHT);
+
+        for (int i = startIndex; i < endIndex; i++) {
+        	int row = (i - startIndex) / 5;
+        	int col = (i - startIndex) % 5;
+
+        	int x = START_X + col * (rectangleWidth + horizontalGap);
+        	int y = START_Y + row * (rectangleHeight + verticalGap);
+
+        	if (mouseX >= x && mouseX <= x + rectangleWidth && mouseY >= y && mouseY <= y + rectangleHeight) {
+        	    return i;
+        	}
         }
-    }
+       return -1; // if clicked outside the rectangles
+     }
+        	
+
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
