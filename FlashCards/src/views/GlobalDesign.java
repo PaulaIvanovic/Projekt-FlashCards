@@ -1,9 +1,12 @@
 package views;
 
 import java.awt.Color;
+import java.awt.Font;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+
 
 public interface GlobalDesign {
 
@@ -11,6 +14,12 @@ public interface GlobalDesign {
 	public Color toolbarColor = new Color(31,0,57);
 	public Color textEnter = new Color(166,166,166);
 	public Color textRed = new Color(255,124,124);
+	public Font mainFont = new Font("Canva Sans", Font.PLAIN , 24);
+	public Font secFont = new Font("Canva Sans", Font.PLAIN , 18);
+	public Font mainTitle = new Font("Nirmala UI", Font.BOLD, 54);
+	        
+		
+}
 	
 	
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
