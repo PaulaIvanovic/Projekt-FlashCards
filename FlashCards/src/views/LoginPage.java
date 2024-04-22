@@ -36,6 +36,18 @@ public class LoginPage extends JFrame implements GlobalDesign{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 800, 530);
         setResizable(false); 
+        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+         int screenHeight = screenSize.height;
+	     int screenWidth = screenSize.width;
+	     int fontSize = (int) (screenHeight * 0.02);
+	        
+	     int desiredHeight = (int) (screenHeight * 0.8);
+	     int desiredWidth = (int) (screenWidth * 0.4);
+
+	     setSize(desiredWidth, desiredHeight);
+	     setLocationRelativeTo(null);
+	     setVisible(true);
 
         contentPane = new JPanel();
         contentPane = (JPanel) getContentPane();
@@ -45,7 +57,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
         setContentPane(contentPane);
        
         JPanel panel_1 = new JPanel();
-        panel_1.setBounds(159, 19, 496, 464);
+        panel_1.setBounds(70, 80, 496, 464);
         contentPane.add(panel_1);
         panel_1.setBackground(new Color(69, 62, 130));
         panel_1.setLayout(new GridBagLayout());
@@ -53,14 +65,14 @@ public class LoginPage extends JFrame implements GlobalDesign{
         
         //username:
         JLabel usernameText = new JLabel("Username:");
-        usernameText.setFont(new Font("Tahoma", Font.BOLD, 12));
+        usernameText.setFont(secFont);
         usernameText.setForeground(Color.WHITE);
         usernameText.setBounds(82, 165, 160, 25);
         panel_1.add(usernameText);
         
         //password:
         JLabel textpass = new JLabel("Password:");
-        textpass.setFont(new Font("Tahoma", Font.BOLD, 12));
+        textpass.setFont(secFont);
         textpass.setForeground(Color.WHITE);
         textpass.setBounds(82, 229, 85, 13);
         panel_1.add(textpass);
@@ -74,7 +86,6 @@ public class LoginPage extends JFrame implements GlobalDesign{
         //login button
         RoundedButton loginBtn = new RoundedButton("Login");
         loginBtn.setForeground(Color.BLACK);
-        //loginBtn.setFont(secFont);
         loginBtn.setBounds(270, 330, 85, 21);
         panel_1.add(loginBtn);
         
@@ -169,7 +180,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
         JLabel lblNewLabel = new JLabel("FLASH CARDS");
         lblNewLabel.setForeground(new Color(255, 255, 255));
         lblNewLabel.setFont(mainTitle);
-        lblNewLabel.setBounds(112, 30, 374, 81);
+        lblNewLabel.setBounds(100, 30, 374, 81);
         panel_1.add(lblNewLabel);
         
         //message these fields can not be empty
@@ -184,17 +195,6 @@ public class LoginPage extends JFrame implements GlobalDesign{
 		photoLabel.setIcon(new ImageIcon(IMG));
         photoLabel.setBounds(10, 30, 78, 81);
         panel_1.add(photoLabel);
-        
-        centerFrame(this);
-    }
-    
-    //center a window on the screen
-    private static void centerFrame(Window window) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = window.getSize();
-        int x = (screenSize.width - windowSize.width) / 2;
-        int y = (screenSize.height - windowSize.height) / 2;
-        window.setLocation(x, y);
     }
     
 }
