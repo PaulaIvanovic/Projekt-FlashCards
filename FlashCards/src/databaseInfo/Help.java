@@ -1,7 +1,7 @@
 package databaseInfo;
 
 public class Help {
-	
+	//sss
 	public String encrypt(String pw) {
 		return "";
 	}
