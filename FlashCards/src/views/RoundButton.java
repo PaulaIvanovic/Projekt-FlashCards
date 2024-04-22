@@ -21,6 +21,7 @@ public class RoundButton extends JButton {
 	    size.width = width;
 	    size.height = height;
 	    setPreferredSize(size);
+
 	    setContentAreaFilled(false);    // content area won't be filled with background color
 	}
 	
@@ -35,6 +36,13 @@ public class RoundButton extends JButton {
 		this.setBounds(x, y, width, height);
 	}
 	
+
+
+	    
+	    setContentAreaFilled(false);    // content area won't be filled with background color
+	}
+	
+
 	//method to paint the button
     protected void paintComponent(Graphics g) {		
         if (getModel().isArmed()) {					
@@ -74,3 +82,8 @@ public class RoundButton extends JButton {
         return shape.contains(x, y);
     }
 }
+
+}
+
+}
+
