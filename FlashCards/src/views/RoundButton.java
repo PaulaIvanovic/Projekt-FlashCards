@@ -37,10 +37,12 @@ public class RoundButton extends JButton {
 	}
 	
 
+
 	    
 	    setContentAreaFilled(false);    // content area won't be filled with background color
 	}
 	
+
 	//method to paint the button
     protected void paintComponent(Graphics g) {		
         if (getModel().isArmed()) {					
@@ -82,3 +84,6 @@ public class RoundButton extends JButton {
 }
 
 }
+
+}
+
