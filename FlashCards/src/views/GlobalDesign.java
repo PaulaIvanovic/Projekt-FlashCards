@@ -1,7 +1,9 @@
 package views;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 
 public interface GlobalDesign {
 
@@ -9,8 +11,16 @@ public interface GlobalDesign {
 	public Color toolbarColor = new Color(31,0,57);
 	public Color textEnter = new Color(166,166,166);
 	public Color textRed = new Color(255,124,124);
-	public Font mainFont = new Font("Canva Sans", Font.PLAIN , 24);
-	public Font secFont = new Font("Canva Sans", Font.PLAIN , 18);
+	
+	
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    int screenHeight = screenSize.height;
+    int screenWidth = screenSize.width;
+    int mainFontSize = (int) (screenHeight * 0.03);	
+    int secFontSize = (int) (screenHeight * 0.02);	
+    
+    public Font mainFont = new Font("Canva Sans", Font.PLAIN , mainFontSize);
+	public Font secFont = new Font("Canva Sans", Font.PLAIN , secFontSize);
 	
 	//colors representing groups in group of cards display
 	public Color[] groupColors = {new Color(0x8CB459), 

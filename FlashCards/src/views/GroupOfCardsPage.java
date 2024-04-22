@@ -2,16 +2,22 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JComponent;
@@ -40,12 +46,23 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	
 	private int currentPage = 0;
 	private int groupsPerPage = 10;
+	
+    
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    int screenHeight = screenSize.height;
+    int screenWidth = screenSize.width;
+    int fontSize = (int) (screenHeight * 0.03);		//so that font changes as screen size changes
+    
+	
 
     public GroupOfCardsPage() {
         this.setTitle("GROUP OF CARDS PAGE");
-        this.setSize(900, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);	//to center the frame on screen
+
+        setExtendedState(JFrame.MAXIMIZED_BOTH);				//opens initially as fullscreen
+        this.setLocationRelativeTo(null);       
+        
+        this.setVisible(true);
         
         //main panel
         contentPane = new JPanel();
@@ -64,7 +81,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		
 		//toolbar label (name of page)
 		JLabel mainTitleLabel = new JLabel("My groups of cards");      
-		mainTitleLabel.setFont(new Font("Tahoma", Font.BOLD, 22));
+		mainTitleLabel.setFont(mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		mainTitleLabel.setBorder(new EmptyBorder(15, 15, 15, 15));
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -75,29 +92,36 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
 		flowLayout.setHgap(10); 
 		buttonPanel.setLayout(flowLayout);
+		buttonPanel.setBorder(new EmptyBorder(10, 10, 15, 15));
+		
+		int buttonDimension = (int) (getWidth() * 0.02);
+		int biggerButtonDimension = (int) (getWidth() * 0.03);
 
 		//edit button in toolbar
-		RoundButton editButton = new RoundButton("", 35, 35);
-		editButton.setButtonIcon("edit.png", 27, 27);
+		RoundButton editButton = new RoundButton("",buttonDimension ,buttonDimension );
+		editButton.setBackground(toolbarColor);
+		editButton.setButtonIcon("icons/EditIcon.png",  buttonDimension, buttonDimension);
 		editButton.setForeground(backgroundColor);
 		buttonPanel.add(editButton);
 
 		//add new group button in toolbar
-		RoundButton addGroupButton = new RoundButton("", 35, 35);
-		addGroupButton.setButtonIcon("add.png", 27, 27);
+		RoundButton addGroupButton = new RoundButton("",  buttonDimension, buttonDimension);
+		addGroupButton.setButtonIcon("icons/addIcon.png",  buttonDimension, buttonDimension);
+		addGroupButton.setBackground(toolbarColor);
 		addGroupButton.setForeground(backgroundColor);
 		buttonPanel.add(addGroupButton);
 		
 		//settings button in toolbar
-		RoundButton settingsButton = new RoundButton("", 35, 35);
-		settingsButton.setButtonIcon("settings.png", 27, 27);
+		RoundButton settingsButton = new RoundButton("",buttonDimension,buttonDimension);
+		settingsButton.setButtonIcon("icons/settingsIcon.png",buttonDimension,buttonDimension);
+		settingsButton.setBackground(toolbarColor);
 		settingsButton.setForeground(backgroundColor);
 		buttonPanel.add(settingsButton);
 		
 		//user icon / button in toolbar
-		RoundButton userIcon = new RoundButton("", 50, 50);
-		userIcon.setButtonIcon("user.png", 27, 27);
-		userIcon.setForeground(backgroundColor);
+		RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
+		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
+		userIcon.setBackground(toolbarColor);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
@@ -114,9 +138,9 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		navFlowLayout.setHgap(10); 
 		navigationPanel.setLayout(navFlowLayout);
 		
-        RoundButton arrowLeft = new RoundButton("", 40, 40);
-        arrowLeft.setButtonIcon("left.png", 25, 25);
-        arrowLeft.setForeground(Color.black);
+        RoundButton arrowLeft = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
+        arrowLeft.setButtonIcon("icons/LeftArrowIcon.png", biggerButtonDimension, biggerButtonDimension);
+        arrowLeft.setBackground(backgroundColor);
         navigationPanel.add(arrowLeft);
         
         JLabel currentPageLabel = new JLabel("1");
@@ -124,9 +148,9 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         currentPageLabel.setForeground(Color.black);
         navigationPanel.add(currentPageLabel);
         
-        RoundButton arrowRight = new RoundButton("", 35, 35);
-        arrowRight.setButtonIcon("right.png", 25, 25);
-        arrowRight.setForeground(Color.black);
+        RoundButton arrowRight = new RoundButton("", biggerButtonDimension, biggerButtonDimension);
+        arrowRight.setButtonIcon("icons/RightArrowIcon.png",biggerButtonDimension, biggerButtonDimension);
+        arrowRight.setBackground(backgroundColor);
         navigationPanel.add(arrowRight);
         
         contentPane.add(navigationPanel, BorderLayout.SOUTH);
@@ -167,17 +191,13 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 
     class DrawGroupRectangles extends JComponent {
         
-        
-        
-
         public void paint(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
 
             g2.setColor(backgroundColor);
             g2.fillRect(0, 0, getWidth(), getHeight());
 
-            Font font = secFont;
-            g2.setFont(font);
+            g2.setFont(mainFont);
 
             int frameWidth = getWidth();
             int frameHeight = getHeight();
@@ -186,15 +206,15 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
             int verticalGap = (int) (frameHeight * VERTICAL_GAP_PERCENTAGE / 100.0);
 
 
-            // Calculate the index range for the current page
+            //calculates the index range for the current page
             int startIndex = currentPage * groupsPerPage;
             int endIndex = Math.min(startIndex + groupsPerPage, groupNames.length);
 
-            // Calculate the number of rows and columns for the current page
+            //calculates the number of rows and columns for the current page
             int numCols = Math.min(groupNames.length - startIndex, 5);
             int numRows = (numCols - 1) / 5 + 1;
 
-            // Calculate the width and height of each rectangle
+            //calculates the width and height of each rectangle
             int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
             int rectangleHeight = Math.min((frameHeight - START_Y * 2 - (numRows - 1) * verticalGap) / numRows, MAX_RECTANGLE_HEIGHT);
 
@@ -238,15 +258,15 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
         int verticalGap = (int) (frameHeight * VERTICAL_GAP_PERCENTAGE / 100.0);
 
-        // Calculate the index range for the current page
+        //calculates the index range for the current page
         int startIndex = currentPage * groupsPerPage;
         int endIndex = Math.min(startIndex + groupsPerPage, groupNames.length);
 
-        // Calculate the number of rows and columns for the current page
+        //calculates the number of rows and columns for the current page
        int numCols = Math.min(groupNames.length - startIndex, 5);
        int numRows = (numCols - 1) / 5 + 1;
 
-       // Calculate the width and height of each rectangle
+       //calculates the width and height of each rectangle
         int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
         int rectangleHeight = Math.min((frameHeight - START_Y * 2 - (numRows - 1) * verticalGap) / numRows, MAX_RECTANGLE_HEIGHT);
 

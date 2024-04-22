@@ -21,6 +21,7 @@ public class RoundButton extends JButton {
 	    size.width = width;
 	    size.height = height;
 	    setPreferredSize(size);
+	    
 	    setContentAreaFilled(false);    // content area won't be filled with background color
 	}
 	
