@@ -84,8 +84,19 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		//adding a name to the title bar
 		setTitle("REGISTER PAGE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 530);
 		setResizable(false); 
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	       int screenHeight = screenSize.height;
+	       int screenWidth = screenSize.width;
+	        
+	       int desiredHeight = (int) (screenHeight * 0.8);
+	       int desiredWidth = (int) (screenWidth * 0.4);
+
+	       setSize(desiredWidth, desiredHeight);
+	       setLocationRelativeTo(null);
+	       setVisible(true);
+
 		
 		contentPane = new JPanel();
 		contentPane.setBackground(backgroundColor);
@@ -95,14 +106,14 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		contentPane.setLayout(null);
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(159, 19, 496, 464);
+		panel_1.setBounds(70, 80, 496, 464);
 		contentPane.add(panel_1);
 		panel_1.setBackground(new Color(69, 62, 130));
 		panel_1.setLayout(null);
 		
 		//username:
 		JLabel usernameText = new JLabel("Username:");
-		usernameText.setFont(new Font("Tahoma", Font.BOLD, 12));
+		usernameText.setFont(secFont);
 		usernameText.setForeground(Color.WHITE);
 		usernameText.setBounds(82, 165, 160, 25);
 		panel_1.add(usernameText);
@@ -110,9 +121,9 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		
 		//password:
 		JLabel textpass = new JLabel("Password:");
-		textpass.setFont(new Font("Tahoma", Font.BOLD, 12));
+		textpass.setFont(secFont);
 		textpass.setForeground(Color.WHITE);
-		textpass.setBounds(82, 276, 85, 13);
+		textpass.setBounds(82, 278, 85, 13);
 		panel_1.add(textpass);
 		
 		//message Already have an account?
@@ -136,10 +147,10 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		
 		//email:
 		JLabel emailText = new JLabel("Email:");
-		emailText.setFont(new Font("Tahoma", Font.BOLD, 12));
+		emailText.setFont(secFont);
 		emailText.setForeground(Color.WHITE);
 		emailText.setForeground(new Color(255, 255, 255));
-		emailText.setBounds(82, 224, 45, 13);
+		emailText.setBounds(82, 226, 85, 13);
 		panel_1.add(emailText);
 		
 		RoundTextField user = new RoundTextField(10);
@@ -259,7 +270,7 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		JLabel lblNewLabel = new JLabel("FLASH CARDS");
 		lblNewLabel.setForeground(new Color(255, 255, 255));
 		lblNewLabel.setFont(mainTitle);
-		lblNewLabel.setBounds(112, 30, 374, 81);
+		lblNewLabel.setBounds(100, 30, 374, 81);
 		panel_1.add(lblNewLabel);
 		
 		//added logo photo
@@ -284,18 +295,6 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		
-		centerFrame(this);
 		registerBtn.setForeground(Color.BLACK);
 	}
-	
-	//center a window on the screen
-	private static void centerFrame(Window window) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = window.getSize();
-        int x = (screenSize.width - windowSize.width) / 2;
-        int y = (screenSize.height - windowSize.height) / 2;
-        window.setLocation(x, y);
-    }
 	}
-
