@@ -11,7 +11,7 @@ import java.sql.ResultSetMetaData;
 
 public class Crude {
 	
-	 String url = "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11700330";
+	 String url = "jdbc:mysql://localhost:3306/fc";
 	 Connection connection = null;
 	 Statement st = null; //use Prepared statement for SQLInjection defense
 	 String query = null;
@@ -22,7 +22,7 @@ public class Crude {
 	 public Crude() {
 		 try {
 			 Class.forName("com.mysql.cj.jdbc.Driver");
-			 connection = DriverManager.getConnection(url, "sql11700330", "ugqkTnHrnj");
+			 connection = DriverManager.getConnection(url);
 			 st = connection.createStatement();
 		 } catch (ClassNotFoundException | SQLException e) {
 			 // TODO Auto-generated catch block
@@ -38,7 +38,7 @@ public class Crude {
 			this.query = "INSERT INTO user (username, email, password, profilePic) " +
 	                "VALUES ('" + d1 + "', '" + d2 + "', '" + d3 + "', '" + d4 + "');";
 			try {
-				rs = st.executeQuery(query);
+				 st.executeUpdate(query);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
