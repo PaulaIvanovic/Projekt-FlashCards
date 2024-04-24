@@ -28,7 +28,7 @@ public class Help {
 	
 	
 	public static void main(String args[]) {
-		Crude crude = new Crude();
+		//Crude crude = new Crude();
 		//crude.create("user","Marko","mrakomail@mail.com","1231234","nema");
 		//crude.create("grupa","Fizika","plava","1");
 		//crude.create("subgroup","kinematika","smeda","2");
@@ -42,6 +42,7 @@ public class Help {
 		//sproban unique constraint na korisnickome imenu i radi
 		//brisanjem korisnika ili grupe kaskadno se brisu podaci (cascade constraint)
 		//enkripcija napravljena na principu md5 hashinga
+		//crude.closeConnection();
 	}
 
 }
