@@ -38,13 +38,13 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 
 	private final int ARC_WIDTH = 30;
     private final int ARC_HEIGHT = 30;    
-    private final int START_X = 80;
-    private final int START_Y = 150;
     private final int HORIZONTAL_GAP_PERCENTAGE = 3; 
     private final int VERTICAL_GAP_PERCENTAGE = 3; 
     private final int MAX_RECTANGLE_HEIGHT = 180;
     private final int MAX_RECTANGLE_WIDTH = 320;
 	public int groupsPerPage;
+	public int START_X;
+	public int START_Y;
 	private int currentPage = 0;
     
     int windowWidth;
@@ -62,7 +62,6 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     
     public GroupOfCardsPage(int x, int y, int width, int height) {
     	//set icon for app
-    	System.out.println("glavni g : " + width +"x"+height);
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
 		setIconImage(Icon.getImage());
@@ -74,7 +73,6 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     	this.setMinimumSize(new Dimension(screenSize.minimumWindowWidth, screenSize.minimumWindowHeight)); // Minimum width = 300, Minimum height = 200
 		checkBounds(x, y, width, height);
     	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
-    	System.out.println("drugi g: " + width +"x"+height);
     	updateView();
 
     	//function for resizing components
@@ -106,14 +104,13 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     	        		windowWidth = newSize.width;
     	        		windowHeight = newSize.height;
     	        	}
-    	        	System.out.println(windowHeight +"x"+windowHeight);
     	            updateView();
     	            
     	        }
     	    }
     	});
     	
-    	
+    	//function for ensuring minimum size o window
     	this.addComponentListener(new ComponentAdapter(){
 	        public void componentResized(ComponentEvent e){
 	            Dimension d=GroupOfCardsPage.this.getSize();
@@ -219,7 +216,6 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		buttonPanel.add(settingsButton);
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(windowWidth +"x"+windowHeight);
 				Settings settingsWindow = new Settings(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
 				settingsWindow.setVisible(true);
 				dispose();
@@ -305,6 +301,8 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     
 	//updates sizes of elements and window
 	public void updateView() {
+		 START_X = (int)(windowWidth*0.05);
+		 START_Y = (int)(windowHeight*0.175);
 		windowCreate();
 	}
 	

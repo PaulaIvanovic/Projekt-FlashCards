@@ -52,7 +52,6 @@ public class Settings extends JFrame implements GlobalDesign{
     
     public Settings(int x, int y, int width, int height) {
     	//set icon for app
-    	System.out.println("glavni s: " + width +"x"+height);
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
 		setIconImage(Icon.getImage());
@@ -64,7 +63,6 @@ public class Settings extends JFrame implements GlobalDesign{
 		this.setMinimumSize(new Dimension(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight)); // Minimum width = 300, Minimum height = 200
 		checkBounds(x, y, width, height);
     	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
-    	System.out.println("drugi s: " + width +"x"+height);
     	updateView();
     	
     	//function for resizing components
@@ -94,7 +92,6 @@ public class Settings extends JFrame implements GlobalDesign{
     	        		windowWidth = newSize.width;
     	        		windowHeight = newSize.height;
     	        	}
-    	        	System.out.println(windowHeight +"x"+windowHeight);
     	            updateView();
     	            
     	        }
@@ -102,6 +99,7 @@ public class Settings extends JFrame implements GlobalDesign{
     	
     	});
     	
+    	//function for ensuring minimum size o window
     	this.addComponentListener(new ComponentAdapter(){
 	        public void componentResized(ComponentEvent e){
 	            Dimension d=Settings.this.getSize();
@@ -358,7 +356,6 @@ public class Settings extends JFrame implements GlobalDesign{
 	
 	//function for checking bounds
 	public void checkBounds(int x, int y, int width, int height) {
-		System.out.println(width +"x"+height);
 		//with tolarence
 		if(x <= -10 || y <= -10) {
 			xPositionWindow = 0;
