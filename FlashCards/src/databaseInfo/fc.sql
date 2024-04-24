@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 22, 2024 at 07:42 PM
+-- Generation Time: Apr 24, 2024 at 11:49 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -104,7 +104,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`iduser`, `username`, `email`, `password`, `create_time`, `profilePic`) VALUES
 (1, 'Admin', 'mbedi11@uniri.hr', '$2y$10$g5fdd0uGnBXT.NFyBiKHb.2TYfXV77jZbBRkvgUQ05pVCszJiFbc6', '2024-04-02 13:29:15', NULL),
-(2, 'Marko', 'mrakomail@mail.com', '1231234', '2024-04-22 11:28:49', 'nema');
+(2, 'Mitar', 'mrakomail@mail.com', '1231234', '2024-04-22 11:28:49', 'nema');
 
 --
 -- Indexes for dumped tables
@@ -135,7 +135,10 @@ ALTER TABLE `subgroup`
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`iduser`);
+  ADD PRIMARY KEY (`iduser`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `password` (`password`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -145,19 +148,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `card`
 --
 ALTER TABLE `card`
-  MODIFY `idcard` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idcard` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `grupa`
 --
 ALTER TABLE `grupa`
-  MODIFY `idgroup` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idgroup` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `subgroup`
 --
 ALTER TABLE `subgroup`
-  MODIFY `idsubgroup` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idsubgroup` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `user`
