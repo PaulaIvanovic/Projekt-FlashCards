@@ -1,13 +1,12 @@
 package views;
 
-
-
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import java.awt.BorderLayout;
@@ -21,19 +20,323 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import views.ScreenDimensions;
 
 
 public class Settings extends JFrame implements GlobalDesign{
-
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
 	
+	int buttonDimension;
+	int biggerButtonDimension;
+	int windowHeight;
+	int windowWidth;
+	int xPositionWindow;
+	int yPositionWindow;
+	
+	ScreenDimensions dimensions;
 
-	/**
-	 * Launch the application.
-	 */
+	
+	public Settings() {
+    	this(0,0,0,0);
+    }
+    
+    public Settings(int x, int y, int width, int height) {
+    	//set icon for app
+    	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
+	    ImageIcon Icon = new ImageIcon(IconURL);
+		setIconImage(Icon.getImage());
+		
+		dimensions = new ScreenDimensions();
+		
+		this.setTitle("SETTINGS");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setMinimumSize(new Dimension(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight)); // Minimum width = 300, Minimum height = 200
+		checkBounds(x, y, width, height);
+    	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+		
+    	updateView();
+    	
+    	//function for resizing components
+    	addComponentListener(new ComponentAdapter() {
+    	    public void componentResized(ComponentEvent e) {
+    	        Dimension newSize = e.getComponent().getSize();
+    	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
+    	            windowWidth = newSize.width;
+    	            windowHeight = newSize.height;
+    	            updateView();
+    	        }
+    	    }
+    	});
+
+    	//listener for window state changes
+    	addWindowStateListener(new WindowAdapter() {
+    	    public void windowStateChanged(WindowEvent e) {
+    	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
+    	            updateView();
+    	        }else if (e.getNewState() == JFrame.NORMAL) {
+    	            // Window is restored
+    	            // Perform any actions needed when window is restored
+    	            // For example, update the view
+    	            updateView();
+    	        }
+    	    }
+    	});
+    	
+    	//check if moved
+    	addComponentListener(new ComponentAdapter() {
+    	    @Override
+    	    public void componentMoved(ComponentEvent e) {	
+    	    	xPositionWindow = e.getComponent().getX();
+    	        yPositionWindow = e.getComponent().getY();
+    	    }
+    	});
+    }	
+    public void windowCreate() {
+    	setVisible(true);
+
+    	
+		//main panel
+		contentPane = new JPanel();
+		contentPane.setBackground(backgroundColor);
+		windowWidth = getWidth();
+        windowHeight = getHeight();
+        views.WindowElementResize.getFontForWindowSize(windowHeight);
+		
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout());
+		
+		//toolbar on top of the window
+		JPanel toolbarPanel = new JPanel(new BorderLayout());
+		toolbarPanel.setBackground(toolbarColor);
+		toolbarPanel.setBounds(0, 0, windowWidth, 80);
+		toolbarPanel.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 10));
+		contentPane.add(toolbarPanel, BorderLayout.NORTH);
+		
+		//toolbar label (name of page)
+		JLabel mainTitleLabel = new JLabel("Settings");      
+		mainTitleLabel.setFont(WindowElementResize.mainFont);
+		mainTitleLabel.setForeground(Color.WHITE);
+		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
+		
+		// panel for buttons
+		JPanel tbPane = new JPanel();
+		tbPane.setOpaque(false);
+		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
+		flowLayout.setHgap(10); 
+		tbPane.setLayout(flowLayout);
+		
+		//button dimensions
+    	buttonDimension = (int) (windowWidth * 0.025);
+		biggerButtonDimension = (int) (windowWidth * 0.035);
+
+		//return button in toolbar
+		RoundButton returnButton = new RoundButton("", buttonDimension,buttonDimension);
+		returnButton.setButtonIcon("Pictures/ReturnArrowIcon.png", buttonDimension,buttonDimension);
+		returnButton.setBackground(toolbarColor);
+		returnButton.setBorder(null);
+		tbPane.add(returnButton);
+		returnButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+				GroupsWindow.setVisible(true);
+				dispose();
+			}
+		});
+		
+		
+		// user icon / button in toolbar
+		RoundButton userPicture = new RoundButton("", biggerButtonDimension, biggerButtonDimension);
+		userPicture.setButtonIcon("Pictures/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
+		userPicture.setBackground(toolbarColor);
+		userPicture.setBorder(null);
+		tbPane.add(userPicture);
+		
+		toolbarPanel.add(tbPane, BorderLayout.EAST);
+		contentPane.add(toolbarPanel, BorderLayout.NORTH);
+		
+		
+		
+		
+		//panel for round buttons with images
+        JPanel mainPanel = new JPanel(); // Use FlowLayout for center alignment
+        mainPanel.setBounds(0, 0, windowWidth, windowHeight-80);
+        mainPanel.setBorder(new EmptyBorder(0,0,5,5));
+        mainPanel.setOpaque(false); // Make buttonPanel transparent
+        mainPanel.setLayout(null);
+
+
+
+        //label choose picture
+    	JLabel lblChoose = new JLabel("Choose new profile picture:");
+    	lblChoose.setForeground(new Color(255, 255, 255));
+    	lblChoose.setFont(WindowElementResize.secFont);
+    	lblChoose.setBounds((int)(windowWidth*0.21), (int)(windowHeight*0.01), (int)(windowWidth*0.215), (int)(windowHeight*0.075));
+		mainPanel.add(lblChoose);
+        
+
+        for (int i = 0; i < Math.min(profilePictures.length, 6)+1; i++) {
+        	int firstPicWidth = (int)(windowWidth*0.175);
+        	int firstPicHeight = (int)(windowHeight*0.3);
+        	int PicWidth = (int)(windowWidth*0.1);
+        	int PicHeight = (int)(windowHeight*0.175);
+        	int distance = (int)(windowWidth*0.125);
+        	int treshold = 1;
+        	
+        	//first chosen picture
+        	if(i == 0) {
+        		RoundButton userIcon = new RoundButton("", firstPicWidth, firstPicHeight);
+            	userIcon.setButtonIcon("Pictures/" + "UserIconBasic.png", firstPicWidth, firstPicHeight);
+            	userIcon.setBounds((int)(windowWidth*0.015)+(i)*distance, (int)(windowHeight*0.055), firstPicWidth, firstPicHeight);
+            	userIcon.setBorder(null);
+            	userIcon.setBackground(backgroundColor);
+            	userIcon.setForeground(backgroundColor);
+            	mainPanel.add(userIcon);   	
+        	}
+        	//different pictures to chose new profile
+        	else {
+           		RoundButton userIcon = new RoundButton("", 0, 0);
+            	userIcon.setButtonIcon("Pictures/" + profilePictures[i-1], PicWidth, PicHeight);
+            	userIcon.setBounds((int)(windowWidth*0.085)*treshold+(i)*distance, (int)(windowHeight*0.085), PicWidth, PicHeight);
+            	userIcon.setBorder(null);
+            	userIcon.setBackground(backgroundColor);
+            	userIcon.setForeground(backgroundColor);
+            	mainPanel.add(userIcon);
+            	treshold=1;
+        	}
+        }
+        
+        //label for username
+		JLabel lblUsername = new JLabel("Username:");
+		lblUsername.setForeground(new Color(255, 255, 255));
+		lblUsername.setFont(WindowElementResize.secFont);
+		lblUsername.setBounds((int)(windowWidth*0.02), (int)(windowHeight*0.525), (int)(windowWidth*0.13), (int)(windowHeight*0.04));
+		mainPanel.add(lblUsername);
+		
+		//text field for username
+		textField = new RoundTextField(0);
+		textField.setText("Current username"); 
+		textField.setEnabled(false);
+		textField.setFont(WindowElementResize.secFont);
+		textField.setBounds((int)(windowWidth*0.02), (int)(windowHeight*0.575), (int)(windowWidth*0.17), (int)(windowHeight*0.04));
+		mainPanel.add(textField);
+		
+		
+		//button change username
+		RoundedButton changeUsername = new RoundedButton("Change username", windowWidth, windowHeight);
+		changeUsername.setForeground(Color.BLACK);
+		changeUsername.setFont(WindowElementResize.secFont);
+		changeUsername.setBounds((int)(windowWidth*0.2), (int)(windowHeight*0.575), (int)(windowWidth*0.1775), (int)(windowHeight*0.04));
+		changeUsername.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		changeUsername.setBackground(new Color(248, 248, 255));
+		mainPanel.add(changeUsername);
+		
+		
+		//label email
+		JLabel lblEmail = new JLabel("Email:");
+		lblEmail.setForeground(new Color(255, 255, 255));
+		lblEmail.setFont(WindowElementResize.secFont);
+		lblEmail.setBounds((int)(windowWidth*0.02), (int)(windowHeight*0.4), (int)(windowWidth*0.13), (int)(windowHeight*0.04));
+		mainPanel.add(lblEmail);
+		
+		//email text field
+		textField_1 = new RoundTextField(0);
+		textField_1.setEnabled(false);
+		textField_1.setText("This is your email");
+		textField_1.setFont(WindowElementResize.secFont);
+		textField_1.setForeground(Color.BLACK);
+		textField_1.setBounds((int)(windowWidth*0.02), (int)(windowHeight*0.45), (int)(windowWidth*0.356), (int)(windowHeight*0.04));
+		mainPanel.add(textField_1);
+
+		//label for password
+		JLabel lbPassword = new JLabel("Password:");
+		lbPassword.setForeground(new Color(255, 255, 255));
+		lbPassword.setFont(WindowElementResize.secFont);
+		lbPassword.setBounds((int)(windowWidth*0.02), (int)(windowHeight*0.65), (int)(windowWidth*0.13), (int)(windowHeight*0.04));
+		mainPanel.add(lbPassword);
+		
+		//button change password
+		RoundedButton changePassword = new RoundedButton("Change password", windowWidth, windowHeight);
+		changePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		
+		changePassword.setForeground(Color.BLACK);
+		changePassword.setFont(WindowElementResize.secFont);
+		changePassword.setBounds((int)(windowWidth*0.02), (int)(windowHeight*0.7), (int)(windowWidth*0.356), (int)(windowHeight*0.04));
+		changePassword.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		changePassword.setBackground(new Color(248, 248, 255));
+		mainPanel.add(changePassword);
+			
+		
+		//button cancel
+		RoundedButton cancel = new RoundedButton("Cancel", windowWidth, windowHeight);
+		cancel.setFont(WindowElementResize.buttonText);
+		cancel.setBounds((int)(windowWidth * 0.775), (int)(windowHeight * 0.825), (int)(windowWidth*0.1), (int)(windowHeight * 0.035));
+		mainPanel.add(cancel);
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+				GroupsWindow.setVisible(true);
+				dispose();
+			}
+		});
+				
+		//button save changes
+		RoundedButton save = new RoundedButton("Save changes", windowWidth, windowHeight);
+		save.setFont(WindowElementResize.buttonText);
+		save.setBounds((int)(windowWidth * 0.875), (int)(windowHeight * 0.825), (int)(windowWidth*0.115), (int)(windowHeight * 0.035));
+		save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+				GroupsWindow.setVisible(true);
+				dispose();
+			}
+		});
+				
+		mainPanel.add(save);
+		contentPane.add(mainPanel, BorderLayout.CENTER);
+	}
+
+    //updates sizes of elements and window
+	public void updateView() {
+		windowWidth = getWidth();
+	    windowHeight = getHeight();
+		views.WindowElementResize.getFontForWindowSize(windowHeight);
+		windowCreate();
+	}
+	
+	//function for checking bounds
+	public void checkBounds(int x, int y, int width, int height) {
+		if(x < 0 || y < 0) {
+			xPositionWindow = 0;
+			yPositionWindow = 0;
+		}else {
+			xPositionWindow = x;
+			yPositionWindow = y;
+		}
+		
+		if(width < dimensions.minimumWindowWidth || height < dimensions.minimumWindowHeight) { //if the screen is less then the minimum allowed size
+			//with tolerances
+			windowWidth = dimensions.screenWidth;
+			windowHeight = dimensions.screenHeight;
+			setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}else {
+			windowWidth = width;
+			windowHeight = height;
+		}
+	}
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -45,235 +348,5 @@ public class Settings extends JFrame implements GlobalDesign{
 				}
 			}
 		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public Settings() {
-		setTitle("SETTINGS");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		
-		//int height = (int)screenSize.getHeight();
-		int width = (int)screenSize.getWidth();
-		
-
-		//main panel
-		contentPane = new JPanel();
-		contentPane.setForeground(new Color(255, 255, 255));
-		contentPane.setBackground(backgroundColor);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout());
-		
-		//toolbar on top of the window:
-		JPanel toolbarPanel = new JPanel(new BorderLayout());
-		toolbarPanel.setBackground(toolbarColor);
-		toolbarPanel.setBounds(0, 0, getWidth(), 80);
-		toolbarPanel.setLayout(new BorderLayout());
-		contentPane.add(toolbarPanel, BorderLayout.NORTH);
-		
-		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel("Settings");      
-		mainTitleLabel.setFont(new Font("Tahoma", Font.BOLD, 22));
-		mainTitleLabel.setForeground(Color.WHITE);
-		mainTitleLabel.setBorder(new EmptyBorder(15, 15, 15, 15));
-		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
-		
-		// panel for buttons
-		JPanel tbPane = new JPanel();
-		tbPane.setOpaque(false);
-		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
-		flowLayout.setHgap(10); 
-		tbPane.setLayout(flowLayout);
-
-		//return button in toolbar
-		RoundButton returnButton = new RoundButton("", 35, 35);
-		returnButton.setButtonIcon("Pictures/ReturnArrowIcon.png", 27, 27);
-		returnButton.setForeground(backgroundColor);
-		tbPane.add(returnButton);
-		
-		// user icon / button in toolbar
-		RoundButton userPicture = new RoundButton("", 50, 50);
-		userPicture.setButtonIcon("Pictures/UserIconBasic.png", 27, 27);
-		userPicture.setForeground(backgroundColor);
-		tbPane.add(userPicture);
-		
-		toolbarPanel.add(tbPane, BorderLayout.EAST);
-		
-		contentPane.add(toolbarPanel, BorderLayout.NORTH);
-		
-		
-		
-		
-		 // Create panel for round buttons with images
-        JPanel mainPanel = new JPanel(); // Use FlowLayout for center alignment
-        mainPanel.setBounds(0, 0, getWidth(), getHeight() - 80);
-        //buttonPanel.setLayout(new BorderLayout());
-        mainPanel.setOpaque(false); // Make buttonPanel transparent
-
-        // Array of image paths 
-        String[] imagePaths = {
-            "1.jpg",
-            "2.jpg",
-            "3.jpeg",
-            "4.jpg",
-            "5.jpg",
-            "6.jpg"
-        };
-
-       // int buttonSize = 80; // Size of each round button
-
-/*
-        for (int i = 0; i < Math.min(imagePaths.length, 6); i++) {
-            ImageIcon icon = new ImageIcon(getClass().getResource(imagePaths[i]));
-            Image img = icon.getImage().getScaledInstance(buttonSize, buttonSize, Image.SCALE_SMOOTH);
-            ImageIcon scaledIcon = new ImageIcon(img);
-
-            RoundButton roundButton = new RoundButton(scaledIcon);
-            roundButton.setPreferredSize(new Dimension(buttonSize, buttonSize)); // Set button size
-            roundButton.setBorderPainted(false); // Remove button border
-            roundButton.setContentAreaFilled(false); // Remove default button background
-            buttonPanel.add(roundButton);
-        }
-*/	
-        
-     // label izaberi sliku
-    	JLabel lblChoose = new JLabel("Choose picture:");
-    	lblChoose.setForeground(new Color(255, 255, 255));
-    	lblChoose.setFont(mainFont);
-    	lblChoose.setBounds(260, 10, 197, 24);
-		mainPanel.add(lblChoose);
-        
-
-        for (int i = 0; i < Math.min(imagePaths.length, 6); i++) {
-        	int firstPicWidth = (int)(width*0.125);
-        	int firstPicHeight = (int)(width*0.125);
-        	int PicWidth = (int)(width*0.1);
-        	int PicHeight = (int)(width*0.1);
-        	int distance = (int)(width*0.15);
-        	
-        	if(i == 0) {//samo slika
-        		RoundButton userIcon = new RoundButton("", 0 ,0);
-            	userIcon.setButtonIcon("Pictures/" + imagePaths[i], firstPicWidth, firstPicHeight);
-            	userIcon.setBounds(36+(i)*distance, 20, firstPicWidth, firstPicHeight);
-            	userIcon.setOpaque(false);
-            	userIcon.setContentAreaFilled(false);
-            	userIcon.setBorderPainted(false);
-            	userIcon.setBorder(BorderFactory.createEmptyBorder());
-            	userIcon.setFocusPainted(false);
-            	userIcon.setBackground(new Color(0,0,0,0));
-            	mainPanel.add(userIcon);   	
-        	}else {//button i sivi rb i plavi na oznacenim
-           		RoundButton userIcon = new RoundButton("", 0, 0);
-            	userIcon.setButtonIcon("Pictures/" + imagePaths[i], PicWidth, PicHeight);
-            	userIcon.setBounds(40+(i)*distance, 50, PicWidth, PicHeight);
-            	userIcon.setOpaque(false);
-            	userIcon.setContentAreaFilled(false);
-            	userIcon.setBorderPainted(false);
-            	userIcon.setBackground(new Color(0,0,0,0));
-            	mainPanel.add(userIcon);
-        	}
-        }
-        
-  
- 
-		
-		JPanel buttons = new JPanel();
-		buttons.setBackground(backgroundColor);
-		buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		mainPanel.setLayout(null);
-		
-		JLabel lblUsername = new JLabel("Username:");
-		lblUsername.setForeground(new Color(255, 255, 255));
-		lblUsername.setFont(mainFont);
-		lblUsername.setBounds(36, 341, 197, 24);
-		mainPanel.add(lblUsername);
-		
-		textField = new JTextField();
-		textField.setFont(secFont);
-		textField.setBounds(36, 369, 228, 33);
-		mainPanel.add(textField);
-		textField.setColumns(10);
-		
-		//button change username
-		JButton changeUsername = new JButton("Change username");
-		changeUsername.setForeground(Color.BLACK);
-		changeUsername.setFont(secFont);
-		changeUsername.setBounds(317, 369, 205, 33);
-		changeUsername.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		changeUsername.setBackground(new Color(248, 248, 255));
-		mainPanel.add(changeUsername);
-		
-		JLabel lblEmail = new JLabel("Email:");
-		lblEmail.setForeground(new Color(255, 255, 255));
-		lblEmail.setFont(mainFont);
-		lblEmail.setBounds(36, 259, 350, 24);
-		mainPanel.add(lblEmail);
-		
-		textField_1 = new JTextField();
-		textField_1.setBounds(36, 293, 490, 33);
-		mainPanel.add(textField_1);
-		textField_1.setColumns(10);
-		
-		JLabel lbPassword = new JLabel("Password:");
-		lbPassword.setForeground(new Color(255, 255, 255));
-		lbPassword.setFont(mainFont);
-		lbPassword.setBounds(36, 412, 177, 24);
-		mainPanel.add(lbPassword);
-		
-		//button change password
-		JButton changePassword = new JButton("Change password");
-		changePassword.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		
-		/* changePassword.setPreferredSize(new Dimension(20, 21));
-		changePassword.setMinimumSize(new Dimension(20, 21));
-		changePassword.setForeground(Color.BLACK);
-		changePassword.setBackground(new Color(248, 248, 255));
-		changePassword.setFont(secFont);
-		changePassword.setBounds(10, 107, 197, 33);
-		changePassword.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		mainPanel.add(changePassword);
-		*/
-		
-		//JButton changePassword = new JButton("Change passwords");
-		changePassword.setForeground(Color.BLACK);
-		changePassword.setFont(secFont);
-		changePassword.setBounds(36, 450, 490, 33);
-		changePassword.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		changePassword.setBackground(new Color(248, 248, 255));
-		mainPanel.add(changePassword);
-		
-		// panel for save and cancel buttons
-		JPanel scButtons = new JPanel();
-		scButtons.setBackground(backgroundColor);
-		scButtons.setBounds(0, 0, getWidth(), 80);
-		scButtons.setLayout(new BorderLayout());
-		
-		//button cancel
-		JButton cancel = new JButton("Cancel");
-		cancel.setForeground(Color.BLACK);
-		cancel.setBackground(new Color(248, 248, 255));
-		cancel.setFont(secFont);
-		
-		//button save changes
-		JButton save = new JButton("Save changes");
-		save.setForeground(Color.BLACK);
-		save.setBackground(new Color(248, 248, 255));
-		save.setFont(secFont);
-		
-		buttons.add(cancel);
-		buttons.add(save);
-		
-	
-		contentPane.add(mainPanel, BorderLayout.CENTER);
-		scButtons.add(buttons, BorderLayout.EAST);
-		contentPane.add(scButtons, BorderLayout.SOUTH);
 	}
 }
