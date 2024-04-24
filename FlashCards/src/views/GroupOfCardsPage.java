@@ -5,11 +5,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentAdapter;
@@ -20,70 +21,124 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.RoundRectangle2D;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.border.EmptyBorder;
+import views.WindowElementResize;
 
 
 public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
 	private JPanel contentPane;
-	
+
 	private final int ARC_WIDTH = 30;
-    private final int ARC_HEIGHT = 30;
-    
+    private final int ARC_HEIGHT = 30;    
     private final int START_X = 80;
     private final int START_Y = 150;
-    
     private final int HORIZONTAL_GAP_PERCENTAGE = 3; 
     private final int VERTICAL_GAP_PERCENTAGE = 3; 
-    
     private final int MAX_RECTANGLE_HEIGHT = 180;
     private final int MAX_RECTANGLE_WIDTH = 320;
-	
+	public int groupsPerPage;
 	private int currentPage = 0;
-	private int groupsPerPage = 10;
-	
     
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    int screenHeight = screenSize.height;
-    int screenWidth = screenSize.width;
-    int fontSize = (int) (screenHeight * 0.03);		//so that font changes as screen size changes
+    int windowWidth;
+    int windowHeight;
+    int xPositionWindow;
+    int yPositionWindow;
     
-	
-
+    ScreenDimensions screenSize;
+	int minimumWindowWidth;
+	int minimumWindowHeight;
+    
     public GroupOfCardsPage() {
-        this.setTitle("GROUP OF CARDS PAGE");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	this(0,0,0,0);
+    }
+    
+    public GroupOfCardsPage(int x, int y, int width, int height) {
+    	//set icon for app
+    	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
+	    ImageIcon Icon = new ImageIcon(IconURL);
+		setIconImage(Icon.getImage());
 
-        setExtendedState(JFrame.MAXIMIZED_BOTH);				//opens initially as fullscreen
-        this.setLocationRelativeTo(null);       
-        
-        this.setVisible(true);
-        
+    	screenSize = new ScreenDimensions();
+    	
+    	this.setTitle("GROUP OF CARDS PAGE");
+    	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	this.setMinimumSize(new Dimension(screenSize.minimumWindowWidth, screenSize.minimumWindowHeight)); // Minimum width = 300, Minimum height = 200
+		checkBounds(x, y, width, height);
+    	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+   
+    	updateView();
+
+    	//function for resizing components
+    	addComponentListener(new ComponentAdapter() {
+    	    public void componentResized(ComponentEvent e) {
+    	        Dimension newSize = e.getComponent().getSize();
+    	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
+    	            windowWidth = newSize.width;
+    	            windowHeight = newSize.height;
+    	            updateView();
+    	        }
+    	    }
+    	});
+
+    	//listener for window state changes
+    	addWindowStateListener(new WindowAdapter() {
+    	    public void windowStateChanged(WindowEvent e) {
+    	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
+    	            updateView();
+    	        }else if (e.getNewState() == JFrame.NORMAL) {
+    	            // Window is restored
+    	            // Perform any actions needed when window is restored
+    	            // For example, update the view
+    	            updateView();
+    	        }
+    	    }
+    	});
+    	
+    	//check if moved
+		addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+        		xPositionWindow = e.getComponent().getX();
+        		yPositionWindow = e.getComponent().getY();
+            }
+        });	    			
+    }
+
+    public void windowCreate() {
+    	setVisible(true);
+    	
+
         //main panel
         contentPane = new JPanel();
         contentPane.setBackground(backgroundColor);		
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		
+        windowWidth = getWidth();
+        windowHeight = getHeight();
+        views.WindowElementResize.getFontForWindowSize(windowHeight);
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout());
+		
+		setItemPerPage();
 		
 		//toolbar on top of the window:
 		JPanel toolbarPanel = new JPanel(new BorderLayout());
 		toolbarPanel.setBackground(toolbarColor);
-		toolbarPanel.setBounds(0, 0, getWidth(), 80);
+		toolbarPanel.setBounds(0, 0, windowWidth, 80);
 		toolbarPanel.setLayout(new BorderLayout());
+		toolbarPanel.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 10));
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 		
 		//toolbar label (name of page)
 		JLabel mainTitleLabel = new JLabel("My groups of cards");      
-		mainTitleLabel.setFont(mainFont);
+		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
-		mainTitleLabel.setBorder(new EmptyBorder(15, 15, 15, 15));
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
 		
 		// panel with all required buttons
@@ -92,16 +147,16 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
 		flowLayout.setHgap(10); 
 		buttonPanel.setLayout(flowLayout);
-		buttonPanel.setBorder(new EmptyBorder(10, 10, 15, 15));
 		
-		int buttonDimension = (int) (getWidth() * 0.02);
-		int biggerButtonDimension = (int) (getWidth() * 0.03);
+		//variables for button dimenions
+		int buttonDimension = (int) (windowWidth * 0.025);
+		int biggerButtonDimension = (int) (windowWidth * 0.035);
 
 		//edit button in toolbar
 		RoundButton editButton = new RoundButton("",buttonDimension ,buttonDimension );
 		editButton.setBackground(toolbarColor);
 		editButton.setButtonIcon("icons/EditIcon.png",  buttonDimension, buttonDimension);
-		editButton.setForeground(backgroundColor);
+		editButton.setBorder(null);
 		buttonPanel.add(editButton);
 
 		//add new group button in toolbar
@@ -109,6 +164,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		addGroupButton.setButtonIcon("icons/addIcon.png",  buttonDimension, buttonDimension);
 		addGroupButton.setBackground(toolbarColor);
 		addGroupButton.setForeground(backgroundColor);
+		addGroupButton.setBorder(null);
 		buttonPanel.add(addGroupButton);
 		
 		//settings button in toolbar
@@ -116,12 +172,21 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		settingsButton.setButtonIcon("icons/settingsIcon.png",buttonDimension,buttonDimension);
 		settingsButton.setBackground(toolbarColor);
 		settingsButton.setForeground(backgroundColor);
+		settingsButton.setBorder(null);
 		buttonPanel.add(settingsButton);
+		settingsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Settings settingsWindow = new Settings(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+				settingsWindow.setVisible(true);
+				dispose();
+			}
+		});
 		
 		//user icon / button in toolbar
 		RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
 		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
+		userIcon.setBorder(null);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
@@ -138,19 +203,24 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		navFlowLayout.setHgap(10); 
 		navigationPanel.setLayout(navFlowLayout);
 		
+		//round button for going back
         RoundButton arrowLeft = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
         arrowLeft.setButtonIcon("icons/LeftArrowIcon.png", biggerButtonDimension, biggerButtonDimension);
         arrowLeft.setBackground(backgroundColor);
+        arrowLeft.setBorder(null);
         navigationPanel.add(arrowLeft);
         
+        //page label
         JLabel currentPageLabel = new JLabel("1");
-        currentPageLabel.setFont(secFont);
-        currentPageLabel.setForeground(Color.black);
+        currentPageLabel.setFont(WindowElementResize.secFont);
+        currentPageLabel.setForeground(Color.white);
         navigationPanel.add(currentPageLabel);
         
+        //round button for going to the next page
         RoundButton arrowRight = new RoundButton("", biggerButtonDimension, biggerButtonDimension);
         arrowRight.setButtonIcon("icons/RightArrowIcon.png",biggerButtonDimension, biggerButtonDimension);
         arrowRight.setBackground(backgroundColor);
+        arrowRight.setBorder(null);
         navigationPanel.add(arrowRight);
         
         contentPane.add(navigationPanel, BorderLayout.SOUTH);
@@ -162,7 +232,8 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
                 int clickedIndex = getClickedRectangleIndex(e.getX(), e.getY());
                 if (clickedIndex != -1) {
                     // Opens a new window with the corresponding group name
-                    new GroupPage(groupNames[clickedIndex], groupColors[clickedIndex]).setVisible(true);
+                	dispose();
+                	//new GroupPage(groupNames[clickedIndex], groupColors[clickedIndex]).setVisible(true);
                 }
             }
         });
@@ -176,7 +247,6 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
                 drawRectangles.repaint(); // Repaint the component to reflect the updated current page
             }
         });
-        
         arrowRight.addActionListener(e -> {
             int totalPages = (int) Math.ceil((double) groupNames.length / groupsPerPage );
             if (currentPage < totalPages - 1) {
@@ -188,20 +258,53 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         
         
     }
+    
+	//updates sizes of elements and window
+	public void updateView() {
+		windowCreate();
+	}
+	
+	//define how many groups and subgroups we can display on page
+	public void setItemPerPage() {
+		if(windowHeight > 1000) {
+			groupsPerPage = 15;
+		}else {
+			groupsPerPage = 10;	
+		}
+	}
+	
+	//function for checking bounds
+	public void checkBounds(int x, int y, int width, int height) {
+		if(x < 0 || y < 0) {
+			xPositionWindow = 0;
+			yPositionWindow = 0;
+		}else {
+			xPositionWindow = x;
+			yPositionWindow = y;
+		}
+		
+		if(width < minimumWindowWidth || height < minimumWindowHeight) { //if the screen is less then the minimum allowed size
+			//with tolerances
+			windowWidth = dimensions.screenWidth;
+			windowHeight = dimensions.screenHeight;
+			setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}else {
+			windowWidth = width;
+			windowHeight = height;
+		}
+	}
 
     class DrawGroupRectangles extends JComponent {
         
         public void paint(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
-
             g2.setColor(backgroundColor);
-            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.fillRect(0, 0, windowWidth, windowHeight);
+            g2.setFont(WindowElementResize.mediumFont);
 
-            g2.setFont(mainFont);
-
-            int frameWidth = getWidth();
-            int frameHeight = getHeight();
-            
+            //frame sizes
+            int frameWidth = windowWidth;
+            int frameHeight = windowHeight;
             int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
             int verticalGap = (int) (frameHeight * VERTICAL_GAP_PERCENTAGE / 100.0);
 
@@ -231,7 +334,6 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 
                 g2.setColor(groupColors[i]);
                 g2.fill(roundedRectangle);
-
                 g2.setColor(Color.BLACK);
 
                 String text = groupNames[i];
@@ -253,8 +355,8 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
       // gets index of clicked group, to use it when displaying group name in new window
       // makes sure mouse is inside rectangle coordinates (outside clicks don't count)
       private int getClickedRectangleIndex(int mouseX, int mouseY) {
-        int frameWidth = getWidth();
-        int frameHeight = getHeight();
+        int frameWidth = windowWidth;
+        int frameHeight = windowHeight;
         int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
         int verticalGap = (int) (frameHeight * VERTICAL_GAP_PERCENTAGE / 100.0);
 
@@ -281,16 +383,15 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         	    return i;
         	}
         }
-       return -1; // if clicked outside the rectangles
+       // if clicked outside the rectangles
+       return -1; 
      }
-        	
-
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    GroupOfCardsPage frame = new GroupOfCardsPage();
+                    GroupOfCardsPage frame = new GroupOfCardsPage(0, 0, 0, 0);
                     frame.setVisible(true);
 
                 } catch (Exception e) {
