@@ -40,7 +40,8 @@ public class Help {
 		//System.out.println(proba=Help.encrypt("1234")); 
 		//crude.update("user","password","1234","12345"); // sve je ovo stestirano i radi
 		//sproban unique constraint na korisnickome imenu i radi
-		//brisanjem korisnika ili grupe kaskadno se brisu podaci (cascade constraint)
+		//brisanjem korisnika ili grupe kaskadno se brisu podaci (cascade constraint) 
+		////sprobano brisanje grupe pa se izbrisu podgrupe i sprobano brisanje usera i brisu se grupe i podgrupe (radi)
 		//enkripcija napravljena na principu md5 hashinga
 		//crude.closeConnection();
 	}
