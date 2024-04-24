@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class GroupPage extends JFrame {
+public class GroupPage extends JFrame implements GlobalDesign{
     public GroupPage(String text, Color bgColor) {
         setTitle(text + " group page");
         setSize(500, 500);
@@ -22,7 +22,8 @@ public class GroupPage extends JFrame {
 		contentPane.setLayout(new BorderLayout());
         
 		//dummy text to test clickable rectangles
-        JLabel label = new JLabel("You just opened " + text + " group");
+        JLabel label = new JLabel(text);
+        label.setFont(secFont);
         label.setHorizontalAlignment(JLabel.CENTER);
         contentPane.add(label, BorderLayout.CENTER);
     }
