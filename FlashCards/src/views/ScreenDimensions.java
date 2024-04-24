@@ -14,7 +14,7 @@ public class ScreenDimensions {
 		screenHeight = (int)screenSize.getHeight();
     	screenWidth = (int)screenSize.getWidth();
     	minimumWindowHeight = (int)(screenHeight*0.75);
-    	minimumWindowWidth = (int)(screenWidth*0.75);
+    	minimumWindowWidth = (int)(screenWidth*0.55);
 	}
 
 }
