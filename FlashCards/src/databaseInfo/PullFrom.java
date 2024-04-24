@@ -5,80 +5,76 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.ResultSetMetaData;
 
-/*
- * u buildpath mora bit mysql connector.jar skinut s neta i stavljen u tomcat - lib folder
- * https://dev.mysql.com/downloads/connector/j/
- * */
-//
 
 public class PullFrom {
+	 Connection connection = null;
+	 Statement st = null; //use Prepared statement for SQLInjection defence
+	 String query = "SELECT * from ";
+	 ResultSet rs = null;
+	 
+	//constructor to get the table from SQL base
+	public  PullFrom(String table) {
+		connect();
+		query += table;
+		fetchData();
+	}
 	
-	public static void main(String []args) {
-		 String url = "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11700330";
-		 Connection connection = null;
-		 Statement st = null; //use Prepared statement for SQLInjection defense
-		 String query = "SELECT * from user";
-		 ResultSet rs = null;
-		 ResultSetMetaData rsmd = null;
+	//constructor to get the row of the table in SQL
+	public  PullFrom(String table, String element, String elementValue) {
+		connect();
+		query += table + " WHERE " + element + " = " + elementValue;
+		fetchData();	
+	}
+	
+	public void connect() {
+		//connecting to the base
+		String url = "jdbc:mysql://localhost:3306/flashcards";
 		 try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			try {
-				 connection = DriverManager.getConnection(url, "sql11700330", "ugqkTnHrnj");
+				 connection = DriverManager.getConnection(url, "root", "root");
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 Integer empId = -1;
-		 String firstName = null;
-		 try {
+	}
+	
+	//fetching data from SQL base
+	public void fetchData() {
+		 try { 
 			 st = connection.createStatement();
 			 rs =  st.executeQuery(query);
-			 rsmd = rs.getMetaData(); //extra help with manipulating data 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 //manipuliraj podacima
+		 
+	}
+	
+	public ResultSet returnRs() {
+		return rs;
+	}
+	
+	//this need to be called every time we use PullFrom
+	//closing the rs connection
+	public void close() {
 		try {
-			while(rs.next()) {
-			System.out.println("id: " + rs.getInt("iduser") +"\n"+
-			"ime: "+ rs.getString("username")+"\n"+"email: "+ rs.getString("email")+'\n');
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 
-		/* 
-		public ResultSet users() {
-			
-		}
-		
-		public ResultSet cards() {
-			
-		}
-		public ResultSet groups() {
-			
-		}
-		public ResultSet subgroups() {
-			
-		}*/
-		
-		
-		
-		 
-		 try {
-			 rs.close();
+			rs.close();
 			connection.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}	
+	}
+	
+	/*public static void main(String args[]) {
+		PullFrom p = new PullFrom("grupa","iduser", "2");
+		p.returnRs();
+		p.close();
 	 }
+	*/
 }
