@@ -35,23 +35,23 @@ public class Crude {
 		 
 		if(tableName.equals("user")) {
 			//d1 je username, d2 je mail, d3 pw
+			//PW ENCRYPTION !!
+			
 			this.query = "INSERT INTO user (username, email, password, profilePic) " +
 	                "VALUES ('" + d1 + "', '" + d2 + "', '" + d3 + "', '" + d4 + "');";
-			try {
-				 st.executeUpdate(query);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			 
 			
 		}
 		if(tableName.equals("card")) {
 			
-			this.query = "INSERT INTO user (title, paragraph, idsubgroup, boja) " +
+			this.query = "INSERT INTO card (title, paragraph, boja, idsubgroup) " +
 	                "VALUES ('" + d1 + "', '" + d2 + "', '" + d3 + "', '" + d4 + "');";
-			 
-			
+		}
+		
+		try {
+			 st.executeUpdate(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	
 	}
@@ -71,19 +71,36 @@ public class Crude {
 			//d1 je username, d2 je mail, d3 pw
 			if(d2 == null) {this.query = "INSERT INTO grupa (name,boja) " + //ako kartica ne pripada nijednom uzeru
 	                "VALUES ('" + d1 + "', '" + d2 + "', '" + d3 + "');";}
-			this.query = "INSERT INTO grupa (name, iduser, boja) " +
+			this.query = "INSERT INTO grupa (name, boja, iduser) " +
 	                "VALUES ('" + d1 + "', '" + d2 + "', '" + d3 + "');";
+		
+		}
+		try {
+			st.executeUpdate(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
 	
-	public void delete(String tableName, String d1) { 
-		
+	public void delete(String tableName, String columnName, String d1) { 
+		 this.query = "DELETE FROM " + tableName + " WHERE " + columnName + "= '" + d1 +"';";
+	    try {
+	        st.executeUpdate(query);
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	
-	public void update(String tableName, String before, String after) { 
-		
+	public void update(String tableName, String columnName, String before, String after) { 
+	    this.query = "UPDATE " + tableName + " SET " + columnName + " = '" + after + "' WHERE " + columnName + " = '" + before + "';";
+			try {
+		        st.executeUpdate(query);
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
 	}
 	
 	public void closeConnection() {
