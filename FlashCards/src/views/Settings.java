@@ -52,6 +52,7 @@ public class Settings extends JFrame implements GlobalDesign{
     
     public Settings(int x, int y, int width, int height) {
     	//set icon for app
+    	System.out.println("glavni s: " + width +"x"+height);
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
 		setIconImage(Icon.getImage());
@@ -63,7 +64,7 @@ public class Settings extends JFrame implements GlobalDesign{
 		this.setMinimumSize(new Dimension(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight)); // Minimum width = 300, Minimum height = 200
 		checkBounds(x, y, width, height);
     	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
-		
+    	System.out.println("drugi s: " + width +"x"+height);
     	updateView();
     	
     	//function for resizing components
@@ -71,12 +72,52 @@ public class Settings extends JFrame implements GlobalDesign{
     	    public void componentResized(ComponentEvent e) {
     	        Dimension newSize = e.getComponent().getSize();
     	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
-    	            windowWidth = newSize.width;
-    	            windowHeight = newSize.height;
+    	        	if(newSize.width <= dimensions.minimumWindowWidth && newSize.height <= dimensions.minimumWindowHeight) {
+    	        		windowWidth = dimensions.minimumWindowWidth;
+        	            windowHeight = dimensions.minimumWindowHeight;
+    	        	}else if(newSize.width <= dimensions.minimumWindowWidth && newSize.height > dimensions.minimumWindowHeight) {
+    	        		windowWidth = dimensions.minimumWindowWidth;
+        	            windowHeight = newSize.height;
+    	        	}else if(newSize.height <= dimensions.minimumWindowHeight && newSize.width > dimensions.minimumWindowWidth) {
+    	        		windowWidth = newSize.width;
+        	            windowHeight = dimensions.minimumWindowHeight;
+    	        	}else if(newSize.width == dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        		windowWidth = dimensions.screenWidth;
+    	        		windowHeight = dimensions.screenHeight;
+    	        	}else if(newSize.width == dimensions.screenWidth && newSize.height != dimensions.screenHeight) {
+    	        		windowWidth = dimensions.screenWidth;
+    	        		windowHeight = newSize.height;
+    	        	}else if(newSize.width != dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        		windowWidth = newSize.width;
+    	        		windowHeight = dimensions.screenHeight;
+    	        	}else {
+    	        		windowWidth = newSize.width;
+    	        		windowHeight = newSize.height;
+    	        	}
+    	        	System.out.println(windowHeight +"x"+windowHeight);
     	            updateView();
+    	            
     	        }
     	    }
+    	
     	});
+    	
+    	this.addComponentListener(new ComponentAdapter(){
+	        public void componentResized(ComponentEvent e){
+	            Dimension d=Settings.this.getSize();
+	            Dimension minD=Settings.this.getMinimumSize();
+	            if(d.width<minD.width) {
+	            	d.width=minD.width;
+	            }
+	                
+	            if(d.height<minD.height) {
+	            	 d.height=minD.height;
+	            }
+	               
+	           Settings.this.setSize(d);
+	        }
+    	});
+ 
 
     	//listener for window state changes
     	addWindowStateListener(new WindowAdapter() {
@@ -101,9 +142,10 @@ public class Settings extends JFrame implements GlobalDesign{
     	    }
     	});
     }	
+    
+    
     public void windowCreate() {
     	setVisible(true);
-
     	
 		//main panel
 		contentPane = new JPanel();
@@ -111,7 +153,6 @@ public class Settings extends JFrame implements GlobalDesign{
 		windowWidth = getWidth();
         windowHeight = getHeight();
         views.WindowElementResize.getFontForWindowSize(windowHeight);
-		
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout());
 		
@@ -173,7 +214,6 @@ public class Settings extends JFrame implements GlobalDesign{
         mainPanel.setBorder(new EmptyBorder(0,0,5,5));
         mainPanel.setOpaque(false); // Make buttonPanel transparent
         mainPanel.setLayout(null);
-
 
 
         //label choose picture
@@ -282,7 +322,7 @@ public class Settings extends JFrame implements GlobalDesign{
 		//button cancel
 		RoundedButton cancel = new RoundedButton("Cancel", windowWidth, windowHeight);
 		cancel.setFont(WindowElementResize.buttonText);
-		cancel.setBounds((int)(windowWidth * 0.775), (int)(windowHeight * 0.825), (int)(windowWidth*0.1), (int)(windowHeight * 0.035));
+		cancel.setBounds((int)(windowWidth * 0.750), (int)(windowHeight * 0.825), (int)(windowWidth*0.1), (int)(windowHeight * 0.035));
 		mainPanel.add(cancel);
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -295,7 +335,7 @@ public class Settings extends JFrame implements GlobalDesign{
 		//button save changes
 		RoundedButton save = new RoundedButton("Save changes", windowWidth, windowHeight);
 		save.setFont(WindowElementResize.buttonText);
-		save.setBounds((int)(windowWidth * 0.875), (int)(windowHeight * 0.825), (int)(windowWidth*0.115), (int)(windowHeight * 0.035));
+		save.setBounds((int)(windowWidth * 0.860), (int)(windowHeight * 0.825), (int)(windowWidth*0.115), (int)(windowHeight * 0.035));
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
@@ -318,7 +358,9 @@ public class Settings extends JFrame implements GlobalDesign{
 	
 	//function for checking bounds
 	public void checkBounds(int x, int y, int width, int height) {
-		if(x < 0 || y < 0) {
+		System.out.println(width +"x"+height);
+		//with tolarence
+		if(x <= -10 || y <= -10) {
 			xPositionWindow = 0;
 			yPositionWindow = 0;
 		}else {
@@ -326,12 +368,21 @@ public class Settings extends JFrame implements GlobalDesign{
 			yPositionWindow = y;
 		}
 		
-		if(width < dimensions.minimumWindowWidth || height < dimensions.minimumWindowHeight) { //if the screen is less then the minimum allowed size
+		if(width <= 0 || height <= 0) { //if the screen is less then the minimum allowed size
 			//with tolerances
 			windowWidth = dimensions.screenWidth;
 			windowHeight = dimensions.screenHeight;
 			setExtendedState(JFrame.MAXIMIZED_BOTH);
-		}else {
+		}else if(width <= dimensions.minimumWindowWidth && height <= dimensions.minimumWindowHeight) {
+			windowWidth = dimensions.minimumWindowWidth;
+			windowHeight = dimensions.minimumWindowHeight;
+		}else if(width <= dimensions.minimumWindowWidth && height > dimensions.minimumWindowHeight) {
+    		windowWidth = dimensions.minimumWindowWidth;
+            windowHeight = height;
+    	}else if(height <= dimensions.minimumWindowHeight && width > dimensions.minimumWindowWidth) {
+    		windowWidth = width;
+            windowHeight = dimensions.minimumWindowHeight;
+    	}else {
 			windowWidth = width;
 			windowHeight = height;
 		}

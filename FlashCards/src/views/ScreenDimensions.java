@@ -13,8 +13,8 @@ public class ScreenDimensions {
     	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		screenHeight = (int)screenSize.getHeight();
     	screenWidth = (int)screenSize.getWidth();
-    	minimumWindowHeight = (int)(screenHeight*0.75);
-    	minimumWindowWidth = (int)(screenWidth*0.75);
+    	minimumWindowHeight = (int)(screenHeight*0.65);
+    	minimumWindowWidth = (int)(screenWidth*0.65);
 	}
 
 }
