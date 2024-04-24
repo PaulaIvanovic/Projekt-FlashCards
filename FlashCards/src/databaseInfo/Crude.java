@@ -38,7 +38,7 @@ public class Crude {
 			//PW ENCRYPTION !!
 			
 			this.query = "INSERT INTO user (username, email, password, profilePic) " +
-	                "VALUES ('" + d1 + "', '" + d2 + "', '" + d3 + "', '" + d4 + "');";
+	                "VALUES ('" + d1 + "', '" + d2 + "', md5('" + d3 + "'), '" + d4 + "');";
 			
 		}
 		if(tableName.equals("card")) {
@@ -95,6 +95,10 @@ public class Crude {
 	
 	
 	public void update(String tableName, String columnName, String before, String after) { 
+		if(tableName.equals("user") && columnName.equals("password")) {
+			before = Help.encrypt(before);
+			after = Help.encrypt(after);
+		}
 	    this.query = "UPDATE " + tableName + " SET " + columnName + " = '" + after + "' WHERE " + columnName + " = '" + before + "';";
 			try {
 		        st.executeUpdate(query);
