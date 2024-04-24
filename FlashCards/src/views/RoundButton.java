@@ -1,5 +1,6 @@
 package views;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,39 +11,37 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import views.ScreenDimensions;
 
 public class RoundButton extends JButton {
 
 	private static final long serialVersionUID = 1L;
-
-	public RoundButton(String label, int width, int height) {
-	    super(label);
-	    Dimension size = getPreferredSize();
-	    size.width = width;
-	    size.height = height;
-	    setPreferredSize(size);
-
-	    setContentAreaFilled(false);    // content area won't be filled with background color
-	}
+	ScreenDimensions dimensions = new ScreenDimensions();
+	public int windowHeight;
+	public int windowWidth;
 	
 	public RoundButton(String label) {
+		super(label);
+		windowWidth = dimensions.screenWidth;
+		windowHeight = dimensions.screenHeight;
+		setProperties();
+	}
+
+	public RoundButton(String label, int windowWidth, int windowHeight) {
 	    super(label);
-	    Dimension size = getPreferredSize();
-	    setPreferredSize(size);
-	    setContentAreaFilled(false);    // content area won't be filled with background color
+	    this.windowWidth = windowWidth;
+	    this.windowHeight = windowHeight;
+	    setProperties();
 	}
 	
-	protected void setBound(int x, int y, int width, int height) {
-		this.setBounds(x, y, width, height);
-	}
+    public void setProperties() {
+        Dimension size = getPreferredSize();
+        size.width = windowWidth;
+        size.height = windowHeight;
+        setPreferredSize(size);
+        setContentAreaFilled(false);
+    }
 	
-
-
-	    
-	    setContentAreaFilled(false);    // content area won't be filled with background color
-	}
-	
-
 	//method to paint the button
     protected void paintComponent(Graphics g) {		
         if (getModel().isArmed()) {					
@@ -50,13 +49,15 @@ public class RoundButton extends JButton {
         } else {
             g.setColor(getBackground());
         }
-        g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 60, 60);	//makes a rounded rectangle
+        g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, windowWidth, windowHeight);	//makes a rounded rectangle
         super.paintComponent(g);
     }
 
     protected void paintBorder(Graphics g) {
-        g.setColor(getForeground());
-        g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 60, 60);
+    	if (getBorder() != null) {
+            g.setColor(getForeground());
+            g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, windowWidth, windowHeight);
+    	}
     }
     
     //function to get the image location, scale it down to fit the button, then set it as icon
@@ -70,20 +71,14 @@ public class RoundButton extends JButton {
         ImageIcon resizedChangesIconImage = new ImageIcon(resizedChangesIcon);
         
         this.setIcon(resizedChangesIconImage); 
-        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
     }
 
     Shape shape;
 
     public boolean contains(int x, int y) {		//determines if (x,y) is contained within the button (hit detection)
         if (shape == null || !shape.getBounds().equals(getBounds())) {
-            shape = new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 60, 60);
+            shape = new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, (int)(windowWidth * 0.04), (int)(windowHeight * 0.07));
         }
         return shape.contains(x, y);
     }
 }
-
-}
-
-}
-
