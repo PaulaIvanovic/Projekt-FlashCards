@@ -7,6 +7,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -72,24 +73,46 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 	
 	public RegisterPage() {
 		//set icon for app
-    	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
-	    ImageIcon Icon = new ImageIcon(IconURL);
-		setIconImage(Icon.getImage());
-		
+        java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
+        ImageIcon Icon = new ImageIcon(IconURL);
+        setIconImage(Icon.getImage());
+        
 		//calculated variables for window height and width
-		int desiredHeight = (int) (dimensions.screenHeight * 0.8);
-	    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
-	    
-		//adding a name to the title bar
-		setTitle("REGISTER PAGE");
+        int desiredHeight = (int) (dimensions.screenHeight * 0.8);
+        int desiredWidth = (int) (dimensions.screenWidth * 0.4);
+
+        // Create a custom title bar panel
+        JPanel titleBarPanel = new JPanel();
+        titleBarPanel.setBackground(new Color(69, 62, 130)); // Set the background color of the title bar
+        titleBarPanel.setLayout(new BorderLayout());
+
+        // Add a close button
+        JButton closeButton = new JButton("X");
+        closeButton.setBackground(new Color(69, 62, 130)); 
+        closeButton.setForeground(Color.WHITE);
+        closeButton.setBorder(null); 
+        closeButton.setFocusPainted(false);
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+        titleBarPanel.add(closeButton, BorderLayout.EAST);
+
+        // Set the custom title bar
+        setUndecorated(true);
+        getContentPane().add(titleBarPanel, BorderLayout.NORTH);
+        
+        setTitle("REGISTER PAGE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, desiredWidth, desiredHeight);
 		setResizable(false); 
-	    setSize(desiredWidth, desiredHeight);
 	    setLocationRelativeTo(null);
 	    setVisible(true);
 
 		//main panel
 		contentPane = new JPanel();
+		contentPane = (JPanel) getContentPane();
 		contentPane.setBackground(backgroundColor);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
