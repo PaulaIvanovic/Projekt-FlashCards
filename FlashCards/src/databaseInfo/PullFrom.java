@@ -11,7 +11,6 @@ import java.sql.ResultSetMetaData;
 
 
 public class PullFrom {
-	static String[] info= new String[2];
 	 Connection connection = null;
 	 Statement st = null; //use Prepared statement for SQLInjection defence
 	 String query = "SELECT * from ";
@@ -78,8 +77,4 @@ public class PullFrom {
 		p.close();
 	 }
 	*/
-	
-	
-
-
 }
