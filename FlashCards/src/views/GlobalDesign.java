@@ -67,13 +67,17 @@ public interface GlobalDesign {
 			new Color(0x67E1A7),
 			new Color(0x67E1A7),
 			new Color(0x5148FF),
-			new Color(0x5148FF)
+			new Color(0x5148FF),
+			new Color(0xD068FA),
+			new Color(0xFFA030),
+			new Color(0xFF5899),
+			new Color(0x5148FF),
 			};
 	
 	//test names of groups to be used when clicked on certain group:
 	public String[] groupNames = {"Maths", "Physics", "Biology", "Geography", "Arts", "History",
 			"Chemistry", "English", "Latin", "Music", "bala", "aiph", "eouahfo", "Maths", "Physics", "Biology", "Geography", "Arts", "History",
-			"Chemistry", "English", "Latin", "Music"};
+			"Chemistry", "English", "Latin", "Music", "Chemistry", "English", "Latin", "Music"};
 	
 	public Color[] subGroupColors = {new Color(0x8CB459), 
 			new Color(0x9391f6),

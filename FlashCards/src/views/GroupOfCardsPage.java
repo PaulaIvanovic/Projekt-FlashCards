@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -228,8 +229,10 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		 
 		//rectangles representing groups of cards is wrapped in a scrollPane element
 		DrawGroupRectangles drawRectangles = new DrawGroupRectangles();
+		drawRectangles.setBackground(backgroundColor);
 		
-		JScrollPane scrollPane = new JScrollPane(drawRectangles);		
+		JScrollPane scrollPane = new JScrollPane(drawRectangles);	
+		scrollPane.setBackground(backgroundColor);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
@@ -313,8 +316,9 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	    @Override
 	    public void paint(Graphics g) {
 	        Graphics2D g2 = (Graphics2D) g;
+	        Rectangle visibleRect = getVisibleRect();
 	        g2.setColor(backgroundColor);
-	        g2.fillRect(0, 0, windowWidth, windowHeight);
+	        g2.fillRect(visibleRect.x, visibleRect.y, visibleRect.width, visibleRect.height);
 	        g2.setFont(WindowElementResize.mediumFont);
 
 	        //frame sizes
