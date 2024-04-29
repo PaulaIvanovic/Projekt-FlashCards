@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
 	private JPanel contentPane;
+
     
     private final int HORIZONTAL_GAP_PERCENTAGE = 2; 
     
@@ -34,6 +35,19 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	public int groupsPerPage;
 	public int START_X;
 	public int START_Y;
+
+
+	private final int ARC_WIDTH = 30;
+    private final int ARC_HEIGHT = 30;    
+    private final int HORIZONTAL_GAP_PERCENTAGE = 3; 
+    private final int VERTICAL_GAP_PERCENTAGE = 3; 
+    private final int MAX_RECTANGLE_HEIGHT = 180;
+    private final int MAX_RECTANGLE_WIDTH = 320;
+	public int groupsPerPage;
+	public int START_X;
+	public int START_Y;
+	private int currentPage = 0;
+
     
     int windowWidth;
     int windowHeight;
@@ -73,11 +87,15 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     	addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent e) {
     	        Dimension newSize = e.getComponent().getSize();
-    	          	       
+
+    	          	     	        
+    	       
+
     	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
     	        	if(newSize.width <= dimensions.minimumWindowWidth && newSize.height <= dimensions.minimumWindowHeight) {
     	        		windowWidth = dimensions.minimumWindowWidth;
         	            windowHeight = dimensions.minimumWindowHeight;
+
     	        	} else if (newSize.width <= dimensions.minimumWindowWidth && newSize.height > dimensions.minimumWindowHeight) {
     	        		windowWidth = dimensions.minimumWindowWidth;
         	            windowHeight = newSize.height;
@@ -127,7 +145,47 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
                 }
             }
         });
-  
+    	        	}else if(newSize.width <= dimensions.minimumWindowWidth && newSize.height > dimensions.minimumWindowHeight) {
+    	        		windowWidth = dimensions.minimumWindowWidth;
+        	            windowHeight = newSize.height;
+    	        	}else if(newSize.height <= dimensions.minimumWindowHeight && newSize.width > dimensions.minimumWindowWidth) {
+    	        		windowWidth = newSize.width;
+        	            windowHeight = dimensions.minimumWindowHeight;
+    	        	}else if(newSize.width == dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        		windowWidth = dimensions.screenWidth;
+    	        		windowHeight = dimensions.screenHeight;
+    	        	}else if(newSize.width == dimensions.screenWidth && newSize.height != dimensions.screenHeight) {
+    	        		windowWidth = dimensions.screenWidth;
+    	        		windowHeight = newSize.height;
+    	        	}else if(newSize.width != dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        		windowWidth = newSize.width;
+    	        		windowHeight = dimensions.screenHeight;
+    	        	}else {
+    	        		windowWidth = newSize.width;
+    	        		windowHeight = newSize.height;
+    	        	}
+    	            updateView();
+    	            
+    	        }
+    	    }
+    	});
+    	
+    	//function for ensuring minimum size o window
+    	this.addComponentListener(new ComponentAdapter(){
+	        public void componentResized(ComponentEvent e){
+	            Dimension d=GroupOfCardsPage.this.getSize();
+	            Dimension minD=GroupOfCardsPage.this.getMinimumSize();
+	            if(d.width<minD.width) {
+	            	d.width=minD.width;
+	            }
+	                
+	            if(d.height<minD.height) {
+	            	 d.height=minD.height;
+	            }
+	               
+	            GroupOfCardsPage.this.setSize(d);
+	        }
+    	});
 
     	//listener for window state changes
     	addWindowStateListener(new WindowAdapter() {
@@ -301,8 +359,13 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     
 	//updates sizes of elements and window
 	public void updateView() {
+
 		 START_X = (int)(windowWidth * 0.05);
 		 START_Y = (int)(windowHeight * 0.175); 
+
+		 START_X = (int)(windowWidth*0.05);
+		 START_Y = (int)(windowHeight*0.175);
+
 		windowCreate();
 	}
 	
@@ -335,6 +398,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 			windowWidth = width;
 			windowHeight = height;
 		}
+
 	
 		
 		//with tolerances
@@ -342,10 +406,113 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 					xPositionWindow = 0;
 					yPositionWindow = 0;
 				} else {
+
+		
+		//with tolerances
+				if(x <= -10 || y <= -10) {
+					xPositionWindow = 0;
+					yPositionWindow = 0;
+				}else {
 					xPositionWindow = x;
 					yPositionWindow = y;
 				}
 	}
+	
+	
+
+
+    class DrawGroupRectangles extends JComponent {
+        public void paint(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setColor(backgroundColor);
+            g2.fillRect(0, 0, windowWidth, windowHeight);
+            g2.setFont(WindowElementResize.mediumFont);
+
+            //frame sizes
+            int frameWidth = windowWidth;
+            int frameHeight = windowHeight;
+            int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
+            int verticalGap = (int) (frameHeight * VERTICAL_GAP_PERCENTAGE / 100.0);
+
+
+            //calculates the index range for the current page
+            int startIndex = currentPage * groupsPerPage;
+            int endIndex = Math.min(startIndex + groupsPerPage, groupNames.length);
+
+            //calculates the number of rows and columns for the current page
+            int numCols = Math.min(groupNames.length - startIndex, 5);
+            int numRows = (numCols - 1) / 5 + 1;
+
+            //calculates the width and height of each rectangle
+            int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
+            int rectangleHeight = Math.min((frameHeight - START_Y * 2 - (numRows - 1) * verticalGap) / numRows, MAX_RECTANGLE_HEIGHT);
+
+
+            for (int i = startIndex; i < endIndex; i++) {
+                int row = (i - startIndex) / 5;
+                int col = (i - startIndex) % 5;
+
+                int x = START_X + col * (rectangleWidth + horizontalGap);
+                int y = START_Y + row * (rectangleHeight + verticalGap);
+
+                // To make the rectangles have rounded edges
+                RoundRectangle2D roundedRectangle = new RoundRectangle2D.Double(x, y, rectangleWidth, rectangleHeight, ARC_WIDTH, ARC_HEIGHT);
+
+                g2.setColor(groupColors[i]);
+                g2.fill(roundedRectangle);
+                g2.setColor(Color.BLACK);
+
+                String text = groupNames[i];
+                drawCenteredString(g2, text, x, y, rectangleWidth, rectangleHeight);
+               }     
+        	}
+        }
+
+        //writes out name of group (centered within the rectangle)
+        private void drawCenteredString(Graphics2D g2, String text, int x, int y, int width, int height) {
+            FontMetrics metrics = g2.getFontMetrics();
+            int textWidth = metrics.stringWidth(text);
+            int textHeight = metrics.getHeight();
+            int centerX = x + (width - textWidth) / 2;
+            int centerY = y + (height - textHeight) / 2 + metrics.getAscent();
+            g2.drawString(text, centerX, centerY);
+        }
+
+      // gets index of clicked group, to use it when displaying group name in new window
+      // makes sure mouse is inside rectangle coordinates (outside clicks don't count)
+      private int getClickedRectangleIndex(int mouseX, int mouseY) {
+        int frameWidth = windowWidth;
+        int frameHeight = windowHeight;
+        int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
+        int verticalGap = (int) (frameHeight * VERTICAL_GAP_PERCENTAGE / 100.0);
+
+        //calculates the index range for the current page
+        int startIndex = currentPage * groupsPerPage;
+        int endIndex = Math.min(startIndex + groupsPerPage, groupNames.length);
+
+        //calculates the number of rows and columns for the current page
+       int numCols = Math.min(groupNames.length - startIndex, 5);
+       int numRows = (numCols - 1) / 5 + 1;
+
+       //calculates the width and height of each rectangle
+        int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
+        int rectangleHeight = Math.min((frameHeight - START_Y * 2 - (numRows - 1) * verticalGap) / numRows, MAX_RECTANGLE_HEIGHT);
+
+        for (int i = startIndex; i < endIndex; i++) {
+        	int row = (i - startIndex) / 5;
+        	int col = (i - startIndex) % 5;
+
+        	int x = START_X + col * (rectangleWidth + horizontalGap);
+        	int y = START_Y + row * (rectangleHeight + verticalGap);
+
+        	if (mouseX >= x && mouseX <= x + rectangleWidth && mouseY >= y && mouseY <= y + rectangleHeight) {
+        	    return i;
+        	}
+        }
+       // if clicked outside the rectangles
+       return -1; 
+     }
+
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
