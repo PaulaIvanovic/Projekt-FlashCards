@@ -64,8 +64,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 		JPanel toolbarPanel = new JPanel(new BorderLayout());
 		toolbarPanel.setBackground(toolbarColor);
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
-				
-		
+					
 		//class for font size
 		WindowElementResize.getFontForWindowSize(desiredHeight);
 		
