@@ -72,12 +72,6 @@ public class PullFrom {
         }
         return infoList;
     }
-    public static void main(String args[]) {
-        PullFrom p = new PullFrom("grupa","iduser", "2");
-        ResultSet res;
-        System.out.println(p.returnInfo("iduser"));
-        p.close();
-     }
 	
 	//this need to be called every time we use PullFrom
 	//closing the rs connection
