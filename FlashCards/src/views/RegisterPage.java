@@ -60,6 +60,8 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import services.Register;
+
 public class RegisterPage extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
@@ -304,6 +306,15 @@ public class RegisterPage extends JFrame implements GlobalDesign{
         panel_1.add(registerBtn);
 		registerBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//procitaj input field pass, username, email
+				String username = user.getText();
+				String email = emailField.getText();
+				String password = new String(pass.getPassword());
+				//pozovi register logiku
+				Register r = new Register(username, password, email);
+				r.AddUser();
+				//da nema text add usermane u bazi..
+				//baci prozor u grupe
 				PopUpWindow popUp = new PopUpWindow("Currently unavailable", (int)(desiredWidth * 0.45), (int)(desiredHeight * 0.45));
             	popUp.setVisible(true);
 			}
