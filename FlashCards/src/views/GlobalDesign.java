@@ -78,9 +78,31 @@ public interface GlobalDesign {
 	public Color[] subGroupColors = {new Color(0x8CB459), 
 			new Color(0x9391f6),
 			new Color(0xFF5454),
-			new Color(0xEFE078)
+			new Color(0xEFE078), 
+			new Color(0x71D3DD), 
+			new Color(0xD068FA),
+			new Color(0xFFA030),
+			new Color(0xFF5899),
+			new Color(0x5148FF),
+			new Color(0x67E1A7),
+			new Color(0x9391f6),
+			new Color(0xFF5454),
+			new Color(0xEFE078),
+			new Color(0x71D3DD), 
+			new Color(0xD068FA),
+			new Color(0xFFA030),
+			new Color(0xFF5899),
+			new Color(0x5148FF),
+			new Color(0x67E1A7),
+			new Color(0x67E1A7),
+			new Color(0x67E1A7),
+			new Color(0x67E1A7),
+			new Color(0x5148FF),
+			new Color(0x5148FF)
 	};
 	
-	public String[] subGroupNames = {"Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"};      
+	public String[] subGroupNames = {"Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4", "Subgroup5", "Subgroup6", "Subgroup7",
+			"Subgroup8", "Subgroup9", "Subgroup10", "Subgroup11", "Subgroup12", "Subgroup13", "Subgroup14", "Subgroup15", "Subgroup16"
+			, "Subgroup17", "Subgroup18", "Subgroup19", "Subgroup20", "Subgroup21", "Subgroup22", "Subgroup23", "Subgroup24"};      
 		
 }
