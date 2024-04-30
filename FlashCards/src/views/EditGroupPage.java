@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
@@ -264,7 +266,8 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
         int colCounter = 0;
         
         for (int i = 0; i < groupNames.length; i++) {
-            JPanel groupPanel = createGroupPanel(groupNames[i], groupColors[i]);
+            JPanel groupPanel = createGroupPanel(groupNames[i], groupColors[i]);         
+            
             editGroupsPanel.add(groupPanel, gbc);
             gbc.gridx++;
             colCounter++;
@@ -325,6 +328,42 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             enterGroupNameField.setText("Enter the new name of group");
             enterGroupNameField.setForeground(Color.GRAY);
             enterGroupNameField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // padding
+            
+            //to change the text when clicked on input field
+            enterGroupNameField.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    if (enterGroupNameField.getText().equals("Enter the new name of group")) {
+                        enterGroupNameField.setText("");
+                        enterGroupNameField.setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    if (enterGroupNameField.getText().isEmpty()) {
+                        enterGroupNameField.setText("Enter the new name of group");
+                        enterGroupNameField.setForeground(Color.GRAY);
+                    }
+                }
+            });
+            
+            //set the input text as new name of group
+            enterGroupNameField.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // retrieve the text from the input field
+                    String newName = enterGroupNameField.getText(); 
+                    // set the new name to the groupOfCards
+                    groupOfCards.setText(newName);
+                    // clear the input field
+                    enterGroupNameField.setText("");
+                    enterGroupNameField.setForeground(Color.GRAY);
+                }
+            });
+
+
+            
             gbc.gridy++;
             rightPanel.add(enterGroupNameField, gbc);
 
