@@ -9,6 +9,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import views.ScreenDimensions;
 import databaseInfo.PullFrom;
+import services.Login;
 
 public class LoginPage extends JFrame implements GlobalDesign{
 
@@ -168,6 +169,13 @@ public class LoginPage extends JFrame implements GlobalDesign{
      
         });
         
+        //message "these fields can not be empty"
+      	JLabel lblNewLabel_3 = new JLabel("");
+      	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.45), (int)(desiredWidth * 0.315), (int)(desiredHeight * 0.035));
+      	panel_1.add(lblNewLabel_3);
+      	lblNewLabel_3.setFont(tinyFont);
+      	lblNewLabel_3.setForeground(textRed);
+        
         //login button function
         RoundedButton loginBtn = new RoundedButton("Login");
         loginBtn.setFont(buttonText);
@@ -175,10 +183,27 @@ public class LoginPage extends JFrame implements GlobalDesign{
         loginBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.475), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
         panel_1.add(loginBtn);
         loginBtn.addActionListener(new ActionListener(){
+        	boolean i = false;
+        	String msg;
             public void actionPerformed(ActionEvent e) {
-                GroupOfCardsPage GroupsWindow = new GroupOfCardsPage();
-        		GroupsWindow.setVisible(true);
-        		dispose();
+            	String username = user.getText();
+            	String password = new String(pass.getPassword());
+            	
+            	//logika logina
+            	if(username.equals("Enter your username") || password.equals("Enter your password")) {
+            		i = false;
+            	}
+            	
+            	Login l = new Login();
+            	 i = !l.loginValidation(username, password);
+            	
+            	if(i) {
+            		msg = "Incorrect username/password.";
+            	}else {
+            		msg = "One or more fields is empty.";
+            	}
+            	lblNewLabel_3.setText(msg);
+              	
             }
         });
      
@@ -198,13 +223,8 @@ public class LoginPage extends JFrame implements GlobalDesign{
         registerBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.5675), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
         panel_1.add(registerBtn);
         
+      
 
-        //message "these fields can not be empty"
-      	JLabel lblNewLabel_3 = new JLabel("* these fields can not be empty");
-      	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.45), (int)(desiredWidth * 0.315), (int)(desiredHeight * 0.035));
-      	panel_1.add(lblNewLabel_3);
-      	lblNewLabel_3.setFont(tinyFont);
-      	lblNewLabel_3.setForeground(textRed);
       	
       	//message "Don't have an account?"
       	JLabel lblNewLabel_2 = new JLabel("Don't have an account?");

@@ -11,7 +11,7 @@ import java.sql.ResultSetMetaData;
 
 public class Crude {
 	
-	 String url = "jdbc:mysql://localhost:3306/fc";
+	 String url = "jdbc:mysql://localhost:3306/fc";//fc ili flashcards?
 	 Connection connection = null;
 	 Statement st = null; //use Prepared statement for SQLInjection defense
 	 String query = null;

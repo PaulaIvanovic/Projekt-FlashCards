@@ -14,7 +14,7 @@ public class PullFrom {
 	 Connection connection = null;
 	 Statement st = null; //use Prepared statement for SQLInjection defence
 	 String query = "SELECT * from ";
-	 ResultSet rs = null;
+	 public ResultSet rs = null;
 	 
 	//constructor to get the table from SQL base
 	public  PullFrom(String table) {
@@ -23,7 +23,7 @@ public class PullFrom {
 		fetchData();
 	}
 	
-	//constructor to get the row of the table in SQL
+	//constructor to get the rows of the table in SQL
 	public  PullFrom(String table, String element, String elementValue) {
 		connect();
 		query += table + " WHERE " + element + " = " + elementValue;
@@ -32,11 +32,11 @@ public class PullFrom {
 	
 	public void connect() {
 		//connecting to the base
-		String url = "jdbc:mysql://localhost:3306/flashcards";
+		String url = "jdbc:mysql://localhost:3306/fc";
 		 try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			try {
-				 connection = DriverManager.getConnection(url, "root", "root");
+				 connection = DriverManager.getConnection(url);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -71,10 +71,24 @@ public class PullFrom {
 		}	
 	}
 	
-	/*public static void main(String args[]) {
+	public ArrayList<String> returnInfo(String col) { //vraca sve podatke iz jednog stupca tablice,
+		//ili samo one koje su odgovarali where uvjetu
+	    ArrayList<String> infoList = new ArrayList<>(); // Use an ArrayList to dynamically store strings
+	    try {
+	        while (rs.next()) {
+	            String s = rs.getString(col);
+	            	infoList.add(s); // Add the matching string to the ArrayList
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return infoList;
+	}
+	public static void main(String args[]) {
 		PullFrom p = new PullFrom("grupa","iduser", "2");
-		p.returnRs();
+		ResultSet res;
+		System.out.println(p.returnInfo("iduser"));
 		p.close();
 	 }
-	*/
+	
 }
