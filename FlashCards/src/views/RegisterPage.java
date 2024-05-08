@@ -7,6 +7,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -59,6 +60,8 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import services.Register;
+
 public class RegisterPage extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
@@ -72,24 +75,46 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 	
 	public RegisterPage() {
 		//set icon for app
-    	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
-	    ImageIcon Icon = new ImageIcon(IconURL);
-		setIconImage(Icon.getImage());
-		
+        java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
+        ImageIcon Icon = new ImageIcon(IconURL);
+        setIconImage(Icon.getImage());
+        
 		//calculated variables for window height and width
-		int desiredHeight = (int) (dimensions.screenHeight * 0.8);
-	    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
-	    
-		//adding a name to the title bar
-		setTitle("REGISTER PAGE");
+        int desiredHeight = (int) (dimensions.screenHeight * 0.8);
+        int desiredWidth = (int) (dimensions.screenWidth * 0.4);
+
+        // Create a custom title bar panel
+        JPanel titleBarPanel = new JPanel();
+        titleBarPanel.setBackground(new Color(69, 62, 130)); // Set the background color of the title bar
+        titleBarPanel.setLayout(new BorderLayout());
+
+        // Add a close button
+        JButton closeButton = new JButton("X");
+        closeButton.setBackground(new Color(69, 62, 130)); 
+        closeButton.setForeground(Color.WHITE);
+        closeButton.setBorder(null); 
+        closeButton.setFocusPainted(false);
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+        titleBarPanel.add(closeButton, BorderLayout.EAST);
+
+        // Set the custom title bar
+        setUndecorated(true);
+        getContentPane().add(titleBarPanel, BorderLayout.NORTH);
+        
+        setTitle("REGISTER PAGE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, desiredWidth, desiredHeight);
 		setResizable(false); 
-	    setSize(desiredWidth, desiredHeight);
 	    setLocationRelativeTo(null);
 	    setVisible(true);
 
 		//main panel
 		contentPane = new JPanel();
+		contentPane = (JPanel) getContentPane();
 		contentPane.setBackground(backgroundColor);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -260,8 +285,8 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 
 
         //message these fields can not be empty
-      	JLabel lblNewLabel_3 = new JLabel("* these fields can not be empty");
-      	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.565), (int)(desiredWidth * 0.315), (int)(desiredHeight * 0.035));
+      	JLabel lblNewLabel_3 = new JLabel("");
+      	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.565), (int)(desiredWidth * 0.7), (int)(desiredHeight * 0.035));
       	panel_1.add(lblNewLabel_3);
       	lblNewLabel_3.setFont(tinyFont);
       	lblNewLabel_3.setForeground(textRed);
@@ -277,16 +302,25 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		//register button function
 		RoundedButton registerBtn = new RoundedButton("Register");
 		registerBtn.setFont(buttonText);
-		registerBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.6), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
+		registerBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.61), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
         panel_1.add(registerBtn);
 		registerBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				PopUpWindow popUp = new PopUpWindow("Currently unavailable", (int)(desiredWidth * 0.45), (int)(desiredHeight * 0.45));
-            	popUp.setVisible(true);
+				String username = user.getText();
+				String email = emailField.getText();
+				String password = new String(pass.getPassword());
+				Register r = new Register(username, password, email);
+				lblNewLabel_3.setText(r.AddUser());// calling register logic
+            	if (r.message.equals("Registration completed.")) {
+                    // Show message and then open the next window
+                    //JOptionPane.showMessageDialog(null, r.message, "Registration", JOptionPane.INFORMATION_MESSAGE);
+                    GroupOfCardsPage groupOfCardsPage = new GroupOfCardsPage();
+                    // Optionally, close the current window
+                    ((JFrame) SwingUtilities.getWindowAncestor(panel_1)).dispose();
+                } 
 			}
 		});
 		registerBtn.setForeground(Color.BLACK);
-		
 		
 		//login button function
 		RoundedButton loginBtn = new RoundedButton("Login");

@@ -24,11 +24,14 @@ public class PullFrom {
 	}
 	
 	//constructor to get the rows of the table in SQL
-	 public  PullFrom(String table, String element, String elementValue) {
-	        connect();
-	        query += table + " WHERE " + element + " = '" + elementValue + "'";
-	        fetchData();    
-	    }
+
+	public  PullFrom(String table, String element, String elementValue) {
+		connect();
+		query += table + " WHERE " + element + " = '" + elementValue + "'";
+		fetchData();	
+	}
+
+	
 	
 	public void connect() {
 		//connecting to the base
@@ -60,6 +63,19 @@ public class PullFrom {
 		return rs;
 	}
 	
+	public ArrayList<String> returnInfo(String col) { //return all data from specific column
+        ArrayList<String> infoList = new ArrayList<>(); // Use an ArrayList to dynamically store strings
+        try {
+            while (rs.next()) {
+                String s = rs.getString(col);
+                    infoList.add(s); // Add the matching string to the ArrayList
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return infoList;
+    }
+	
 	//this need to be called every time we use PullFrom
 	//closing the rs connection
 	public void close() {
@@ -70,25 +86,4 @@ public class PullFrom {
 			e.printStackTrace();
 		}	
 	}
-	
-	public ArrayList<String> returnInfo(String col) { //vraca sve podatke iz jednog stupca tablice,
-		//ili samo one koje su odgovarali where uvjetu
-	    ArrayList<String> infoList = new ArrayList<>(); // Use an ArrayList to dynamically store strings
-	    try {
-	        while (rs.next()) {
-	            String s = rs.getString(col);
-	            	infoList.add(s); // Add the matching string to the ArrayList
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return infoList;
-	}
-	public static void main(String args[]) {
-		PullFrom p = new PullFrom("grupa","iduser", "2");
-		ResultSet res;
-		System.out.println(p.returnInfo("iduser"));
-		p.close();
-	 }
-	
 }
