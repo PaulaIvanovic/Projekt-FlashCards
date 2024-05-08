@@ -72,4 +72,4 @@ public class Register {
 		}
 		return message;
 	}
-
+}

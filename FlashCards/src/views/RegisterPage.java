@@ -315,7 +315,6 @@ public class RegisterPage extends JFrame implements GlobalDesign{
                     // Show message and then open the next window
                     //JOptionPane.showMessageDialog(null, r.message, "Registration", JOptionPane.INFORMATION_MESSAGE);
                     GroupOfCardsPage groupOfCardsPage = new GroupOfCardsPage();
-                    groupOfCardsPage.showScreen();
                     // Optionally, close the current window
                     ((JFrame) SwingUtilities.getWindowAncestor(panel_1)).dispose();
                 } 
