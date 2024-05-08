@@ -20,18 +20,18 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import views.AddCardsManual.ColorfulButtons;
 
-
-public class AddGroupOfCards extends JFrame implements GlobalDesign{
+public class AddCardsManual extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	 private JTextField groupName;
+	 private JTextField qInput, aInput;
 	
 	  ScreenDimensions dimensions = new ScreenDimensions();
 
 
-	public AddGroupOfCards() {
+	public AddCardsManual() {
 		//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -44,7 +44,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 	  
         // Set the custom title bar
         setUndecorated(true);
-        setTitle("NEW GROUP");
+        setTitle("NEW CARD");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(0, 0, desiredWidth, desiredHeight);
         setResizable(false); 
@@ -69,7 +69,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 		WindowElementResize.getFontForWindowSize(desiredHeight);
 		
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel(" New group");      
+		JLabel mainTitleLabel = new JLabel(" New card");      
 		mainTitleLabel.setFont(WindowElementResize.mainTitle);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -102,46 +102,85 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         centerPanel.setBackground(new Color(69, 62, 130));
         centerPanel.setLayout(null);
         
-        //adding label for group name
-        JLabel lblGroupName = new JLabel("Group name:");
-        lblGroupName.setFont(secFont);
-        lblGroupName.setForeground(Color.WHITE);
-        lblGroupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.03), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
-        centerPanel.add(lblGroupName);
+        //adding label for q
+        JLabel lblQ = new JLabel("Question:");
+        lblQ.setFont(secFont);
+        lblQ.setForeground(Color.WHITE);
+        lblQ.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.03), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
+        centerPanel.add(lblQ);
         
-        //group name input
-        groupName = new RoundTextField(0);
-        groupName.setFont(inputText);
-        groupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.16), (int)(desiredWidth*0.8), (int)(desiredHeight*0.085));
-        groupName.setText("Enter group name");
+        //question input
+        qInput = new RoundTextField(0);
+        qInput.setFont(inputText);
+        qInput.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.13), (int)(desiredWidth*0.9), (int)(desiredHeight*0.15));
+        qInput.setText("Enter your question");
         
         //text inside of username field
-        groupName.addFocusListener(new FocusListener() {
+        qInput.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
-                if (groupName.getText().equals("Enter group name")) {
-                	groupName.setText(""); 
+                if (qInput.getText().equals("Enter your question")) {
+                	qInput.setText(""); 
                 }
             }
 
             public void focusLost(FocusEvent e) {
-                if (groupName.getText().isEmpty()) {
-                	groupName.setText("Enter group name");
+                if (qInput.getText().isEmpty()) {
+                	qInput.setText("Enter your question");
                 }
             }
         });
-        centerPanel.add(groupName);
+        centerPanel.add(qInput);
         
-        //adding label for group color
-        JLabel lblGroupColor = new JLabel("Choose group color:");
-        lblGroupColor.setFont(secFont);
-        lblGroupColor.setForeground(Color.WHITE);
-        lblGroupColor.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.29), (int)(desiredWidth*0.33), (int)(desiredHeight*0.085));
-        centerPanel.add(lblGroupColor);
+        //adding label for a
+        JLabel lblA = new JLabel("Answer:");
+        lblA.setFont(secFont);
+        lblA.setForeground(Color.WHITE);
+        lblA.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.30), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
+        centerPanel.add(lblA);
         
+        //answer input
+        aInput = new RoundTextField(0);
+        aInput.setFont(inputText);
+        aInput.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.40), (int)(desiredWidth*0.9), (int)(desiredHeight*0.2));
+        aInput.setText("Enter your answer");
+        
+        //text inside of username field
+        aInput.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                if (aInput.getText().equals("Enter your answer")) {
+                	aInput.setText(""); 
+                }
+            }
+
+            public void focusLost(FocusEvent e) {
+                if (aInput.getText().isEmpty()) {
+                	aInput.setText("Enter your answer");
+                }
+            }
+        });
+        centerPanel.add(aInput);
+        
+        //adding label for color
+        JLabel lblColor = new JLabel("Color:");
+        lblColor.setFont(secFont);
+        lblColor.setForeground(Color.WHITE);
+        lblColor.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.665), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
+        centerPanel.add(lblColor);
+        
+        //adding button for choosing color
         // Create an instance of ColorfulButtons
         ColorfulButtons colorfulButtons = new ColorfulButtons();
-        colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.39), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
+        colorfulButtons.setBounds((int)(desiredWidth*0.14), (int)(desiredHeight*0.65), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
         centerPanel.add(colorfulButtons);
+        
+        //add button to change color
+        RoundedButton btnChange = new RoundedButton("Change color");
+        btnChange.setFont(smallFont);
+        btnChange.setForeground(Color.BLACK);
+        btnChange.setBackground(new Color(248, 248, 255));
+        btnChange.setBounds((int)(desiredWidth*0.24), (int)(desiredHeight*0.67), (int)(desiredWidth*0.25), (int)(desiredHeight*0.085));
+        centerPanel.add(btnChange);
+        
         
         // Add Save and Cancel buttons
         RoundedButton btnSave = new RoundedButton("Save");
@@ -160,6 +199,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 		
 	}
 	
+	
 	class ColorfulButtons extends JPanel {
 
 	    public ColorfulButtons() {
@@ -171,12 +211,11 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 			
 
 	        // Array of colors for buttons
-	        Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN,
-	                          Color.BLUE, Color.CYAN, Color.MAGENTA, Color.PINK};
+	        Color[] colors = {Color.WHITE};
 
 	        // Create buttons with different colors
-	        for (int i = 0; i < 8; i++) {
-	            RoundButton button = new RoundButton(" ", (int)(desiredWidth*0.083), (int)(desiredHeight*0.143)); // Adjust button size as needed
+	        for (int i = 0; i < 1; i++) {
+	            RoundButton button = new RoundButton(" ", (int)(desiredWidth*0.063), (int)(desiredHeight*0.103)); // Adjust button size as needed
 	            button.setBackground(colors[i]);
 	            button.addActionListener(new ButtonClickListener());
 	            add(button);
@@ -198,7 +237,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddGroupOfCards frame = new AddGroupOfCards();
+					AddCardsManual frame = new AddCardsManual();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
