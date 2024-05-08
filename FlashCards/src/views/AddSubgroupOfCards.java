@@ -9,10 +9,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,9 +28,10 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	 private JTextField groupName, generateSubgroup;
+	private JTextField groupName, generateSubgroup;
+	String fileName;
 	
-	  ScreenDimensions dimensions = new ScreenDimensions();
+	ScreenDimensions dimensions = new ScreenDimensions();
 
 
 	public AddSubgroupOfCards() {
@@ -38,8 +41,8 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
 		setIconImage(Icon.getImage());
 		
 		//calculated variables for window height and width
-	    int desiredHeight = (int) (dimensions.screenHeight * 0.535);
-	    int desiredWidth = (int) (dimensions.screenWidth * 0.5);
+	    int desiredHeight = (int) (dimensions.screenHeight * 0.435);
+	    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 		
 	  
         // Set the custom title bar
@@ -112,7 +115,7 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
         //group name input
         groupName = new RoundTextField(0);
         groupName.setFont(inputText);
-        groupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.10), (int)(desiredWidth*0.8), (int)(desiredHeight*0.075));
+        groupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.11), (int)(desiredWidth*0.8), (int)(desiredHeight*0.075));
         groupName.setText("Enter group name");
         
         //text inside of username field
@@ -135,26 +138,45 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
         JLabel lblGroupColor = new JLabel("Choose subgroup color:");
         lblGroupColor.setFont(secFont);
         lblGroupColor.setForeground(Color.WHITE);
-        lblGroupColor.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.2), (int)(desiredWidth*0.33), (int)(desiredHeight*0.075));
+        lblGroupColor.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.22), (int)(desiredWidth*0.43), (int)(desiredHeight*0.075));
         centerPanel.add(lblGroupColor);
         
         // Create an instance of ColorfulButtons
         ColorfulButtons colorfulButtons = new ColorfulButtons();
-        colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.28), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
+        colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.3), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
         centerPanel.add(colorfulButtons);
         
         //adding label for generating subgroups
         JLabel lblGenerate = new JLabel("Generate automatic subgroup from file:");
         lblGenerate.setFont(secFont);
         lblGenerate.setForeground(Color.WHITE);
-        lblGenerate.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.43), (int)(desiredWidth*0.6), (int)(desiredHeight*0.085));
+        lblGenerate.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.5), (int)(desiredWidth*0.6), (int)(desiredHeight*0.085));
         centerPanel.add(lblGenerate);
         
         //group name input
         generateSubgroup = new RoundTextField(0);
         generateSubgroup.setFont(inputText);
-        generateSubgroup.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.52), (int)(desiredWidth*0.6), (int)(desiredHeight*0.075));
+        generateSubgroup.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.6), (int)(desiredWidth*0.6), (int)(desiredHeight*0.075));
         generateSubgroup.setText("Insert file name");
+        
+        generateSubgroup.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                if (generateSubgroup.getText().equals("Insert file name")) {
+                	generateSubgroup.setText(""); 
+                }
+            }
+            public void focusLost(FocusEvent e) {
+                if (generateSubgroup.getText().isEmpty()) {
+                	generateSubgroup.setText("Insert file name");
+                }
+            }
+        });
+        
+        generateSubgroup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fileName = generateSubgroup.getText(); // update fileName when text is entered or changed
+            }
+        });
         centerPanel.add(generateSubgroup);
         
         // button load
@@ -162,7 +184,28 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
         btnLoad.setFont(smallFont);
         btnLoad.setForeground(Color.BLACK);
         btnLoad.setBackground(new Color(248, 248, 255));
-        btnLoad.setBounds((int)(desiredWidth*0.7), (int)(desiredHeight*0.52), (int)(desiredWidth*0.15), (int)(desiredHeight*0.075));
+        btnLoad.setBounds((int)(desiredWidth*0.7), (int)(desiredHeight*0.6), (int)(desiredWidth*0.15), (int)(desiredHeight*0.075));
+        
+        btnLoad.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Create a new file chooser instance
+                JFileChooser fileChooser = new JFileChooser();
+
+                // Show open dialog to select a file
+                int result = fileChooser.showOpenDialog(AddSubgroupOfCards.this);
+
+                // Check if a file is selected
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    // Get the selected file
+                    File selectedFile = fileChooser.getSelectedFile();
+                    // Process the selected file (e.g., display its path)
+                    JOptionPane.showMessageDialog(AddSubgroupOfCards.this, "Selected file: " + selectedFile.getAbsolutePath());
+                    //saving in string
+                    generateSubgroup.setText(selectedFile.getName());
+                }
+            }
+        });
+        
         centerPanel.add(btnLoad);
         
         // Add Save and Cancel buttons
