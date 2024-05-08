@@ -11,7 +11,7 @@ import java.sql.ResultSetMetaData;
 
 public class Crude {
 	
-	 String url = "jdbc:mysql://localhost:3306/fc";
+	 String url = "jdbc:mysql://localhost:3306/fc";//fc ili flashcards?
 	 Connection connection = null;
 	 Statement st = null; //use Prepared statement for SQLInjection defense
 	 String query = null;
@@ -96,8 +96,8 @@ public class Crude {
 	
 	public void update(String tableName, String columnName, String before, String after) { 
 		if(tableName.equals("user") && columnName.equals("password")) {
-			before = Help.encrypt(before);
-			after = Help.encrypt(after);
+			before = PasswordEncryption.encrypt(before);
+			after = PasswordEncryption.encrypt(after);
 		}
 	    this.query = "UPDATE " + tableName + " SET " + columnName + " = '" + after + "' WHERE " + columnName + " = '" + before + "';";
 			try {

@@ -24,11 +24,13 @@ public class PullFrom {
 	}
 	
 	//constructor to get the rows of the table in SQL
+
 	public  PullFrom(String table, String element, String elementValue) {
 		connect();
 		query += table + " WHERE " + element + " = '" + elementValue + "'";
 		fetchData();	
 	}
+
 	
 	
 	public void connect() {
@@ -37,7 +39,7 @@ public class PullFrom {
 		 try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			try {
-				 connection = DriverManager.getConnection(url, "root", "root");
+				 connection = DriverManager.getConnection(url);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -84,19 +86,4 @@ public class PullFrom {
 			e.printStackTrace();
 		}	
 	}
-	/*
-	public static void main(String args[]) {
-		PullFrom p = new PullFrom("grupa","iduser", "2");
-		 try {
-	            while (p.rs.next()) {
-	                String s = p.rs.getString("name");
-	                System.out.println(s);
-	                    //infoList.add(s); // Add the matching string to the ArrayList
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-		p.close();
-	 }*/
-	
 }
