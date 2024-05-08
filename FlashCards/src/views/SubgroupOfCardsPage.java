@@ -25,32 +25,32 @@ import javax.swing.JScrollPane;
 public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
 	private JPanel contentPane;
-    
+
     private final int HORIZONTAL_GAP_PERCENTAGE = 2; 
-    
+
     private final int MAX_RECTANGLE_HEIGHT = 150;
     private final int MAX_RECTANGLE_WIDTH = 300;
-    
+
 	public int groupsPerPage;
 	public int START_X;
 	public int START_Y;
-    
+
     int windowWidth;
     int windowHeight;
     int xPositionWindow;
     int yPositionWindow;
-    
+
     ScreenDimensions screenSize;
 	int minimumWindowWidth;
 	int minimumWindowHeight;
-	
+
 	int previousWidth;
 	int previousHeight;
-    
+
     public SubgroupOfCardsPage() {
     	this(0,0,0,0);
     }
-    
+
     public SubgroupOfCardsPage(int x, int y, int width, int height) {
     	//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
@@ -58,13 +58,13 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		setIconImage(Icon.getImage());
 
     	screenSize = new ScreenDimensions();
-    	
+
     	this.setTitle("SUBGROUP OF CARDS PAGE");
     	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	
+
     	this.setExtendedState(JFrame.MAXIMIZED_BOTH);		//window starts with maximum size
     	this.setMinimumSize(new Dimension(screenSize.minimumWindowWidth, screenSize.minimumWindowHeight));
-		
+
     	checkBounds(x, y, width, height);
     	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
     	updateView();
@@ -73,7 +73,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
     	addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent e) {
     	        Dimension newSize = e.getComponent().getSize();
-    	          	       
+
     	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
     	        	if(newSize.width <= dimensions.minimumWindowWidth && newSize.height <= dimensions.minimumWindowHeight) {
     	        		windowWidth = dimensions.minimumWindowWidth;
@@ -101,7 +101,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
     	        }
     	    }
     	});
-    	
+
 
     	// Listener for window state changes
         addWindowStateListener(new WindowAdapter() {
@@ -114,20 +114,20 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
                 }
             }
         });
-        
+
     	////when minimize/maximize button is clicked, window goes to 50% of its original (fullscreen) size
     	this. addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 if ((getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0) {
                     setSize(previousWidth / 2, previousHeight / 2);
-                    
+
                     revalidate();
                     repaint();
                 }
             }
         });
-  
+
 
     	//listener for window state changes
     	addWindowStateListener(new WindowAdapter() {
@@ -139,7 +139,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
     	        }
     	    }
     	});
-    	
+
     	//check if moved
 		addComponentListener(new ComponentAdapter() {
             @Override
@@ -152,7 +152,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 
     public void windowCreate() {
     	setVisible(true);
-    	
+
         windowWidth = getWidth();
         windowHeight = getHeight();
         views.WindowElementResize.getFontForWindowSize(windowHeight);
@@ -162,7 +162,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
         contentPane.setBackground(backgroundColor);		
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout());
-		
+
 		//toolbar on top of the window:
 		JPanel toolbarPanel = new JPanel(new BorderLayout());
 		toolbarPanel.setBackground(toolbarColor);
@@ -170,23 +170,30 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		toolbarPanel.setLayout(new BorderLayout());
 		toolbarPanel.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 10));
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
-		
+
 		//toolbar label (name of page)
 		JLabel mainTitleLabel = new JLabel("My subgroup of cards");      
 		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
-		
+
 		// panel with all required buttons
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
 		flowLayout.setHgap(10); 
 		buttonPanel.setLayout(flowLayout);
-		
+
 		//variables for button dimensions
 		int buttonDimension = (int) (windowWidth * 0.025);
 		int biggerButtonDimension = (int) (windowWidth * 0.035);
+		
+		//return button in toolbar
+		RoundButton returnButton = new RoundButton("",buttonDimension ,buttonDimension );
+		returnButton.setBackground(toolbarColor);
+		returnButton.setButtonIcon("icons/ReturnArrowIcon.png",  buttonDimension, buttonDimension);
+		returnButton.setBorder(null);
+		buttonPanel.add(returnButton);
 
 		//edit button in toolbar
 		RoundButton editButton = new RoundButton("",buttonDimension ,buttonDimension );
@@ -202,7 +209,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		addsubGroupButton.setForeground(backgroundColor);
 		addsubGroupButton.setBorder(null);
 		buttonPanel.add(addsubGroupButton);
-		
+
 		//settings button in toolbar
 		RoundButton settingsButton = new RoundButton("",buttonDimension,buttonDimension);
 		settingsButton.setButtonIcon("icons/settingsIcon.png",buttonDimension,buttonDimension);
@@ -217,17 +224,17 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 				dispose();
 			}
 		});
-		
+
 		//user icon / button in toolbar
 		RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
 		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
 		buttonPanel.add(userIcon);
-		
+
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
-		 
-		
+
+
 		JScrollPane scrollPane = new JScrollPane(groupsCollection());	
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -235,7 +242,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 
         contentPane.add(scrollPane, BorderLayout.CENTER);  
     }
-    
+
     public JPanel groupsCollection() {
         JPanel groupsPanel = new JPanel(new GridBagLayout());
         groupsPanel.setBackground(backgroundColor);
@@ -243,7 +250,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        
+
         //frame sizes
         int frameWidth = windowWidth;
         int frameHeight = windowHeight;
@@ -257,7 +264,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
         int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
         int availableHeight = frameHeight - (int)(frameHeight * 0.2);
         int rectangleHeight = Math.min(availableHeight / numRows, MAX_RECTANGLE_HEIGHT);
-        
+
 
         //add groups to the panel
         for (int i = 1; i < subGroupNames.length; i++) {
@@ -265,17 +272,17 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
             subGroupOfCards.setBackground(subGroupColors[i]);
             subGroupOfCards.setFont(WindowElementResize.mediumFont);
             subGroupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height to 200
-            
+
             String name = subGroupNames[i];
             Color color = subGroupColors[i];
-            
+
             //listens for clicks on group to open its page
             subGroupOfCards.addActionListener(new ActionListener() {
     			public void actionPerformed(ActionEvent e) {
     				new GroupPage(name, color).setVisible(true);;
     			}
     		});
-            
+
             gbc.anchor = GridBagConstraints.NORTHWEST;
 
             //adds padding from the edges of the panel
@@ -289,7 +296,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 
             groupsPanel.add(subGroupOfCards, gbc);
             gbc.gridx++;
-            
+
             // start a new row after every 5 groups
             if (i % 5 == 0) {
                 gbc.gridx = 0;
@@ -298,14 +305,14 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
         }
         return groupsPanel;
     }
-    
+
 	//updates sizes of elements and window
 	public void updateView() {
 		 START_X = (int)(windowWidth * 0.05);
 		 START_Y = (int)(windowHeight * 0.175); 
 		windowCreate();
 	}
-	
+
 	//function for checking bounds
 	public void checkBounds(int x, int y, int width, int height) {
 		//with tolerances
@@ -316,7 +323,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 			xPositionWindow = x;
 			yPositionWindow = y;
 		}
-		
+
 		if(width <= 0 || height <= 0) { //if the screen is less then the minimum allowed size
 			//with tolerances
 			windowWidth = dimensions.screenWidth;
@@ -335,8 +342,8 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 			windowWidth = width;
 			windowHeight = height;
 		}
-	
-		
+
+
 		//with tolerances
 				if (x <= -10 || y <= -10) {
 					xPositionWindow = 0;
