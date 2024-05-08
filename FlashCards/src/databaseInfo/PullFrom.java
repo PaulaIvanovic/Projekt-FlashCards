@@ -24,11 +24,11 @@ public class PullFrom {
 	}
 	
 	//constructor to get the rows of the table in SQL
-	public  PullFrom(String table, String element, String elementValue) {
-		connect();
-		query += table + " WHERE " + element + " = " + elementValue;
-		fetchData();	
-	}
+	 public  PullFrom(String table, String element, String elementValue) {
+	        connect();
+	        query += table + " WHERE " + element + " = '" + elementValue + "'";
+	        fetchData();    
+	    }
 	
 	public void connect() {
 		//connecting to the base

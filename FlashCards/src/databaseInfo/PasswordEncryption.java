@@ -4,7 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class Help {
+public class PasswordEncryption {
 	//sss
 	public static String encrypt(String pw) {
 		   try {

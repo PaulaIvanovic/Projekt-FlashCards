@@ -96,8 +96,8 @@ public class Crude {
 	
 	public void update(String tableName, String columnName, String before, String after) { 
 		if(tableName.equals("user") && columnName.equals("password")) {
-			before = Help.encrypt(before);
-			after = Help.encrypt(after);
+			before = PasswordEncryption.encrypt(before);
+			after = PasswordEncryption.encrypt(after);
 		}
 	    this.query = "UPDATE " + tableName + " SET " + columnName + " = '" + after + "' WHERE " + columnName + " = '" + before + "';";
 			try {

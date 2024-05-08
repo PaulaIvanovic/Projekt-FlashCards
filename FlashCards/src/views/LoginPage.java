@@ -8,6 +8,7 @@ import javax.swing.border.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import views.ScreenDimensions;
+import databaseInfo.PasswordEncryption;
 import databaseInfo.PullFrom;
 import services.Login;
 
@@ -184,23 +185,37 @@ public class LoginPage extends JFrame implements GlobalDesign{
         panel_1.add(loginBtn);
         loginBtn.addActionListener(new ActionListener(){
         	boolean i = false;
+        	int flag = 0; //0 krivo ime ili pw, 1 one or more fields is empty, 2 uspjesni login
         	String msg;
             public void actionPerformed(ActionEvent e) {
             	String username = user.getText();
             	String password = new String(pass.getPassword());
             	
+            	
             	//logika logina
-            	if(username.equals("Enter your username") || password.equals("Enter your password")) {
-            		i = false;
-            	}
-            	
-            	Login l = new Login();
-            	 i = !l.loginValidation(username, password);
-            	
-            	if(i) {
-            		msg = "Incorrect username/password.";
-            	}else {
+            	if(username.equals("Enter your name") || password.equals("Enter your password") || username == null || password == null) {
+            		flag = 1; // 1 = one or more fields is empty
             		msg = "One or more fields is empty.";
+            		lblNewLabel_3.setText(msg);
+            		return;
+            	}
+            	password = PasswordEncryption.encrypt(password);
+            	Login l = new Login();
+            	 i = l.loginValidation(username,password); // i is true when username matches
+            	 
+            	 if(i) flag = 2; // 2 = suc. login
+            	 else {flag = 0;} // 0 = incor. username/pw
+            	
+            	if(flag == 0) {
+            		msg = "Incorrect username/password.";
+            	}
+            	if(flag == 1){
+            		msg = "One or more fields is empty.";
+            	}
+            	if(flag == 2) {
+            		msg = "Successful login";
+                    GroupOfCardsPage groupOfCardsPage = new GroupOfCardsPage();
+                    //groupOfCardsPage.showScreen();
             	}
             	lblNewLabel_3.setText(msg);
               	
