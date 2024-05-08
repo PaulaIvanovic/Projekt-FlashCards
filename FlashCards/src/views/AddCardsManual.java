@@ -13,6 +13,7 @@ import java.awt.event.FocusListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -161,25 +162,16 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         centerPanel.add(aInput);
         
         //adding label for color
-        JLabel lblColor = new JLabel("Color:");
+        JLabel lblColor = new JLabel("Choose new color:");
         lblColor.setFont(secFont);
         lblColor.setForeground(Color.WHITE);
-        lblColor.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.665), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
+        lblColor.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.665), (int)(desiredWidth*0.35), (int)(desiredHeight*0.085));
         centerPanel.add(lblColor);
         
-        //adding button for choosing color
         // Create an instance of ColorfulButtons
-        ColorfulButtons colorfulButtons = new ColorfulButtons();
-        colorfulButtons.setBounds((int)(desiredWidth*0.14), (int)(desiredHeight*0.65), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
+        ColorfulButtons colorfulButtons = new ColorfulButtons(centerPanel);
+        colorfulButtons.setBounds((int)(desiredWidth*0.33), (int)(desiredHeight*0.65), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
         centerPanel.add(colorfulButtons);
-        
-        //add button to change color
-        RoundedButton btnChange = new RoundedButton("Change color");
-        btnChange.setFont(smallFont);
-        btnChange.setForeground(Color.BLACK);
-        btnChange.setBackground(new Color(248, 248, 255));
-        btnChange.setBounds((int)(desiredWidth*0.24), (int)(desiredHeight*0.67), (int)(desiredWidth*0.25), (int)(desiredHeight*0.085));
-        centerPanel.add(btnChange);
         
         
         // Add Save and Cancel buttons
@@ -202,24 +194,21 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 	
 	class ColorfulButtons extends JPanel {
 
-	    public ColorfulButtons() {
-	        setLayout(new FlowLayout(FlowLayout.LEFT)); // Buttons will be aligned to the left
+		private JPanel parentPanel;
+		
+	    public ColorfulButtons(JPanel parentPanel) {
+	        this.parentPanel = parentPanel;
+	    	setLayout(new FlowLayout(FlowLayout.LEFT)); // Buttons will be aligned to the left
 	        
-	      //calculated variables for window height and width
+	        //calculated variables for window height and width
 		    int desiredHeight = (int) (dimensions.screenHeight * 0.435);
 		    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 			
-
-	        // Array of colors for buttons
-	        Color[] colors = {Color.WHITE};
-
-	        // Create buttons with different colors
-	        for (int i = 0; i < 1; i++) {
-	            RoundButton button = new RoundButton(" ", (int)(desiredWidth*0.063), (int)(desiredHeight*0.103)); // Adjust button size as needed
-	            button.setBackground(colors[i]);
-	            button.addActionListener(new ButtonClickListener());
-	            add(button);
-	        }
+            // Create a button with a default color
+		    RoundButton button = new RoundButton(" ", (int)(desiredWidth*0.063), (int)(desiredHeight*0.103)); // Adjust button size as needed
+            button.setBackground(Color.WHITE);
+            button.addActionListener(new ButtonClickListener());
+            add(button);
 
 	        setOpaque(false); // Make the panel transparent
 	    }
@@ -227,12 +216,16 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 	    private class ButtonClickListener implements ActionListener {
 	        public void actionPerformed(ActionEvent e) {
 	            RoundButton source = (RoundButton) e.getSource();
-	            //JOptionPane.showMessageDialog(null, "You clicked a color button", "Button Clicked", JOptionPane.INFORMATION_MESSAGE);
+	            Color selectedColor = JColorChooser.showDialog(parentPanel, "Choose a color", source.getBackground());
+	            if (selectedColor != null) {
+	                // Update the background color of the button
+	                source.setBackground(selectedColor);
 	        }
 	    }
 	}
 	
-
+	    
+	}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
