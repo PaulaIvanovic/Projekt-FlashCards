@@ -8,7 +8,9 @@ import javax.swing.border.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import views.ScreenDimensions;
+import databaseInfo.PasswordEncryption;
 import databaseInfo.PullFrom;
+import services.Login;
 
 public class LoginPage extends JFrame implements GlobalDesign{
 
@@ -21,27 +23,45 @@ public class LoginPage extends JFrame implements GlobalDesign{
     ScreenDimensions dimensions = new ScreenDimensions();
    
     public LoginPage() {
-    	//set icon for app
-    	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
-	    ImageIcon Icon = new ImageIcon(IconURL);
-		setIconImage(Icon.getImage());
-		
-    	//calculated variables for window height and width
-	    int desiredHeight = (int) (dimensions.screenHeight * 0.8);
-	    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
+        //set icon for app
+        java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
+        ImageIcon Icon = new ImageIcon(IconURL);
+        setIconImage(Icon.getImage());
+        
+        //calculated variables for window height and width
+        int desiredHeight = (int) (dimensions.screenHeight * 0.8);
+        int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 
-    	
-    	//adding a name to the title bar
+        // Create a custom title bar panel
+        JPanel titleBarPanel = new JPanel();
+        titleBarPanel.setBackground(new Color(69, 62, 130)); // Set the background color of the title bar
+        titleBarPanel.setLayout(new BorderLayout());
+
+        // Add a close button
+        JButton closeButton = new JButton("X");
+        closeButton.setBackground(new Color(69, 62, 130)); 
+        closeButton.setForeground(Color.WHITE);
+        closeButton.setBorder(null); 
+        closeButton.setFocusPainted(false);
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+        titleBarPanel.add(closeButton, BorderLayout.EAST);
+
+        // Set the custom title bar
+        setUndecorated(true);
+        getContentPane().add(titleBarPanel, BorderLayout.NORTH);
+
         setTitle("LOGIN PAGE");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 800, 530);
+        setBounds(100, 100, desiredWidth, desiredHeight);
         setResizable(false); 
-	    setSize(desiredWidth, desiredHeight);
-	    setLocationRelativeTo(null);
-	    setVisible(true);  
-	    
-	
-	    //main panel 
+        setLocationRelativeTo(null);
+        setVisible(true);  
+        
+        //main panel 
         contentPane = new JPanel();
         contentPane = (JPanel) getContentPane();
         contentPane.setBackground(backgroundColor);
@@ -168,6 +188,13 @@ public class LoginPage extends JFrame implements GlobalDesign{
      
         });
         
+        //message "these fields can not be empty"
+      	JLabel lblNewLabel_3 = new JLabel("");
+      	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.45), (int)(desiredWidth * 0.315), (int)(desiredHeight * 0.035));
+      	panel_1.add(lblNewLabel_3);
+      	lblNewLabel_3.setFont(tinyFont);
+      	lblNewLabel_3.setForeground(textRed);
+        
         //login button function
         RoundedButton loginBtn = new RoundedButton("Login");
         loginBtn.setFont(buttonText);
@@ -175,10 +202,41 @@ public class LoginPage extends JFrame implements GlobalDesign{
         loginBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.475), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
         panel_1.add(loginBtn);
         loginBtn.addActionListener(new ActionListener(){
+        	boolean i = false;
+        	int flag = 0; //0 krivo ime ili pw, 1 one or more fields is empty, 2 uspjesni login
+        	String msg;
             public void actionPerformed(ActionEvent e) {
-                GroupOfCardsPage GroupsWindow = new GroupOfCardsPage();
-        		GroupsWindow.setVisible(true);
-        		dispose();
+            	String username = user.getText();
+            	String password = new String(pass.getPassword());
+            	
+            	
+            	//logika logina
+            	if(username.equals("Enter your name") || password.equals("Enter your password") || username == null || password == null) {
+            		flag = 1; // 1 = one or more fields is empty
+            		msg = "One or more fields is empty.";
+            		lblNewLabel_3.setText(msg);
+            		return;
+            	}
+            	password = PasswordEncryption.encrypt(password);
+            	Login l = new Login();
+            	 i = l.loginValidation(username,password); // i is true when username matches
+            	 
+            	 if(i) flag = 2; // 2 = suc. login
+            	 else {flag = 0;} // 0 = incor. username/pw
+            	
+            	if(flag == 0) {
+            		msg = "Incorrect username/password.";
+            	}
+            	if(flag == 1){
+            		msg = "One or more fields is empty.";
+            	}
+            	if(flag == 2) {
+            		msg = "Successful login";
+                    GroupOfCardsPage groupOfCardsPage = new GroupOfCardsPage();
+                    //groupOfCardsPage.showScreen();
+            	}
+            	lblNewLabel_3.setText(msg);
+              	
             }
         });
      
@@ -198,13 +256,8 @@ public class LoginPage extends JFrame implements GlobalDesign{
         registerBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.5675), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
         panel_1.add(registerBtn);
         
+      
 
-        //message "these fields can not be empty"
-      	JLabel lblNewLabel_3 = new JLabel("* these fields can not be empty");
-      	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.45), (int)(desiredWidth * 0.315), (int)(desiredHeight * 0.035));
-      	panel_1.add(lblNewLabel_3);
-      	lblNewLabel_3.setFont(tinyFont);
-      	lblNewLabel_3.setForeground(textRed);
       	
       	//message "Don't have an account?"
       	JLabel lblNewLabel_2 = new JLabel("Don't have an account?");

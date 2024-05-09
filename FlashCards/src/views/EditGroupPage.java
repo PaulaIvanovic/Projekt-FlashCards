@@ -2,16 +2,21 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
@@ -20,18 +25,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
 
 
-public class GroupOfCardsPage extends JFrame implements GlobalDesign {
-	private static final long serialVersionUID = 1L;	
+
+public class EditGroupPage extends JFrame implements GlobalDesign {
+	private static final long serialVersionUID = 1L;
+	
 	private JPanel contentPane;
-    
-    private final int HORIZONTAL_GAP_PERCENTAGE = 2; 
-    
-    private final int MAX_RECTANGLE_HEIGHT = 150;
-    private final int MAX_RECTANGLE_WIDTH = 300;
-    
-	public int groupsPerPage;
+	   
+	
+	private final int HORIZONTAL_GAP_PERCENTAGE = 2;	
+	
 	public int START_X;
 	public int START_Y;
     
@@ -47,11 +52,11 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	int previousWidth;
 	int previousHeight;
     
-    public GroupOfCardsPage() {
+    public EditGroupPage() {
     	this(0,0,0,0);
     }
     
-    public GroupOfCardsPage(int x, int y, int width, int height) {
+    public EditGroupPage(int x, int y, int width, int height) {
     	//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -59,7 +64,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 
     	screenSize = new ScreenDimensions();
     	
-    	this.setTitle("GROUP OF CARDS PAGE");
+    	this.setTitle("EDIT GROUPS OF CARDS PAGE");
     	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	
     	this.setExtendedState(JFrame.MAXIMIZED_BOTH);		//window starts with maximum size
@@ -103,25 +108,26 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     	});
     	
 
-    	// Listener for window state changes
+    	// listener for window state changes
         addWindowStateListener(new WindowAdapter() {
             @Override
             public void windowStateChanged(WindowEvent e) {
                 if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) == 0) {
-                    // Store the previous size when the window is not maximized
+                    // store the previous size when the window is not maximized
                     previousWidth = getWidth();
                     previousHeight = getHeight();
                 }
             }
         });
         
-    	////when minimize/maximize button is clicked, window goes to 50% of its original (fullscreen) size
+    	//when minimize/maximize button is clicked, 
+        //window goes to 50% of its original (fullscreen) size
     	this. addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 if ((getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0) {
                     setSize(previousWidth / 2, previousHeight / 2);
-                    
+                 
                     revalidate();
                     repaint();
                 }
@@ -147,7 +153,8 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         		xPositionWindow = e.getComponent().getX();
         		yPositionWindow = e.getComponent().getY();
             }
-        });	    			
+        });	
+		
     }
 
     public void windowCreate() {
@@ -172,7 +179,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 		
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel("My groups of cards");      
+		JLabel mainTitleLabel = new JLabel("Groups of cards - edit");      
 		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -181,17 +188,26 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
-		flowLayout.setHgap(10); 
+		flowLayout.setHgap(15); 
 		buttonPanel.setLayout(flowLayout);
+	
+		RoundedButton cancelButton = new RoundedButton("Cancel");
+		cancelButton.setPreferredSize(new Dimension(95, 35));
+		buttonPanel.add(cancelButton);
+		
+		RoundedButton saveButton = new RoundedButton("Save all");
+		saveButton.setPreferredSize(new Dimension(95, 35));
+		buttonPanel.add(saveButton);
 		
 		//variables for button dimensions
 		int buttonDimension = (int) (windowWidth * 0.025);
 		int biggerButtonDimension = (int) (windowWidth * 0.035);
-
+		
 		//edit button in toolbar
 		RoundButton editButton = new RoundButton("",buttonDimension ,buttonDimension );
 		editButton.setBackground(toolbarColor);
-		editButton.setButtonIcon("icons/EditIcon.png",  buttonDimension, buttonDimension);
+		editButton.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)); 		
+		editButton.setButtonIcon("icons/EditIcon.png", buttonDimension, buttonDimension);
 		editButton.setBorder(null);
 		buttonPanel.add(editButton);
 
@@ -204,12 +220,13 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		buttonPanel.add(addGroupButton);
 		
 		//settings button in toolbar
-		RoundButton settingsButton = new RoundButton("",buttonDimension,buttonDimension);
-		settingsButton.setButtonIcon("icons/settingsIcon.png",buttonDimension,buttonDimension);
+		RoundButton settingsButton = new RoundButton("", buttonDimension,buttonDimension);
+		settingsButton.setButtonIcon("icons/settingsIcon.png", buttonDimension,buttonDimension);
 		settingsButton.setBackground(toolbarColor);
 		settingsButton.setForeground(backgroundColor);
 		settingsButton.setBorder(null);
 		buttonPanel.add(settingsButton);
+		
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Settings settingsWindow = new Settings(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
@@ -219,85 +236,199 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		});
 		
 		//user icon / button in toolbar
-		RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
+		RoundButton userIcon = new RoundButton("", biggerButtonDimension, biggerButtonDimension);
 		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
-		 
 		
-		JScrollPane scrollPane = new JScrollPane(groupsCollection());	
+		JScrollPane scrollPane = new JScrollPane(editGroupsCollection());	
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        contentPane.add(scrollPane, BorderLayout.CENTER);  
+        contentPane.add(scrollPane, BorderLayout.CENTER);
     }
-    
-    public JPanel groupsCollection() {
-        JPanel groupsPanel = new JPanel(new GridBagLayout());
-        groupsPanel.setBackground(backgroundColor);
+		
+    public JPanel editGroupsCollection() {
+        JPanel editGroupsPanel = new JPanel(new GridBagLayout()); // main panel (all groups)
+        editGroupsPanel.setBackground(backgroundColor);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = new Insets(10, 10, 10, 10);
         
-        //frame sizes
-        int frameWidth = windowWidth;
-        int frameHeight = windowHeight;
-        int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
-
-        //calculates the number of rows and columns for the current page
-        int numCols = Math.min(groupNames.length, 5);
-        int numRows = (numCols - 1) / 5 + 1;
-
-        //calculates the width and height of each rectangle
-        int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
-        int availableHeight = frameHeight - (int)(frameHeight * 0.2);
-        int rectangleHeight = Math.min(availableHeight / numRows, MAX_RECTANGLE_HEIGHT);
         
-
-        //add groups to the panel
+        int numCols = Math.min(groupNames.length, 2);
+        int colCounter = 0;
+        
         for (int i = 1; i < groupNames.length; i++) {
-            RoundedButton groupOfCards = new RoundedButton(groupNames[i]);
-            groupOfCards.setBackground(groupColors[i]);
-            groupOfCards.setFont(WindowElementResize.mediumFont);
-            groupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height to 200
+            JPanel groupPanel = createGroupPanel(groupNames[i], groupColors[i]);         
             
-            String name = groupNames[i];
-            Color color = groupColors[i];
-            
-            //listens for clicks on group to open its page
-            groupOfCards.addActionListener(new ActionListener() {
-    			public void actionPerformed(ActionEvent e) {
-    				new GroupPage(name, color).setVisible(true);;
-    			}
-    		});
-            
-            gbc.anchor = GridBagConstraints.NORTHWEST;
-
-            //adds padding from the edges of the panel
-            if (gbc.gridx == 0) {
-                gbc.insets = new Insets(10, 10, 10, 10); 
-            } else if (gbc.gridx == 4) {
-                gbc.insets = new Insets(10, 10, 10, 10); 
-            } else {
-                gbc.insets = new Insets(10, 10, 10, 10); 
-            }
-
-            groupsPanel.add(groupOfCards, gbc);
+            editGroupsPanel.add(groupPanel, gbc);
             gbc.gridx++;
+            colCounter++;
             
-            // start a new row after every 5 groups
-            if (i % 5 == 0) {
+            // if maximum number of columns reached, move to next row
+            if (colCounter == numCols) {
+                colCounter = 0;
                 gbc.gridx = 0;
                 gbc.gridy++;
             }
         }
-        return groupsPanel;
+
+        return editGroupsPanel;
     }
+
+    // Method to create a panel for a group
+    private JPanel createGroupPanel(String groupName, Color groupColor) {
+        	int frameWidth = windowWidth;
+            int frameHeight = windowHeight;
+            int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
+
+            // Calculate the number of columns and rows based on the groupNames array
+            int numCols = Math.min(groupNames.length, 2);
+            int numRows = (numCols - 1) / 2 + 1;
+
+            // Calculate the maximum width and height for each rectangle
+            int rectangleWidth =(int) (0.18 * frameWidth);
+            int rectangleHeight = (int) (0.28 * frameHeight);
+
+            JPanel groupPanel = new JPanel(new BorderLayout()); // panel for 1 group, divided into 2 sides
+            groupPanel.setBackground(backgroundColor);
+
+            // Rectangle representing group
+            RoundedButton groupOfCards = new RoundedButton(groupName);
+            groupOfCards.setBackground(groupColor);
+            groupOfCards.setFont(WindowElementResize.mediumFont);
+            groupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight));
+            groupPanel.add(groupOfCards, BorderLayout.WEST);
+            
+            
+            JPanel rightPanel = new JPanel(new GridBagLayout());
+            rightPanel.setBackground(backgroundColor);
+            rightPanel.setBorder(new EmptyBorder(5, 15, 5, 5));
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.insets = new Insets(5, 0, 6, 0); // vertical gap between components
+
+            JLabel groupNameLabel = new JLabel("Group name:");
+            groupNameLabel.setForeground(Color.WHITE);
+            groupNameLabel.setFont(smallFont);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            rightPanel.add(groupNameLabel, gbc);
+            
+            
+            RoundTextField enterGroupNameField = new RoundTextField(0);
+            int columns = (int) Math.min(25, frameWidth * 0.023); 
+
+            enterGroupNameField.setColumns(columns);
+            enterGroupNameField.setFont(inputText);
+            enterGroupNameField.setText("Enter the new name of group");
+            enterGroupNameField.setForeground(Color.GRAY);
+            enterGroupNameField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // padding
+            
+
+            
+
+            
+            //to change the text when clicked on input field
+            enterGroupNameField.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    if (enterGroupNameField.getText().equals("Enter the new name of group")) {
+                        enterGroupNameField.setText("");
+                        enterGroupNameField.setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    if (enterGroupNameField.getText().isEmpty()) {
+                        enterGroupNameField.setText("Enter the new name of group");
+                        enterGroupNameField.setForeground(Color.GRAY);
+                    }
+                }
+            });
+            
+            //set the input text as new name of group
+            enterGroupNameField.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // retrieve the text from the input field
+                    String newName = enterGroupNameField.getText(); 
+                    // set the new name to the groupOfCards
+                    groupOfCards.setText(newName);
+                    // clear the input field
+                    enterGroupNameField.setText("");
+                    enterGroupNameField.setForeground(Color.GRAY);
+                }
+            });
+
+
+            
+            gbc.gridy++;
+            rightPanel.add(enterGroupNameField, gbc);
+
+            JLabel chooseColorLabel = new JLabel("Choose a color:");
+            chooseColorLabel.setForeground(Color.WHITE);
+            chooseColorLabel.setFont(smallFont);
+            gbc.gridy++;
+            rightPanel.add(chooseColorLabel, gbc);
+
+            JPanel circlePanel = new JPanel(new GridLayout(2, 5, 5, 5));
+            circlePanel.setBackground(backgroundColor);
+
+            //color selection circles
+            for (int i = 0; i < 16; i++) {
+                RoundButton circle = new RoundButton("");
+                circle.setBackground(groupColors[i]);
+                circle.setPreferredSize(new Dimension((int) (0.035 * frameHeight), (int) (0.035 * frameHeight)));
+                circle.setBorder(null);
+                circlePanel.add(circle);
+            }
+
+            // Action listener for color selection circles
+            for (Component component : circlePanel.getComponents()) {
+                if (component instanceof RoundButton) {
+                    RoundButton circleButton = (RoundButton) component;
+                    circleButton.addActionListener(e -> {
+                        Color buttonColor = circleButton.getBackground();
+                        groupOfCards.setBackground(buttonColor);
+                    });
+                }
+            }
+
+            gbc.gridy++;
+            rightPanel.add(circlePanel, gbc);
+            
+            //delete & save buttons for each group
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setBackground(backgroundColor);
+            
+            RoundedButton deleteGroupButton = new RoundedButton("Delete");
+            deleteGroupButton.setBackground(Color.RED);
+            deleteGroupButton.setFont(buttonText);
+            deleteGroupButton.setPreferredSize(new Dimension(80, 30));
+            buttonPanel.add(deleteGroupButton);
+
+            RoundedButton saveChangesButton = new RoundedButton("Save");
+            saveChangesButton.setFont(buttonText);
+            saveChangesButton.setPreferredSize(new Dimension(80, 30));
+            buttonPanel.add(saveChangesButton);
+
+            gbc.gridy++;
+            rightPanel.add(buttonPanel, gbc);
+
+            groupPanel.add(rightPanel, BorderLayout.CENTER);
+
+            return groupPanel;
+        }
+    
     
 	//updates sizes of elements and window
 	public void updateView() {
@@ -317,7 +448,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 			yPositionWindow = y;
 		}
 		
-		if(width <= 0 || height <= 0) { //if the screen is less then the minimum allowed size
+		if(width <= 0 || height <= 0) { //if the screen is less than the minimum allowed size
 			//with tolerances
 			windowWidth = dimensions.screenWidth;
 			windowHeight = dimensions.screenHeight;
@@ -351,7 +482,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    GroupOfCardsPage frame = new GroupOfCardsPage(0, 0, 0, 0);
+                    EditGroupPage frame = new EditGroupPage(0, 0, 0, 0);
                     frame.setVisible(true);
 
                 } catch (Exception e) {

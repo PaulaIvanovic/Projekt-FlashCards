@@ -84,6 +84,9 @@ public interface GlobalDesign {
 
 	public Color[] subGroupColors = {new Color(0xEFE078),
 			new Color(0x8CB459), 
+			"Latin", "Music", "Croatian", "AI"};
+	
+	public Color[] subGroupColors = {new Color(0x8CB459), 
 			new Color(0x9391f6),
 			new Color(0xFF5454),
 			new Color(0xEFE078)
