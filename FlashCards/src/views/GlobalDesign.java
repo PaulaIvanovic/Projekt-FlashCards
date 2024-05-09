@@ -1,5 +1,4 @@
 package views;
-
 import java.awt.Color;
 import java.awt.Font;
 
@@ -82,6 +81,11 @@ public interface GlobalDesign {
 			"English", "Latin", "Music", "Croatian", "AI", "Programming", "Geography", "Arts", "History",
 			"Latin", "Music", "Croatian", "AI"
 	};
+			};
+
+	public Color[] subGroupColors = {new Color(0xEFE078),
+			new Color(0x8CB459), 
+			"Latin", "Music", "Croatian", "AI"};
 	
 	public Color[] subGroupColors = {new Color(0x8CB459), 
 			new Color(0x9391f6),
@@ -92,15 +96,18 @@ public interface GlobalDesign {
 	public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4",
 			"Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"
 	};     
-	
+
+	public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"};      
+	/*public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4",
+			"Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"
+	};  */   
+
 	public String[] cardQuestion = {"", "Tko ide u kino neka ide slobodno, tko ne ide ne može ići.", 
 			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii.", "SubGroup3", "Subgroup4", 
 			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii.", 
 			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii."
 	};   
 
-	
-	
 	public Color[] cardQuestionColors = {new Color(0x8CB459), 
 			new Color(0x9391f6),
 			new Color(0xFF5454),
@@ -122,4 +129,6 @@ public interface GlobalDesign {
 			new Color(0x71D3DD),
 			};
 		
+}
+
 }
