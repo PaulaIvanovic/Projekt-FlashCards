@@ -80,6 +80,7 @@ public interface GlobalDesign {
 			"Chemistry", "English", "Latin", "Music", "Croatian", "AI", "Programming", "Maths", 
 			"English", "Latin", "Music", "Croatian", "AI", "Programming", "Geography", "Arts", "History",
 			"Latin", "Music", "Croatian", "AI"
+	};
 			};
 
 	public Color[] subGroupColors = {new Color(0xEFE078),
@@ -91,6 +92,10 @@ public interface GlobalDesign {
 			new Color(0xFF5454),
 			new Color(0xEFE078)
 	};
+	
+	public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4",
+			"Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"
+	};     
 
 	public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"};      
 	/*public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4",
@@ -102,8 +107,6 @@ public interface GlobalDesign {
 			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii.", 
 			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii."
 	};   
-
-
 
 	public Color[] cardQuestionColors = {new Color(0x8CB459), 
 			new Color(0x9391f6),
@@ -125,5 +128,7 @@ public interface GlobalDesign {
 			new Color(0xD068FA),
 			new Color(0x71D3DD),
 			};
+		
+}
 
 }
