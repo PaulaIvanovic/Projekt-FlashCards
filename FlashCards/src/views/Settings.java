@@ -26,6 +26,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
 import views.ScreenDimensions;
 
@@ -69,78 +70,57 @@ public class Settings extends JFrame implements GlobalDesign{
     	addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent e) {
     	        Dimension newSize = e.getComponent().getSize();
+    	          	       
     	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
     	        	if(newSize.width <= dimensions.minimumWindowWidth && newSize.height <= dimensions.minimumWindowHeight) {
     	        		windowWidth = dimensions.minimumWindowWidth;
         	            windowHeight = dimensions.minimumWindowHeight;
-    	        	}else if(newSize.width <= dimensions.minimumWindowWidth && newSize.height > dimensions.minimumWindowHeight) {
+    	        	} else if (newSize.width <= dimensions.minimumWindowWidth && newSize.height > dimensions.minimumWindowHeight) {
     	        		windowWidth = dimensions.minimumWindowWidth;
         	            windowHeight = newSize.height;
-    	        	}else if(newSize.height <= dimensions.minimumWindowHeight && newSize.width > dimensions.minimumWindowWidth) {
+    	        	} else if (newSize.height <= dimensions.minimumWindowHeight && newSize.width > dimensions.minimumWindowWidth) {
     	        		windowWidth = newSize.width;
         	            windowHeight = dimensions.minimumWindowHeight;
-    	        	}else if(newSize.width == dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        	} else if (newSize.width == dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
     	        		windowWidth = dimensions.screenWidth;
     	        		windowHeight = dimensions.screenHeight;
-    	        	}else if(newSize.width == dimensions.screenWidth && newSize.height != dimensions.screenHeight) {
+    	        	} else if (newSize.width == dimensions.screenWidth && newSize.height != dimensions.screenHeight) {
     	        		windowWidth = dimensions.screenWidth;
     	        		windowHeight = newSize.height;
-    	        	}else if(newSize.width != dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        	} else if (newSize.width != dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
     	        		windowWidth = newSize.width;
     	        		windowHeight = dimensions.screenHeight;
-    	        	}else {
+    	        	} else {
     	        		windowWidth = newSize.width;
     	        		windowHeight = newSize.height;
     	        	}
-    	            updateView();
-    	            
-    	        }
-    	    }
-    	
-    	});
-    	
-    	//function for ensuring minimum size o window
-    	this.addComponentListener(new ComponentAdapter(){
-	        public void componentResized(ComponentEvent e){
-	            Dimension d=Settings.this.getSize();
-	            Dimension minD=Settings.this.getMinimumSize();
-	            if(d.width<minD.width) {
-	            	d.width=minD.width;
-	            }
-	                
-	            if(d.height<minD.height) {
-	            	 d.height=minD.height;
-	            }
-	               
-	           Settings.this.setSize(d);
-	        }
-    	});
- 
-
-    	//listener for window state changes
-    	addWindowStateListener(new WindowAdapter() {
-    	    public void windowStateChanged(WindowEvent e) {
-    	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
-    	            updateView();
-    	        }else if (e.getNewState() == JFrame.NORMAL) {
-    	            // Window is restored
-    	            // Perform any actions needed when window is restored
-    	            // For example, update the view
-    	            updateView();
+    	            updateView();   
     	        }
     	    }
     	});
     	
     	//check if moved
-    	addComponentListener(new ComponentAdapter() {
-    	    @Override
-    	    public void componentMoved(ComponentEvent e) {	
-    	    	xPositionWindow = e.getComponent().getX();
-    	        yPositionWindow = e.getComponent().getY();
-    	    }
-    	});
-    }	
-    
+		addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+        		xPositionWindow = e.getComponent().getX();
+        		yPositionWindow = e.getComponent().getY();
+            }
+        });	 
+		
+		
+		addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                if (e.getNewState() != JFrame.ICONIFIED && e.getNewState() != JFrame.MAXIMIZED_BOTH) {
+                	setSize(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight);
+                	windowWidth = dimensions.minimumWindowWidth;
+                	windowHeight = dimensions.minimumWindowHeight;
+                }
+                updateView();
+            }
+        });
+    }
     
     public void windowCreate() {
     	setVisible(true);
@@ -198,6 +178,7 @@ public class Settings extends JFrame implements GlobalDesign{
 		userPicture.setButtonIcon("Pictures/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
 		userPicture.setBackground(toolbarColor);
 		userPicture.setBorder(null);
+		userPicture.setEnabled(false);
 		tbPane.add(userPicture);
 		
 		toolbarPanel.add(tbPane, BorderLayout.EAST);
@@ -384,7 +365,7 @@ public class Settings extends JFrame implements GlobalDesign{
 			windowHeight = height;
 		}
 	}
-	
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -396,5 +377,5 @@ public class Settings extends JFrame implements GlobalDesign{
 				}
 			}
 		});
-	}
+	}*/
 }

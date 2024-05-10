@@ -286,7 +286,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
             gbc.gridx++;
             
             // start a new row after every 5 groups
-            if (i % 4 == 0 && i != 0) {
+            if ((i+1) % 5 == 0) {
                 gbc.gridx = 0;
                 gbc.gridy++;
             }
