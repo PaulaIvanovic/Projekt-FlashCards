@@ -3,6 +3,7 @@ package services;
 
 import java.sql.SQLException;
 import databaseInfo.PullFrom;
+import databaseInfo.UserInfo;
 
 public class Login  {
 	
@@ -19,6 +20,7 @@ public class Login  {
 	            pass = u.rs.getString("password");
 	            if (pw.equals(pass)) {
 	                flag = true;
+	                UserInfo collect = new UserInfo(userName, false);
 	            }
 	        }
 	    } catch (SQLException e) {

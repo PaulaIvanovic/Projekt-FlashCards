@@ -19,6 +19,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -27,15 +29,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import databaseInfo.UserInfo;
+
 
 
 public class EditGroupPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
-	   
-	
-	private final int HORIZONTAL_GAP_PERCENTAGE = 2;	
+
 	
 	public int START_X;
 	public int START_Y;
@@ -74,6 +76,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
     	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
     	updateView();
 
+
     	//function for resizing components
     	addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent e) {
@@ -107,45 +110,6 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
     	    }
     	});
     	
-
-    	// listener for window state changes
-        addWindowStateListener(new WindowAdapter() {
-            @Override
-            public void windowStateChanged(WindowEvent e) {
-                if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) == 0) {
-                    // store the previous size when the window is not maximized
-                    previousWidth = getWidth();
-                    previousHeight = getHeight();
-                }
-            }
-        });
-        
-    	//when minimize/maximize button is clicked, 
-        //window goes to 50% of its original (fullscreen) size
-    	this. addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                if ((getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0) {
-                    setSize(previousWidth / 2, previousHeight / 2);
-                 
-                    revalidate();
-                    repaint();
-                }
-            }
-        });
-  
-
-    	//listener for window state changes
-    	addWindowStateListener(new WindowAdapter() {
-    	    public void windowStateChanged(WindowEvent e) {
-    	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
-    	            updateView();
-    	        }else if (e.getNewState() == JFrame.NORMAL) {
-    	            updateView();
-    	        }
-    	    }
-    	});
-    	
     	//check if moved
 		addComponentListener(new ComponentAdapter() {
             @Override
@@ -153,8 +117,20 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
         		xPositionWindow = e.getComponent().getX();
         		yPositionWindow = e.getComponent().getY();
             }
-        });	
+        });	 
 		
+		
+		addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                if (e.getNewState() != JFrame.ICONIFIED && e.getNewState() != JFrame.MAXIMIZED_BOTH) {
+                	setSize(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight);
+                	windowWidth = dimensions.minimumWindowWidth;
+                	windowHeight = dimensions.minimumWindowHeight;
+                }
+                updateView();
+            }
+        });
     }
 
     public void windowCreate() {
@@ -194,6 +170,13 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		RoundedButton cancelButton = new RoundedButton("Cancel");
 		cancelButton.setPreferredSize(new Dimension(95, 35));
 		buttonPanel.add(cancelButton);
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+				GroupsWindow.setVisible(true);
+				dispose();
+			}
+		});
 		
 		RoundedButton saveButton = new RoundedButton("Save all");
 		saveButton.setPreferredSize(new Dimension(95, 35));
@@ -203,21 +186,6 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		int buttonDimension = (int) (windowWidth * 0.025);
 		int biggerButtonDimension = (int) (windowWidth * 0.035);
 		
-		//edit button in toolbar
-		RoundButton editButton = new RoundButton("",buttonDimension ,buttonDimension );
-		editButton.setBackground(toolbarColor);
-		editButton.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)); 		
-		editButton.setButtonIcon("icons/EditIcon.png", buttonDimension, buttonDimension);
-		editButton.setBorder(null);
-		buttonPanel.add(editButton);
-
-		//add new group button in toolbar
-		RoundButton addGroupButton = new RoundButton("",  buttonDimension, buttonDimension);
-		addGroupButton.setButtonIcon("icons/addIcon.png",  buttonDimension, buttonDimension);
-		addGroupButton.setBackground(toolbarColor);
-		addGroupButton.setForeground(backgroundColor);
-		addGroupButton.setBorder(null);
-		buttonPanel.add(addGroupButton);
 		
 		//settings button in toolbar
 		RoundButton settingsButton = new RoundButton("", buttonDimension,buttonDimension);
@@ -240,6 +208,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
+		userIcon.setEnabled(false);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
@@ -262,12 +231,11 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
         gbc.insets = new Insets(10, 10, 10, 10);
         
         
-        int numCols = Math.min(groupNames.length, 2);
+        int numCols = Math.min(UserInfo.groupNames.size(), 2);
         int colCounter = 0;
-        
-        for (int i = 1; i < groupNames.length; i++) {
-            JPanel groupPanel = createGroupPanel(groupNames[i], groupColors[i]);         
-            
+      
+        for (int i = 0; i < UserInfo.groupNames.size(); i++) {
+        	JPanel groupPanel = createGroupPanel(UserInfo.groupNames.get(i), UserInfo.groupColors.get(i));         
             editGroupsPanel.add(groupPanel, gbc);
             gbc.gridx++;
             colCounter++;
@@ -287,12 +255,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
     private JPanel createGroupPanel(String groupName, Color groupColor) {
         	int frameWidth = windowWidth;
             int frameHeight = windowHeight;
-            int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
-
-            // Calculate the number of columns and rows based on the groupNames array
-            int numCols = Math.min(groupNames.length, 2);
-            int numRows = (numCols - 1) / 2 + 1;
-
+         
             // Calculate the maximum width and height for each rectangle
             int rectangleWidth =(int) (0.18 * frameWidth);
             int rectangleHeight = (int) (0.28 * frameHeight);
@@ -331,8 +294,6 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             enterGroupNameField.setText("Enter the new name of group");
             enterGroupNameField.setForeground(Color.GRAY);
             enterGroupNameField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // padding
-            
-
             
 
             
@@ -386,7 +347,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             //color selection circles
             for (int i = 0; i < 16; i++) {
                 RoundButton circle = new RoundButton("");
-                circle.setBackground(groupColors[i]);
+                circle.setBackground(groupColorOptions[i]);
                 circle.setPreferredSize(new Dimension((int) (0.035 * frameHeight), (int) (0.035 * frameHeight)));
                 circle.setBorder(null);
                 circlePanel.add(circle);
@@ -413,12 +374,12 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             RoundedButton deleteGroupButton = new RoundedButton("Delete");
             deleteGroupButton.setBackground(Color.RED);
             deleteGroupButton.setFont(buttonText);
-            deleteGroupButton.setPreferredSize(new Dimension(80, 30));
+            deleteGroupButton.setPreferredSize(new Dimension((int)(windowWidth*0.075), (int)(windowWidth*0.0175)));
             buttonPanel.add(deleteGroupButton);
 
             RoundedButton saveChangesButton = new RoundedButton("Save");
             saveChangesButton.setFont(buttonText);
-            saveChangesButton.setPreferredSize(new Dimension(80, 30));
+            saveChangesButton.setPreferredSize(new Dimension((int)(windowWidth*0.075), (int)(windowWidth*0.0175)));
             buttonPanel.add(saveChangesButton);
 
             gbc.gridy++;
@@ -478,17 +439,4 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 				}
 	}
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    EditGroupPage frame = new EditGroupPage(0, 0, 0, 0);
-                    frame.setVisible(true);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 }

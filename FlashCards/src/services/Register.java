@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import databaseInfo.PasswordEncryption;
 import databaseInfo.Crude;
 import databaseInfo.PullFrom;
+import databaseInfo.UserInfo;
 
 public class Register {
 	String username;
@@ -66,7 +67,8 @@ public class Register {
 					EncryptedPw = PasswordEncryption.encrypt(pw);
 					crude.create("user", username, email, pw, profilePic);
 					//System.out.println(EncryptedPw);
-					message = "Registration completed.";	
+					message = "Registration completed.";
+					UserInfo collect = new UserInfo(username, true);
 				}
 			}
 		}

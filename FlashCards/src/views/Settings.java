@@ -222,7 +222,7 @@ public class Settings extends JFrame implements GlobalDesign{
 		mainPanel.add(lblChoose);
         
 
-        for (int i = 0; i < Math.min(profilePictures.length, 6)+1; i++) {
+        for (int i = 0; i < profilePictures.length; i++) {
         	int firstPicWidth = (int)(windowWidth*0.175);
         	int firstPicHeight = (int)(windowHeight*0.3);
         	int PicWidth = (int)(windowWidth*0.1);

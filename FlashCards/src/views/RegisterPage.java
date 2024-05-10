@@ -24,6 +24,8 @@ import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
@@ -321,6 +323,20 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 			}
 		});
 		registerBtn.setForeground(Color.BLACK);
+		
+		
+		// ActionListener for text fields
+        ActionListener textFieldListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Trigger button click event when Enter is pressed in any text field
+            	registerBtn.doClick();
+            }
+        };
+        
+        pass.addActionListener(textFieldListener);
+        user.addActionListener(textFieldListener);
+        emailField.addActionListener(textFieldListener);
 		
 		//login button function
 		RoundedButton loginBtn = new RoundedButton("Login");

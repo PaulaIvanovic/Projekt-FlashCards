@@ -14,6 +14,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -73,7 +75,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
     	addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent e) {
     	        Dimension newSize = e.getComponent().getSize();
-
+    	          	       
     	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
     	        	if(newSize.width <= dimensions.minimumWindowWidth && newSize.height <= dimensions.minimumWindowHeight) {
     	        		windowWidth = dimensions.minimumWindowWidth;
@@ -101,45 +103,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
     	        }
     	    }
     	});
-
-
-    	// Listener for window state changes
-        addWindowStateListener(new WindowAdapter() {
-            @Override
-            public void windowStateChanged(WindowEvent e) {
-                if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) == 0) {
-                    // Store the previous size when the window is not maximized
-                    previousWidth = getWidth();
-                    previousHeight = getHeight();
-                }
-            }
-        });
-
-    	////when minimize/maximize button is clicked, window goes to 50% of its original (fullscreen) size
-    	this. addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                if ((getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0) {
-                    setSize(previousWidth / 2, previousHeight / 2);
-
-                    revalidate();
-                    repaint();
-                }
-            }
-        });
-
-
-    	//listener for window state changes
-    	addWindowStateListener(new WindowAdapter() {
-    	    public void windowStateChanged(WindowEvent e) {
-    	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
-    	            updateView();
-    	        }else if (e.getNewState() == JFrame.NORMAL) {
-    	            updateView();
-    	        }
-    	    }
-    	});
-
+    	
     	//check if moved
 		addComponentListener(new ComponentAdapter() {
             @Override
@@ -147,7 +111,20 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
         		xPositionWindow = e.getComponent().getX();
         		yPositionWindow = e.getComponent().getY();
             }
-        });	    			
+        });	 
+		
+		
+		addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                if (e.getNewState() != JFrame.ICONIFIED && e.getNewState() != JFrame.MAXIMIZED_BOTH) {
+                	setSize(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight);
+                	windowWidth = dimensions.minimumWindowWidth;
+                	windowHeight = dimensions.minimumWindowHeight;
+                }
+                updateView();
+            }
+        });
     }
 
     public void windowCreate() {

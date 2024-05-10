@@ -22,7 +22,7 @@ public class Crude {
 	 public Crude() {
 		 try {
 			 Class.forName("com.mysql.cj.jdbc.Driver");
-			 connection = DriverManager.getConnection(url);
+			 connection = DriverManager.getConnection(url, "root", "root");
 			 st = connection.createStatement();
 		 } catch (ClassNotFoundException | SQLException e) {
 			 // TODO Auto-generated catch block

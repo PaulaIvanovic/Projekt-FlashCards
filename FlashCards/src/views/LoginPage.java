@@ -221,8 +221,8 @@ public class LoginPage extends JFrame implements GlobalDesign{
             	Login l = new Login();
             	 i = l.loginValidation(username,password); // i is true when username matches
             	 
-            	 if(i) flag = 2; // 2 = suc. login
-            	 else {flag = 0;} // 0 = incor. username/pw
+            	if(i) flag = 2; // 2 = suc. login
+            	else {flag = 0;} // 0 = incor. username/pw
             	
             	if(flag == 0) {
             		msg = "Incorrect username/password.";
@@ -232,13 +232,26 @@ public class LoginPage extends JFrame implements GlobalDesign{
             	}
             	if(flag == 2) {
             		msg = "Successful login";
+            		dispose();
                     GroupOfCardsPage groupOfCardsPage = new GroupOfCardsPage();
-                    //groupOfCardsPage.showScreen();
+                    
             	}
             	lblNewLabel_3.setText(msg);
               	
             }
         });
+        
+     // ActionListener for text fields
+        ActionListener textFieldListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Trigger button click event when Enter is pressed in any text field
+            	loginBtn.doClick();
+            }
+        };
+        
+        pass.addActionListener(textFieldListener);
+        user.addActionListener(textFieldListener);
      
 
         
