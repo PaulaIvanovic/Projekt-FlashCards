@@ -188,6 +188,13 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		addGroupButton.setForeground(backgroundColor);
 		addGroupButton.setBorder(null);
 		buttonPanel.add(addGroupButton);
+		GroupOfCardsPage parent = this;
+		addGroupButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AddGroupOfCards addGroup = new AddGroupOfCards(parent);
+				addGroup.setVisible(true);
+			}
+		});
 		
 		//settings button in toolbar
 		RoundButton settingsButton = new RoundButton("",buttonDimension,buttonDimension);
@@ -209,6 +216,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
+		userIcon.setEnabled(false);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
@@ -277,7 +285,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
             gbc.gridx++;
             
             // start a new row after every 5 groups
-            if (i % 5 == 0) {
+            if (i % 4 == 0 && i != 0) {
                 gbc.gridx = 0;
                 gbc.gridy++;
             }

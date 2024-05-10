@@ -43,29 +43,26 @@ public interface GlobalDesign {
             "6.jpg"
         };
 	public String defaultGroupName = "Default";
-	public String defaultGroupColor = "0x8CB459";
+	public String defaultGroupColor = "0xFFFFFF";
 	
 	//colors representing groups in group of cards display
-	public Color[] groupColorOptions = {new Color(0x8CB459), 
-			new Color(0x9391f6),
-			new Color(0xFF5454),
-			new Color(0xEFE078),
-			new Color(0x71D3DD), 
-			new Color(0xD068FA),
-			new Color(0xFFA030),
-			new Color(0xFF5899),
-			new Color(0x5148FF),
-			new Color(0x67E1A7),
-			new Color(0x9391f6),
-			new Color(0xFF5454),
-			new Color(0xEFE078),
-			new Color(0x71D3DD), 
-			new Color(0xD068FA),
-			new Color(0xD068FA),
-			new Color(0xFFA030),
-			new Color(0xFF5899),
-			new Color(0x5148FF),
-			new Color(0x67E1A7),
+	public Color[] groupColorOptions = {
+			new Color(0x2662E8),  //blue 1
+			new Color(0x5148FF), //blue 2
+			new Color(0x9391f6), //pastel purple
+			new Color(0xD068FA), //purple
+			new Color(0xFF5899), //dark pink
+			new Color(0xFF5454), //coral
+			new Color(0xFF0303), //red
+			new Color(0xFF5400), //orange
+			new Color(0xFFA030), //pastel orange
+			new Color(0xEFE078), //pastel yellow		
+			new Color(0xF8EE02), //yellow
+			new Color(0x8CB459), //olive
+			new Color(0x00bf63), //green
+			new Color(0x67E1A7), //turquoise
+			new Color(0x71D3DD), //aqua
+			new Color(0xFFFFFF), //white
 			};
 
 	

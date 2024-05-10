@@ -2,8 +2,10 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,18 +22,21 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import databaseInfo.UserInfo;
+
 
 
 public class AddGroupOfCards extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	 private JTextField groupName;
+	private JTextField groupName;
+	public String chosenColor;
 	
-	  ScreenDimensions dimensions = new ScreenDimensions();
+	ScreenDimensions dimensions = new ScreenDimensions();
 
 
-	public AddGroupOfCards() {
+	public AddGroupOfCards(GroupOfCardsPage parent) {
 		//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -47,6 +52,8 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         setTitle("NEW GROUP");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(0, 0, desiredWidth, desiredHeight);
+        setUndecorated(true);
+        getRootPane().setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
         setResizable(false); 
         setLocationRelativeTo(null);
         setVisible(true);  
@@ -87,6 +94,8 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 		exitButton.setBorder(null);
 		exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	parent.updateView();
+            	parent.setVisible(true);
                 dispose();
             }
         });
@@ -115,7 +124,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         groupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.16), (int)(desiredWidth*0.8), (int)(desiredHeight*0.085));
         groupName.setText("Enter group name");
         
-        //text inside of username field
+        //text inside of name field
         groupName.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (groupName.getText().equals("Enter group name")) {
@@ -140,8 +149,15 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         
         // Create an instance of ColorfulButtons
         ColorfulButtons colorfulButtons = new ColorfulButtons();
-        colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.39), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
+        colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.39), (int)(desiredWidth*0.93), (int)(desiredHeight*0.3)); // Adjust the bounds as needed
         centerPanel.add(colorfulButtons);
+        
+        //message "these fields can not be empty"
+      	JLabel lblInfo = new JLabel("");
+      	lblInfo.setBounds((int)(desiredWidth * 0.03), (int)(desiredHeight * 0.725), (int)(desiredWidth * 0.5), (int)(desiredHeight * 0.04));
+      	centerPanel.add(lblInfo);
+      	lblInfo.setFont(tinyFont);
+      	lblInfo.setForeground(textRed);
         
         // Add Save and Cancel buttons
         RoundedButton btnSave = new RoundedButton("Save");
@@ -150,6 +166,25 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         btnSave.setBackground(new Color(248, 248, 255));
         btnSave.setBounds((int)(desiredWidth*0.62), (int)(desiredHeight*0.76), (int)(desiredWidth*0.17), (int)(desiredHeight*0.085));
         centerPanel.add(btnSave);
+        btnSave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	if(checkSelection()) {
+            		UserInfo.addGroup(groupName.getText(), chosenColor);
+            		parent.updateView();
+            		parent.setVisible(true);
+                	dispose();
+            	}else {
+            		lblInfo.setText("Warning: Information incomplete. Make sure no field is empty.");
+            	}
+            }
+
+			private boolean checkSelection() {
+				if(groupName.getText() == "" || groupName.getText().equalsIgnoreCase("Enter group name") || groupName.getText() == null || chosenColor == null) {
+					return false;
+				}
+				return true;
+			}
+        });
 
         RoundedButton btnCancel = new RoundedButton("Cancel");
         btnCancel.setFont(smallFont);
@@ -157,6 +192,13 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         btnCancel.setBackground(new Color(248, 248, 255));
         btnCancel.setBounds((int)(desiredWidth*0.8), (int)(desiredHeight*0.76), (int)(desiredWidth*0.17), (int)(desiredHeight*0.085));
         centerPanel.add(btnCancel);
+        btnCancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	parent.updateView();
+            	parent.setVisible(true);
+                dispose();
+            }
+        });
 		
 	}
 	
@@ -164,36 +206,41 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 
 	    public ColorfulButtons() {
 	        setLayout(new FlowLayout(FlowLayout.LEFT)); // Buttons will be aligned to the left
-	        
+	       
 	      //calculated variables for window height and width
 		    int desiredHeight = (int) (dimensions.screenHeight * 0.435);
 		    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 			
-
-	        // Array of colors for buttons
-	        Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN,
-	                          Color.BLUE, Color.CYAN, Color.MAGENTA, Color.PINK};
-
+		    JPanel buttonLayout = new JPanel(new GridLayout(2, 8, 10, 10));
+		    buttonLayout.setOpaque(false); // Make the panel transparent
 	        // Create buttons with different colors
-	        for (int i = 0; i < 8; i++) {
-	            RoundButton button = new RoundButton(" ", (int)(desiredWidth*0.083), (int)(desiredHeight*0.143)); // Adjust button size as needed
-	            button.setBackground(colors[i]);
-	            button.addActionListener(new ButtonClickListener());
-	            add(button);
+	        for (int i = 0; i < 16; i++) {
+	            RoundButton button = new RoundButton(" "); // Adjust button size as needed
+	            button.setBackground(groupColorOptions[i]);
+	            button.setPreferredSize(new Dimension((int) (0.075 * desiredWidth), (int) (0.125 * desiredHeight)));
+	            button.setBorder(null);
+	            button.addActionListener(new ActionListener() {
+	    			public void actionPerformed(ActionEvent e) {
+	    				Color color = button.getBackground();
+	    				int red = color.getRed();
+	    		        int green = color.getGreen();
+	    		        int blue = color.getBlue();
+	    		        
+	    		        // Convert the RGB values to hexadecimal format
+	    		        chosenColor = String.format("0x%02X%02X%02X", red, green, blue);
+	    			}
+	    		});
+	            buttonLayout.add(button);
 	        }
 
 	        setOpaque(false); // Make the panel transparent
+	        add(buttonLayout);
 	    }
 
-	    private class ButtonClickListener implements ActionListener {
-	        public void actionPerformed(ActionEvent e) {
-	            RoundButton source = (RoundButton) e.getSource();
-	            //JOptionPane.showMessageDialog(null, "You clicked a color button", "Button Clicked", JOptionPane.INFORMATION_MESSAGE);
-	        }
-	    }
+	    
 	}
 	
-
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -205,7 +252,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 				}
 			}
 		});
-	}
+	}*/
 }
 
 

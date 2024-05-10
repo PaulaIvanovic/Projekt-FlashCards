@@ -13,7 +13,7 @@ public class UserInfo implements GlobalDesign{
 	public static ArrayList<String> groupNames;
 	public static ArrayList<Color> subGroupColors;
 	public static ArrayList<String> subGroupNames;
-	Crude crude;
+	public static Crude crude;
 	
 	public UserInfo(String username, boolean newUser) {
 		 crude = new Crude();
@@ -46,7 +46,9 @@ public class UserInfo implements GlobalDesign{
 		crude.create("grupa", defaultGroupName, defaultGroupColor, userID);
 	}
 	
-	public void getGroups() {
+	public static void getGroups() {
+		groupNames.clear();
+		groupColors.clear();
 		PullFrom groupInfo = new PullFrom("grupa","iduser", userID);
 		try {
 			 while(groupInfo.rs.next()) {
@@ -60,5 +62,16 @@ public class UserInfo implements GlobalDesign{
 	
 	public void getSubgroups() {
 		
+	}
+
+
+	public static void addGroup(String name, String chosenColor) {
+		System.out.println(name + " " + chosenColor);
+		try {
+			crude.create("grupa", name, chosenColor, userID);
+			getGroups();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

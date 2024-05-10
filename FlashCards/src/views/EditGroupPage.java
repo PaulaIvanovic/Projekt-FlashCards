@@ -37,9 +37,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
-	   
-	
-	private final int HORIZONTAL_GAP_PERCENTAGE = 2;	
+
 	
 	public int START_X;
 	public int START_Y;
@@ -172,6 +170,13 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		RoundedButton cancelButton = new RoundedButton("Cancel");
 		cancelButton.setPreferredSize(new Dimension(95, 35));
 		buttonPanel.add(cancelButton);
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+				GroupsWindow.setVisible(true);
+				dispose();
+			}
+		});
 		
 		RoundedButton saveButton = new RoundedButton("Save all");
 		saveButton.setPreferredSize(new Dimension(95, 35));
@@ -181,14 +186,6 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		int buttonDimension = (int) (windowWidth * 0.025);
 		int biggerButtonDimension = (int) (windowWidth * 0.035);
 		
-
-		//add new group button in toolbar
-		RoundButton addGroupButton = new RoundButton("",  buttonDimension, buttonDimension);
-		addGroupButton.setButtonIcon("icons/addIcon.png",  buttonDimension, buttonDimension);
-		addGroupButton.setBackground(toolbarColor);
-		addGroupButton.setForeground(backgroundColor);
-		addGroupButton.setBorder(null);
-		buttonPanel.add(addGroupButton);
 		
 		//settings button in toolbar
 		RoundButton settingsButton = new RoundButton("", buttonDimension,buttonDimension);
@@ -211,6 +208,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
+		userIcon.setEnabled(false);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
@@ -376,12 +374,12 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             RoundedButton deleteGroupButton = new RoundedButton("Delete");
             deleteGroupButton.setBackground(Color.RED);
             deleteGroupButton.setFont(buttonText);
-            deleteGroupButton.setPreferredSize(new Dimension(80, 30));
+            deleteGroupButton.setPreferredSize(new Dimension((int)(windowWidth*0.075), (int)(windowWidth*0.0175)));
             buttonPanel.add(deleteGroupButton);
 
             RoundedButton saveChangesButton = new RoundedButton("Save");
             saveChangesButton.setFont(buttonText);
-            saveChangesButton.setPreferredSize(new Dimension(80, 30));
+            saveChangesButton.setPreferredSize(new Dimension((int)(windowWidth*0.075), (int)(windowWidth*0.0175)));
             buttonPanel.add(saveChangesButton);
 
             gbc.gridy++;
