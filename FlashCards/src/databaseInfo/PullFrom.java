@@ -39,7 +39,7 @@ public class PullFrom {
 		 try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			try {
-				 connection = DriverManager.getConnection(url);
+				 connection = DriverManager.getConnection(url, "root", "root");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
