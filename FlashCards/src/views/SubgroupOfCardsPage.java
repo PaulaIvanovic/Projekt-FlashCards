@@ -23,6 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import databaseInfo.UserInfo;
+
 
 public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
@@ -36,6 +38,8 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 	public int groupsPerPage;
 	public int START_X;
 	public int START_Y;
+	
+	public String name;
 
     int windowWidth;
     int windowHeight;
@@ -50,10 +54,14 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 	int previousHeight;
 
     public SubgroupOfCardsPage() {
-    	this(0,0,0,0);
+    	this(0,0,0,0, "");
     }
 
-    public SubgroupOfCardsPage(int x, int y, int width, int height) {
+    public SubgroupOfCardsPage(int x, int y, int width, int height, String name) {
+    	this.name = name;
+    	//get parent group ID
+    	UserInfo.getGroupID(name);
+    	UserInfo.getSubgroups();
     	//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -149,7 +157,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel("My subgroup of cards");      
+		JLabel mainTitleLabel = new JLabel(name);      
 		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -171,6 +179,13 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		returnButton.setButtonIcon("icons/ReturnArrowIcon.png",  buttonDimension, buttonDimension);
 		returnButton.setBorder(null);
 		buttonPanel.add(returnButton);
+		returnButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GroupOfCardsPage groupPage = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+				dispose();
+				groupPage.setVisible(true);
+			}
+		});
 
 		//edit button in toolbar
 		RoundButton editButton = new RoundButton("",buttonDimension ,buttonDimension );
@@ -178,6 +193,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		editButton.setButtonIcon("icons/EditIcon.png",  buttonDimension, buttonDimension);
 		editButton.setBorder(null);
 		buttonPanel.add(editButton);
+		
 
 		//add new group button in toolbar
 		RoundButton addsubGroupButton = new RoundButton("",  buttonDimension, buttonDimension);
@@ -186,6 +202,14 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		addsubGroupButton.setForeground(backgroundColor);
 		addsubGroupButton.setBorder(null);
 		buttonPanel.add(addsubGroupButton);
+		SubgroupOfCardsPage parent = this;
+		addsubGroupButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AddSubgroupOfCards addSubgroup = new AddSubgroupOfCards(parent);
+				addSubgroup.setVisible(true);
+			}
+		});
+		
 
 		//settings button in toolbar
 		RoundButton settingsButton = new RoundButton("",buttonDimension,buttonDimension);
@@ -227,36 +251,37 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-
+        
         //frame sizes
         int frameWidth = windowWidth;
         int frameHeight = windowHeight;
         int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
 
         //calculates the number of rows and columns for the current page
-        int numCols = Math.min(subGroupNames.length, 5);
+        int numCols = Math.min(UserInfo.groupNames.size(), 5);
         int numRows = (numCols - 1) / 5 + 1;
 
         //calculates the width and height of each rectangle
         int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
         int availableHeight = frameHeight - (int)(frameHeight * 0.2);
         int rectangleHeight = Math.min(availableHeight / numRows, MAX_RECTANGLE_HEIGHT);
+        
 
 
         //add groups to the panel
-        for (int i = 1; i < subGroupNames.length; i++) {
-            RoundedButton subGroupOfCards = new RoundedButton(subGroupNames[i]);
-            subGroupOfCards.setBackground(subGroupColors[i]);
+        for (int i = 0; i < UserInfo.subGroupNames.size(); i++) {
+            RoundedButton subGroupOfCards = new RoundedButton(UserInfo.subGroupNames.get(i));
+            subGroupOfCards.setBackground(UserInfo.subGroupColors.get(i));
             subGroupOfCards.setFont(WindowElementResize.mediumFont);
             subGroupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height to 200
 
-            String name = subGroupNames[i];
-            Color color = subGroupColors[i];
+            String name2 = UserInfo.subGroupNames.get(i);
+            Color color = UserInfo.subGroupColors.get(i);
 
             //listens for clicks on group to open its page
             subGroupOfCards.addActionListener(new ActionListener() {
     			public void actionPerformed(ActionEvent e) {
-    				new GroupPage(name, color).setVisible(true);;
+    				new GroupPage(name2, color).setVisible(true);;
     			}
     		});
 
@@ -275,7 +300,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
             gbc.gridx++;
 
             // start a new row after every 5 groups
-            if (i % 5 == 0) {
+            if (i % 4 == 0 && i != 0) {
                 gbc.gridx = 0;
                 gbc.gridy++;
             }
@@ -331,11 +356,12 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 				}
 	}
 
+	/*
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    SubgroupOfCardsPage frame = new SubgroupOfCardsPage(0, 0, 0, 0);
+                    SubgroupOfCardsPage frame = new SubgroupOfCardsPage(0, 0, 0, 0, "");
                     frame.setVisible(true);
 
                 } catch (Exception e) {
@@ -343,5 +369,6 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
                 }
             }
         });
-    }
+        
+    }*/
 }

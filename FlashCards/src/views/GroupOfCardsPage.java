@@ -266,7 +266,8 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
             //listens for clicks on group to open its page
             groupOfCards.addActionListener(new ActionListener() {
     			public void actionPerformed(ActionEvent e) {
-    				new GroupPage(name, color).setVisible(true);;
+    				SubgroupOfCardsPage subGroup = new SubgroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight, name);
+    				dispose();
     			}
     		});
             

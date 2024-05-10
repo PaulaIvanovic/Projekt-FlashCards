@@ -8,6 +8,7 @@ import views.GlobalDesign;
 
 public class UserInfo implements GlobalDesign{
 	public static String userID;
+	public static String groupID;
 	
 	public static ArrayList<Color> groupColors;
 	public static ArrayList<String> groupNames;
@@ -60,17 +61,49 @@ public class UserInfo implements GlobalDesign{
 		}
 	}
 	
-	public void getSubgroups() {
-		
+	public static void getSubgroups() {
+		subGroupNames.clear();
+		subGroupColors.clear();
+		PullFrom subgroupInfo = new PullFrom("subgroup","idgroup", groupID);
+		try {
+			 while(subgroupInfo.rs.next()) {
+				 subGroupNames.add(subgroupInfo.rs.getString("name"));
+				 subGroupColors.add(Color.decode(subgroupInfo.rs.getString("boja")));
+			 }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
 	public static void addGroup(String name, String chosenColor) {
-		System.out.println(name + " " + chosenColor);
 		try {
 			crude.create("grupa", name, chosenColor, userID);
 			getGroups();
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void addsubGroup(String name, String chosenColor, String group) {
+		try {
+			crude.create("subgroup", name, chosenColor, groupID);
+			getSubgroups();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void getGroupID(String name) {
+		//get group
+		 PullFrom u = new PullFrom("grupa","name", name);
+		 
+		 //get group ID
+		 try {
+			 if (u.rs.next()) {
+				 groupID = u.rs.getString("idgroup");
+			 }
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
