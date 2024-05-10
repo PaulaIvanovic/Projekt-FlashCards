@@ -96,12 +96,14 @@ public class UserInfo implements GlobalDesign{
 	
 	public static void getGroupID(String name) {
 		//get group
-		 PullFrom u = new PullFrom("grupa","name", name);
-		 
+		 PullFrom group = new PullFrom("grupa","name", name);
+		
 		 //get group ID
 		 try {
-			 if (u.rs.next()) {
-				 groupID = u.rs.getString("idgroup");
+			 while (group.rs.next()) {
+				 if(group.rs.getString("iduser").equals(userID)) {
+					 groupID = group.rs.getString("idgroup"); 
+				 }
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
