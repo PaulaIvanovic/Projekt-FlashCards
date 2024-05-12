@@ -12,8 +12,12 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -27,6 +31,7 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
+	private JLabel mainTitleLabel;
 
 	//responsive starting coordinates
 	public int START_X;
@@ -68,8 +73,66 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
     	
     	updateView();
     	
-    }
-    
+    	
+    	//function for resizing components
+    	addComponentListener(new ComponentAdapter() {
+    	    public void componentResized(ComponentEvent e) {
+    	        Dimension newSize = e.getComponent().getSize();
+    	          	       
+    	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
+    	        	if(newSize.width <= dimensions.minimumWindowWidth && newSize.height <= dimensions.minimumWindowHeight) {
+    	        		windowWidth = dimensions.minimumWindowWidth;
+        	            windowHeight = dimensions.minimumWindowHeight;
+    	        	} else if (newSize.width <= dimensions.minimumWindowWidth && newSize.height > dimensions.minimumWindowHeight) {
+    	        		windowWidth = dimensions.minimumWindowWidth;
+        	            windowHeight = newSize.height;
+    	        	} else if (newSize.height <= dimensions.minimumWindowHeight && newSize.width > dimensions.minimumWindowWidth) {
+    	        		windowWidth = newSize.width;
+        	            windowHeight = dimensions.minimumWindowHeight;
+    	        	} else if (newSize.width == dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        		windowWidth = dimensions.screenWidth;
+    	        		windowHeight = dimensions.screenHeight;
+    	        	} else if (newSize.width == dimensions.screenWidth && newSize.height != dimensions.screenHeight) {
+    	        		windowWidth = dimensions.screenWidth;
+    	        		windowHeight = newSize.height;
+    	        	} else if (newSize.width != dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        		windowWidth = newSize.width;
+    	        		windowHeight = dimensions.screenHeight;
+    	        	} else {
+    	        		windowWidth = newSize.width;
+    	        		windowHeight = newSize.height;
+    	        	}
+    	        	
+    	        	 updateView(); 
+    	        
+    	        }
+    	    }
+    	});
+    	
+    	//check if moved
+    			addComponentListener(new ComponentAdapter() {
+    	            @Override
+    	            public void componentMoved(ComponentEvent e) {
+    	        		xPositionWindow = e.getComponent().getX();
+    	        		yPositionWindow = e.getComponent().getY();
+    	            }
+    	        });	 
+    			
+    			
+    			addWindowStateListener(new WindowStateListener() {
+    	            @Override
+    	            public void windowStateChanged(WindowEvent e) {
+    	                if (e.getNewState() != JFrame.ICONIFIED && e.getNewState() != JFrame.MAXIMIZED_BOTH) {
+    	                	setSize(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight);
+    	                	windowWidth = dimensions.minimumWindowWidth;
+    	                	windowHeight = dimensions.minimumWindowHeight;
+    	                }
+    	                updateView();
+    	                
+    	            }
+    	        });
+    	    }	
+    	
     
     public void windowCreate() {
     	setVisible(true);
@@ -93,8 +156,8 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 		toolbarPanel.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 10));
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 		
-			JLabel mainTitleLabel = new JLabel("Group <GroupName> subgroups - edit");      
-			mainTitleLabel.setFont(WindowElementResize.mainFont);
+			mainTitleLabel = new JLabel("Group <GroupName> subgroups - edit");      
+			mainTitleLabel.setFont(WindowElementResize.mediumFont);			
 			mainTitleLabel.setForeground(Color.WHITE);
 			toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
 			
@@ -242,46 +305,48 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 	        
 	    rightPanel.add(subgroupNameLabel, gbc);
 
-	        RoundTextField enterSubgroupName = new RoundTextField(0);
-	        enterSubgroupName.setColumns(25);
-	        enterSubgroupName.setText("Enter the new name of subgroup");
-	        enterSubgroupName.setForeground(Color.GRAY);
-	        enterSubgroupName.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // padding
+	        RoundTextField enterSubgroupNameField = new RoundTextField(0);
+	        int columns = (int) Math.min(25, frameWidth * 0.023); 
+	        
+	        enterSubgroupNameField.setColumns(columns);
+	        enterSubgroupNameField.setText("Enter the new name of subgroup");
+	        enterSubgroupNameField.setForeground(Color.GRAY);
+	        enterSubgroupNameField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // padding
 	        
 	        gbc.gridy++;
 		      
-		    rightPanel.add(enterSubgroupName, gbc);
+		    rightPanel.add(enterSubgroupNameField, gbc);
 	        
 	        //to remove the placeholder text when clicked on input field & place it back when clicked out 
-	        enterSubgroupName.addFocusListener(new FocusListener() {
+		    enterSubgroupNameField.addFocusListener(new FocusListener() {
                 @Override
                 public void focusGained(FocusEvent e) {
-                    if (enterSubgroupName.getText().equals("Enter the new name of subgroup")) {
-                    	enterSubgroupName.setText("");
-                    	enterSubgroupName.setForeground(Color.BLACK);
+                    if (enterSubgroupNameField.getText().equals("Enter the new name of subgroup")) {
+                    	enterSubgroupNameField.setText("");
+                    	enterSubgroupNameField.setForeground(Color.BLACK);
                     }
                 }
 
                 @Override
                 public void focusLost(FocusEvent e) {
-                    if (enterSubgroupName.getText().isEmpty()) {
-                    	enterSubgroupName.setText("Enter the new name of subgroup");
-                        enterSubgroupName.setForeground(Color.GRAY);
+                    if (enterSubgroupNameField.getText().isEmpty()) {
+                    	enterSubgroupNameField.setText("Enter the new name of subgroup");
+                    	enterSubgroupNameField.setForeground(Color.GRAY);
                     }
                 }
             });
 	        
             //sets the input text as new name of subgroup (when enter is pressed)
-	        enterSubgroupName.addActionListener(new ActionListener() {
+		    enterSubgroupNameField.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     // retrieve the text from the input field
-                    String newName = enterSubgroupName.getText(); 
+                    String newName = enterSubgroupNameField.getText(); 
                     // set the new name to the groupOfCards
                     subgroupOfCards.setText(newName);
                     // clear the input field
-                    enterSubgroupName.setText("");
-                    enterSubgroupName.setForeground(Color.GRAY);
+                    enterSubgroupNameField.setText("");
+                    enterSubgroupNameField.setForeground(Color.GRAY);
                 }
             });
 	        
@@ -328,14 +393,19 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
         //panel with the save changes & delete group buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(backgroundColor);
+        
+	        RoundedButton deleteSubgroupButton = new RoundedButton("Delete");
+	        deleteSubgroupButton.setBackground(Color.RED);
+	        deleteSubgroupButton.setFont(buttonText);
+	        deleteSubgroupButton.setPreferredSize(new Dimension(80, 30));
+	        buttonPanel.add(deleteSubgroupButton);
 
 	        RoundedButton saveChangesButton = new RoundedButton("Save");
+	        saveChangesButton.setFont(buttonText);
 	        saveChangesButton.setPreferredSize(new Dimension(80, 30));
 	        buttonPanel.add(saveChangesButton);
 	
-	        RoundedButton deleteGroupButton = new RoundedButton("Delete");
-	        deleteGroupButton.setPreferredSize(new Dimension(80, 30));
-	        buttonPanel.add(deleteGroupButton);
+
         
         gbc.gridy++;
 
