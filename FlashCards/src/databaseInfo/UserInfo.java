@@ -12,6 +12,7 @@ public class UserInfo implements GlobalDesign{
 	
 	public static ArrayList<Color> groupColors;
 	public static ArrayList<String> groupNames;
+	public static ArrayList<String> groupIDs;
 	public static ArrayList<Color> subGroupColors;
 	public static ArrayList<String> subGroupNames;
 	public static Crude crude;
@@ -20,6 +21,7 @@ public class UserInfo implements GlobalDesign{
 		 crude = new Crude();
 		 groupColors = new ArrayList<>();
 		 groupNames = new ArrayList<>();
+		 groupIDs = new ArrayList<>();
 		 subGroupColors = new ArrayList<>();
 		 subGroupNames = new ArrayList<>();
 		 
@@ -50,11 +52,13 @@ public class UserInfo implements GlobalDesign{
 	public static void getGroups() {
 		groupNames.clear();
 		groupColors.clear();
+		groupIDs.clear();
 		PullFrom groupInfo = new PullFrom("grupa","iduser", userID);
 		try {
 			 while(groupInfo.rs.next()) {
 				 groupNames.add(groupInfo.rs.getString("name"));
 				 groupColors.add(Color.decode(groupInfo.rs.getString("boja")));
+				 groupIDs.add(groupInfo.rs.getString("idgroup"));
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -109,4 +113,51 @@ public class UserInfo implements GlobalDesign{
 			e.printStackTrace();
 		}
 	}
+
+
+	public static void changeGroupColor(String grID, Color newColor) {
+		System.out.println(grID + " " + newColor);
+		int index = groupIDs.indexOf(grID);
+		if(index > -1) {
+			groupColors.set(index, newColor);	
+		}
+	}
+
+
+	public static void changeGroupName(String grID, String newName) {
+		System.out.println(grID + " " + newName);
+		int index = groupIDs.indexOf(grID);
+		if(index > -1) {
+			groupNames.set(index, newName);	
+		}
+	}
+	
+	public static void saveEditAllGroups() {
+		for(int i = 0; i < groupIDs.size(); i++) {
+			int red = groupColors.get(i).getRed();
+	        int green = groupColors.get(i).getGreen();
+	        int blue = groupColors.get(i).getBlue();
+	        // Convert the RGB values to hexadecimal format
+	        String newColor = String.format("0x%02X%02X%02X", red, green, blue);
+	        
+			crude.update("grupa", "boja", "idgroup", groupIDs.get(i), newColor);
+			crude.update("grupa", "name", "idgroup", groupIDs.get(i), groupNames.get(i));
+		}
+	}
+	
+	public static void saveEditGroup(String grID) {
+		int index = groupIDs.indexOf(grID);
+		if(index > -1) {
+			int red = groupColors.get(index).getRed();
+	        int green = groupColors.get(index).getGreen();
+	        int blue = groupColors.get(index).getBlue();
+	        // Convert the RGB values to hexadecimal format
+	        String newColor = String.format("0x%02X%02X%02X", red, green, blue);
+	        
+			crude.update("grupa", "boja", "idgroup", groupIDs.get(index), newColor);
+			crude.update("grupa", "name", "idgroup", groupIDs.get(index), groupNames.get(index));	
+		}
+	}
+
+
 }

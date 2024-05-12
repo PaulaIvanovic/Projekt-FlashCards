@@ -17,6 +17,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
@@ -172,6 +174,8 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		buttonPanel.add(cancelButton);
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				UserInfo.getGroups();
+				
 				GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
 				GroupsWindow.setVisible(true);
 				dispose();
@@ -181,7 +185,16 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		RoundedButton saveButton = new RoundedButton("Save all");
 		saveButton.setPreferredSize(new Dimension(95, 35));
 		buttonPanel.add(saveButton);
-		
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				UserInfo.saveEditAllGroups();
+				
+				GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+				GroupsWindow.setVisible(true);
+				dispose();
+			}
+		});
+
 		//variables for button dimensions
 		int buttonDimension = (int) (windowWidth * 0.025);
 		int biggerButtonDimension = (int) (windowWidth * 0.035);
@@ -235,7 +248,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
         int colCounter = 0;
       
         for (int i = 0; i < UserInfo.groupNames.size(); i++) {
-        	JPanel groupPanel = createGroupPanel(UserInfo.groupNames.get(i), UserInfo.groupColors.get(i));         
+        	JPanel groupPanel = createGroupPanel(UserInfo.groupNames.get(i), UserInfo.groupColors.get(i), UserInfo.groupIDs.get(i));         
             editGroupsPanel.add(groupPanel, gbc);
             gbc.gridx++;
             colCounter++;
@@ -252,8 +265,8 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
     }
 
     // Method to create a panel for a group
-    private JPanel createGroupPanel(String groupName, Color groupColor) {
-        	int frameWidth = windowWidth;
+    private JPanel createGroupPanel(String groupName, Color groupColor, String ID) {
+    		int frameWidth = windowWidth;
             int frameHeight = windowHeight;
          
             // Calculate the maximum width and height for each rectangle
@@ -264,7 +277,9 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             groupPanel.setBackground(backgroundColor);
 
             // Rectangle representing group
-            RoundedButton groupOfCards = new RoundedButton(groupName);
+            RoundedButton groupOfCards = new RoundedButton("");
+            groupOfCards.setMultiLineButtonText(groupName);
+            groupOfCards.help = ID;
             groupOfCards.setBackground(groupColor);
             groupOfCards.setFont(WindowElementResize.mediumFont);
             groupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight));
@@ -316,20 +331,33 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
                 }
             });
             
-            //set the input text as new name of group
-            enterGroupNameField.addActionListener(new ActionListener() {
+            enterGroupNameField.addKeyListener(new KeyAdapter() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    // retrieve the text from the input field
-                    String newName = enterGroupNameField.getText(); 
-                    // set the new name to the groupOfCards
-                    groupOfCards.setText(newName);
-                    // clear the input field
-                    enterGroupNameField.setText("");
-                    enterGroupNameField.setForeground(Color.GRAY);
+                public void keyPressed(KeyEvent e){
+                	// Set the text with the key typed
+                    char keyChar = e.getKeyChar();
+                    if (Character.isLetterOrDigit(keyChar)  || isSpecialCharacter(keyChar)) {
+                        String text = String.valueOf(keyChar);
+                        groupOfCards.setMultiLineButtonText(enterGroupNameField.getText() + text);
+                    } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                        String currentText = enterGroupNameField.getText();
+                        if (!currentText.isEmpty()) {
+                            // Remove the last character
+                            currentText = currentText.substring(0, currentText.length() - 1);
+                            groupOfCards.setMultiLineButtonText(currentText);
+                        }
+                    }
+                    UserInfo.changeGroupName(groupOfCards.help, groupOfCards.getText());
+                }
+                
+                private boolean isSpecialCharacter(char c) {
+                    // Define special characters you want to allow
+                    String specialCharacters = "!@#$%^&*()_+{}|:<>?";
+
+                    // Check if the character is in the list of special characters
+                    return specialCharacters.indexOf(c) != -1;
                 }
             });
-
 
             
             gbc.gridy++;
@@ -360,6 +388,8 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
                     circleButton.addActionListener(e -> {
                         Color buttonColor = circleButton.getBackground();
                         groupOfCards.setBackground(buttonColor);
+;
+	    		        UserInfo.changeGroupColor(groupOfCards.help, buttonColor);
                     });
                 }
             }
@@ -381,6 +411,25 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             saveChangesButton.setFont(buttonText);
             saveChangesButton.setPreferredSize(new Dimension((int)(windowWidth*0.075), (int)(windowWidth*0.0175)));
             buttonPanel.add(saveChangesButton);
+            saveChangesButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // retrieve the text from the input field
+                    String newName = enterGroupNameField.getText(); 
+                    if(newName.equalsIgnoreCase("Enter the new name of group") || newName.isEmpty()) {
+                    	PopUpWindow info = new PopUpWindow("WARNING", "Warning: Group name is missing.",(int) (windowWidth*0.2), (int)(windowHeight*0.35));
+                    	info.setVisible(true);
+                    }else {
+                    	// set the new name to the groupOfCards
+                    	groupOfCards.setMultiLineButtonText(newName);
+                    	// clear the input field
+                    	enterGroupNameField.setText("");
+                    	enterGroupNameField.setForeground(Color.GRAY);
+                    	UserInfo.changeGroupName(groupOfCards.help, newName);
+                    	UserInfo.saveEditGroup(groupOfCards.help);
+                    }
+                }
+            });
 
             gbc.gridy++;
             rightPanel.add(buttonPanel, gbc);
