@@ -12,9 +12,10 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -110,6 +111,15 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 				RoundedButton cancelButton = new RoundedButton("Cancel");
 				cancelButton.setPreferredSize(new Dimension(95, 40));
 				buttonPanel.add(cancelButton);
+				
+				//cancel button leads back to GroupOfCardsPage
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						GroupOfCardsPage GroupsWindow = new GroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+						GroupsWindow.setVisible(true);
+						dispose();
+					}
+				});
 	
 				RoundedButton saveButton = new RoundedButton("Save all");
 				saveButton.setPreferredSize(new Dimension(95, 40));
@@ -136,6 +146,15 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 				settingsButton.setForeground(backgroundColor);
 				settingsButton.setBorder(null);
 				buttonPanel.add(settingsButton);
+				
+				//settings button leads to Settings page
+				settingsButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Settings settingsWindow = new Settings(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
+						settingsWindow.setVisible(true);
+						dispose();
+					}
+				});
 				
 				RoundButton userIcon = new RoundButton("", biggerButtonDimension, biggerButtonDimension);
 				userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
@@ -225,13 +244,48 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 
 	        RoundTextField enterSubgroupName = new RoundTextField(0);
 	        enterSubgroupName.setColumns(25);
-	        enterSubgroupName.setText("Enter the new name of group");
+	        enterSubgroupName.setText("Enter the new name of subgroup");
 	        enterSubgroupName.setForeground(Color.GRAY);
 	        enterSubgroupName.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // padding
 	        
 	        gbc.gridy++;
-	      
-	    rightPanel.add(enterSubgroupName, gbc);
+		      
+		    rightPanel.add(enterSubgroupName, gbc);
+	        
+	        //to remove the placeholder text when clicked on input field & place it back when clicked out 
+	        enterSubgroupName.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    if (enterSubgroupName.getText().equals("Enter the new name of subgroup")) {
+                    	enterSubgroupName.setText("");
+                    	enterSubgroupName.setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    if (enterSubgroupName.getText().isEmpty()) {
+                    	enterSubgroupName.setText("Enter the new name of subgroup");
+                        enterSubgroupName.setForeground(Color.GRAY);
+                    }
+                }
+            });
+	        
+            //sets the input text as new name of subgroup (when enter is pressed)
+	        enterSubgroupName.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // retrieve the text from the input field
+                    String newName = enterSubgroupName.getText(); 
+                    // set the new name to the groupOfCards
+                    subgroupOfCards.setText(newName);
+                    // clear the input field
+                    enterSubgroupName.setText("");
+                    enterSubgroupName.setForeground(Color.GRAY);
+                }
+            });
+	        
+	        
 
 	        JLabel chooseColorLabel = new JLabel("Choose a color:");
 	        chooseColorLabel.setForeground(Color.WHITE);
@@ -240,6 +294,8 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 	        gbc.gridy++;
 	    
 	    rightPanel.add(chooseColorLabel, gbc);
+	    
+	    	
 
 	    //panel containing colors to pick from
         JPanel circlePanel = new JPanel(new GridLayout(2, 5, 5, 5));
@@ -256,6 +312,18 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
         gbc.gridy++;
 
         rightPanel.add(circlePanel, gbc);
+        
+        // every colorCircle sets new color of subgroupOfCards to its color
+        for (Component component : circlePanel.getComponents()) {
+            if (component instanceof RoundButton) {
+                RoundButton circleButton = (RoundButton) component;
+                circleButton.addActionListener(e -> {
+                    Color buttonColor = circleButton.getBackground();
+                    subgroupOfCards.setBackground(buttonColor);
+                });
+            }
+        }
+
 
         //panel with the save changes & delete group buttons
         JPanel buttonPanel = new JPanel();
