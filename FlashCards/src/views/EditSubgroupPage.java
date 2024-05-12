@@ -2,15 +2,25 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
 
 public class EditSubgroupPage extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;
@@ -133,12 +143,141 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 				userIcon.setBorder(null);
 				buttonPanel.add(userIcon);
 
-				toolbarPanel.add(buttonPanel, BorderLayout.EAST);
+			toolbarPanel.add(buttonPanel, BorderLayout.EAST);
+			
+			//scrollbar to get to all subgroups
+		    JScrollPane scrollPane = new JScrollPane(editSubgroupsCollection());	
+			scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+		    contentPane.add(scrollPane, BorderLayout.CENTER);
     }
     
+    public JPanel editSubgroupsCollection() {
+        JPanel editSubgroupsPanel = new JPanel(new GridBagLayout()); // main panel (all groups)
+        editSubgroupsPanel.setBackground(backgroundColor);
+
+        //layout to arrange each groupPanel
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        int numCols = Math.min(subGroupNames.length, 2);
+        int colCounter = 0;
+
+        for (int i = 0; i < subGroupNames.length; i++) {
+            JPanel groupPanel = createSubgroupPanel(subGroupNames[i], subGroupColors[i]);
+            editSubgroupsPanel.add(groupPanel, gbc);
+            gbc.gridx++;
+            colCounter++;
+
+            // if maximum number of columns reached, move to next row
+            if (colCounter == numCols) {
+                colCounter = 0;
+                gbc.gridx = 0;
+                gbc.gridy++;
+            }
+        }
+
+        return editSubgroupsPanel;
+    }
     
+    private JPanel createSubgroupPanel(String subgroupName, Color subgroupColor) {
+
+    	//window dimensions to assure responsiveness
+    	int frameWidth = windowWidth;
+        int frameHeight = windowHeight;
+
+        //width and height of each rectangle (based in window size)
+        int rectangleWidth =(int) (0.18 * frameWidth);
+        int rectangleHeight = (int) (0.28 * frameHeight);
+
+        JPanel subgroupPanel = new JPanel(new BorderLayout()); // panel for 1 group, divided into 2 sides
+        subgroupPanel.setBackground(backgroundColor);
+
+        	//rectangle representing subgroup
+	        RoundedButton subgroupOfCards = new RoundedButton(subgroupName);
+	        subgroupOfCards.setBackground(subgroupColor);
+	        subgroupOfCards.setFont(WindowElementResize.mediumFont);
+	        subgroupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight));
+	        
+        subgroupPanel.add(subgroupOfCards, BorderLayout.WEST);
+
+        //right panel with text field, color picker & save and delete buttons
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        rightPanel.setBackground(backgroundColor);
+        rightPanel.setBorder(new EmptyBorder(5, 15, 5, 5));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(5, 0, 6, 0); // vertical gap between components
+
+
+	        JLabel subgroupNameLabel = new JLabel("Group name:");
+	        subgroupNameLabel.setForeground(Color.WHITE);
+	        subgroupNameLabel.setFont(smallFont);
+	        gbc.gridx = 0;
+            gbc.gridy = 0;
+	        
+	    rightPanel.add(subgroupNameLabel, gbc);
+
+	        RoundTextField enterSubgroupName = new RoundTextField(0);
+	        enterSubgroupName.setColumns(25);
+	        enterSubgroupName.setText("Enter the new name of group");
+	        enterSubgroupName.setForeground(Color.GRAY);
+	        enterSubgroupName.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // padding
+	        
+	        gbc.gridy++;
+	      
+	    rightPanel.add(enterSubgroupName, gbc);
+
+	        JLabel chooseColorLabel = new JLabel("Choose a color:");
+	        chooseColorLabel.setForeground(Color.WHITE);
+	        chooseColorLabel.setFont(smallFont);
+	        
+	        gbc.gridy++;
+	    
+	    rightPanel.add(chooseColorLabel, gbc);
+
+	    //panel containing colors to pick from
+        JPanel circlePanel = new JPanel(new GridLayout(2, 5, 5, 5));
+        circlePanel.setBackground(backgroundColor);
+
+	        for (int i = 0; i < subGroupNames.length; i++) {
+	            RoundButton colorCircle = new RoundButton("");
+	            colorCircle.setBackground(subGroupColors[i]);
+	            colorCircle.setPreferredSize(new Dimension((int) (0.035 * frameHeight), (int) (0.035 * frameHeight)));
+	            colorCircle.setBorder(null);
+	        circlePanel.add(colorCircle);
+	        }
+        
+        gbc.gridy++;
+
+        rightPanel.add(circlePanel, gbc);
+
+        //panel with the save changes & delete group buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(backgroundColor);
+
+	        RoundedButton saveChangesButton = new RoundedButton("Save");
+	        saveChangesButton.setPreferredSize(new Dimension(80, 30));
+	        buttonPanel.add(saveChangesButton);
+	
+	        RoundedButton deleteGroupButton = new RoundedButton("Delete");
+	        deleteGroupButton.setPreferredSize(new Dimension(80, 30));
+	        buttonPanel.add(deleteGroupButton);
+        
+        gbc.gridy++;
+
+        rightPanel.add(buttonPanel, gbc);
+
+        subgroupPanel.add(rightPanel, BorderLayout.CENTER);
+
+        return subgroupPanel;
     
-    
+    }
     
     
     //moves starting point of components based on window size
