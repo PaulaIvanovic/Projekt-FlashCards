@@ -24,6 +24,8 @@ import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
@@ -59,6 +61,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import services.Register;
 
 public class RegisterPage extends JFrame implements GlobalDesign{
 
@@ -283,8 +287,8 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 
 
         //message these fields can not be empty
-      	JLabel lblNewLabel_3 = new JLabel("* these fields can not be empty");
-      	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.565), (int)(desiredWidth * 0.315), (int)(desiredHeight * 0.035));
+      	JLabel lblNewLabel_3 = new JLabel("");
+      	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.565), (int)(desiredWidth * 0.7), (int)(desiredHeight * 0.035));
       	panel_1.add(lblNewLabel_3);
       	lblNewLabel_3.setFont(tinyFont);
       	lblNewLabel_3.setForeground(textRed);
@@ -300,16 +304,39 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		//register button function
 		RoundedButton registerBtn = new RoundedButton("Register");
 		registerBtn.setFont(buttonText);
-		registerBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.6), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
+		registerBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.61), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
         panel_1.add(registerBtn);
 		registerBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				PopUpWindow popUp = new PopUpWindow("Currently unavailable", (int)(desiredWidth * 0.45), (int)(desiredHeight * 0.45));
-            	popUp.setVisible(true);
+				String username = user.getText();
+				String email = emailField.getText();
+				String password = new String(pass.getPassword());
+				Register r = new Register(username, password, email);
+				lblNewLabel_3.setText(r.AddUser());// calling register logic
+            	if (r.message.equals("Registration completed.")) {
+                    // Show message and then open the next window
+                    //JOptionPane.showMessageDialog(null, r.message, "Registration", JOptionPane.INFORMATION_MESSAGE);
+                    GroupOfCardsPage groupOfCardsPage = new GroupOfCardsPage();
+                    // Optionally, close the current window
+                    ((JFrame) SwingUtilities.getWindowAncestor(panel_1)).dispose();
+                } 
 			}
 		});
 		registerBtn.setForeground(Color.BLACK);
 		
+		
+		// ActionListener for text fields
+        ActionListener textFieldListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Trigger button click event when Enter is pressed in any text field
+            	registerBtn.doClick();
+            }
+        };
+        
+        pass.addActionListener(textFieldListener);
+        user.addActionListener(textFieldListener);
+        emailField.addActionListener(textFieldListener);
 		
 		//login button function
 		RoundedButton loginBtn = new RoundedButton("Login");

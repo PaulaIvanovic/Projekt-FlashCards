@@ -1,7 +1,7 @@
 package views;
-
 import java.awt.Color;
 import java.awt.Font;
+
 
 
 public interface GlobalDesign {
@@ -42,9 +42,52 @@ public interface GlobalDesign {
             "5.jpg",
             "6.jpg"
         };
+	public String defaultGroupName = "Default";
+	public String defaultGroupColor = "0xFFFFFF";
 	
 	//colors representing groups in group of cards display
-	public Color[] groupColors = {new Color(0x8CB459), 
+	public Color[] groupColorOptions = {
+			new Color(0x2662E8),  //blue 1
+			new Color(0x5148FF), //blue 2
+			new Color(0x9391f6), //pastel purple
+			new Color(0xD068FA), //purple
+			new Color(0xFF5899), //dark pink
+			new Color(0xFF5454), //coral
+			new Color(0xFF0303), //red
+			new Color(0xFF5400), //orange
+			new Color(0xFFA030), //pastel orange
+			new Color(0xEFE078), //pastel yellow		
+			new Color(0xF8EE02), //yellow
+			new Color(0x8CB459), //olive
+			new Color(0x00bf63), //green
+			new Color(0x67E1A7), //turquoise
+			new Color(0x71D3DD), //aqua
+			new Color(0xFFFFFF), //white
+			};
+
+	
+	public Color[] subGroupColors = {new Color(0x8CB459), 
+			new Color(0x9391f6),
+			new Color(0xFF5454),
+			new Color(0xEFE078),
+			new Color(0xEFE078),
+			new Color(0x8CB459), 
+			new Color(0x9391f6),
+			new Color(0xFF5454),
+			new Color(0xEFE078)
+	};
+	
+	public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4",
+			"Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"
+	};     
+
+	public String[] cardQuestion = {"", "Tko ide u kino neka ide slobodno, tko ne ide ne može ići.", 
+			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii.", "SubGroup3", "Subgroup4", 
+			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii.", 
+			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii."
+	};   
+
+	public Color[] cardQuestionColors = {new Color(0x8CB459), 
 			new Color(0x9391f6),
 			new Color(0xFF5454),
 			new Color(0xEFE078),
@@ -56,19 +99,12 @@ public interface GlobalDesign {
 			new Color(0x67E1A7),
 			new Color(0x9391f6),
 			new Color(0xFF5454),
-			new Color(0xEFE078),
 			new Color(0x71D3DD), 
 			new Color(0xD068FA),
-			new Color(0xD068FA),
-			new Color(0xFFA030),
-			new Color(0xFF5899),
 			new Color(0x5148FF),
 			new Color(0x67E1A7),
 			new Color(0x9391f6),
 			new Color(0xD068FA),
-			new Color(0xD068FA),
-			new Color(0xFFA030),
-			new Color(0xEFE078),
 			new Color(0x71D3DD),
 			new Color(0xEFE078),
 			new Color(0x71D3DD), 
@@ -116,5 +152,7 @@ public interface GlobalDesign {
 	};
 	
 	public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"};      
+			};
 		
 }
+

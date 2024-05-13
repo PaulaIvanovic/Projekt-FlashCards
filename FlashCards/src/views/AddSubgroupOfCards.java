@@ -11,10 +11,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,17 +28,19 @@ import databaseInfo.UserInfo;
 
 
 
-public class AddGroupOfCards extends JFrame implements GlobalDesign{
+public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField groupName;
+	private JTextField groupName, generateSubgroup;
+	
 	public String chosenColor;
+	String fileName;
 	
 	ScreenDimensions dimensions = new ScreenDimensions();
 
 
-	public AddGroupOfCards(GroupOfCardsPage parent) {
+	public AddSubgroupOfCards(SubgroupOfCardsPage parent) {
 		//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -49,7 +53,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 	  
         // Set the custom title bar
         setUndecorated(true);
-        setTitle("NEW GROUP");
+        setTitle("NEW SUBGROUP");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(0, 0, desiredWidth, desiredHeight);
         setUndecorated(true);
@@ -76,7 +80,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 		WindowElementResize.getFontForWindowSize(desiredHeight);
 		
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel(" New group");      
+		JLabel mainTitleLabel = new JLabel(" New subgroup");      
 		mainTitleLabel.setFont(WindowElementResize.mainTitle);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -96,7 +100,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
             public void actionPerformed(ActionEvent e) {
             	parent.updateView();
             	parent.setVisible(true);
-                dispose();
+            	dispose();
             }
         });
 		tbPane.add(exitButton);
@@ -111,50 +115,112 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         centerPanel.setBackground(new Color(69, 62, 130));
         centerPanel.setLayout(null);
         
-        //adding label for group name
-        JLabel lblGroupName = new JLabel("Group name:");
+        //adding label for subgroup name
+        JLabel lblGroupName = new JLabel("Subroup name:");
         lblGroupName.setFont(secFont);
         lblGroupName.setForeground(Color.WHITE);
-        lblGroupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.03), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
+        lblGroupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.025), (int)(desiredWidth*0.3), (int)(desiredHeight*0.075));
         centerPanel.add(lblGroupName);
         
         //group name input
         groupName = new RoundTextField(0);
         groupName.setFont(inputText);
-        groupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.16), (int)(desiredWidth*0.8), (int)(desiredHeight*0.085));
-        groupName.setText("Enter group name");
+        groupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.11), (int)(desiredWidth*0.8), (int)(desiredHeight*0.075));
+        groupName.setText("Enter subgroup name");
         
-        //text inside of name field
+        //text inside of username field
         groupName.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
-                if (groupName.getText().equals("Enter group name")) {
+                if (groupName.getText().equals("Enter subgroup name")) {
                 	groupName.setText(""); 
                 }
             }
 
             public void focusLost(FocusEvent e) {
                 if (groupName.getText().isEmpty()) {
-                	groupName.setText("Enter group name");
+                	groupName.setText("Enter subgroup name");
                 }
             }
         });
         centerPanel.add(groupName);
         
-        //adding label for group color
-        JLabel lblGroupColor = new JLabel("Choose group color:");
+        //adding label for subgroup color
+        JLabel lblGroupColor = new JLabel("Choose subgroup color:");
         lblGroupColor.setFont(secFont);
         lblGroupColor.setForeground(Color.WHITE);
-        lblGroupColor.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.29), (int)(desiredWidth*0.33), (int)(desiredHeight*0.085));
+        lblGroupColor.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.22), (int)(desiredWidth*0.43), (int)(desiredHeight*0.075));
         centerPanel.add(lblGroupColor);
         
         // Create an instance of ColorfulButtons
         ColorfulButtons colorfulButtons = new ColorfulButtons();
-        colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.39), (int)(desiredWidth*0.93), (int)(desiredHeight*0.3)); // Adjust the bounds as needed
+        colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.3), (int)(desiredWidth*0.93), (int)(desiredHeight*0.3)); // Adjust the bounds as needed
         centerPanel.add(colorfulButtons);
+        
+        //adding label for generating subgroups
+        JLabel lblGenerate = new JLabel("Generate automatic subgroup from file:");
+        lblGenerate.setFont(secFont);
+        lblGenerate.setForeground(Color.WHITE);
+        lblGenerate.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.575), (int)(desiredWidth*0.75), (int)(desiredHeight*0.085));
+        centerPanel.add(lblGenerate);
+        
+        //group name input
+        generateSubgroup = new RoundTextField(0);
+        generateSubgroup.setFont(inputText);
+        generateSubgroup.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.675), (int)(desiredWidth*0.6), (int)(desiredHeight*0.075));
+        generateSubgroup.setText("Insert file name");
+        
+        generateSubgroup.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                if (generateSubgroup.getText().equals("Insert file name")) {
+                	generateSubgroup.setText(""); 
+                }
+            }
+            public void focusLost(FocusEvent e) {
+                if (generateSubgroup.getText().isEmpty()) {
+                	generateSubgroup.setText("Insert file name");
+                }
+            }
+        });
+        
+        generateSubgroup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fileName = generateSubgroup.getText(); // update fileName when text is entered or changed
+            }
+        });
+        centerPanel.add(generateSubgroup);
+        
+        // button load
+        RoundedButton btnLoad = new RoundedButton("Load");
+        btnLoad.setFont(smallFont);
+        btnLoad.setForeground(Color.BLACK);
+        btnLoad.setBackground(new Color(248, 248, 255));
+        btnLoad.setBounds((int)(desiredWidth*0.7), (int)(desiredHeight*0.675), (int)(desiredWidth*0.15), (int)(desiredHeight*0.075));
+        
+        btnLoad.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Create a new file chooser instance
+                JFileChooser fileChooser = new JFileChooser();
+
+                // Show open dialog to select a file
+                int result = fileChooser.showOpenDialog(AddSubgroupOfCards.this);
+
+                // Check if a file is selected
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    // Get the selected file
+                    File selectedFile = fileChooser.getSelectedFile();
+                    // Process the selected file (e.g., display its path)
+                    JOptionPane.showMessageDialog(AddSubgroupOfCards.this, "Selected file: " + selectedFile.getAbsolutePath());
+                    //saving in string
+                    generateSubgroup.setText(selectedFile.getName());
+                }
+            }
+        });
+        
+        centerPanel.add(btnLoad);
         
         //message "these fields can not be empty"
       	JLabel lblInfo = new JLabel("");
-      	lblInfo.setBounds((int)(desiredWidth * 0.03), (int)(desiredHeight * 0.725), (int)(desiredWidth * 0.5), (int)(desiredHeight * 0.04));
+      	lblInfo.setBounds((int)(desiredWidth * 0.03), (int)(desiredHeight * 0.75), (int)(desiredWidth * 0.5), (int)(desiredHeight * 0.04));
       	centerPanel.add(lblInfo);
       	lblInfo.setFont(tinyFont);
       	lblInfo.setForeground(textRed);
@@ -164,12 +230,12 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         btnSave.setFont(smallFont);
         btnSave.setForeground(Color.BLACK);
         btnSave.setBackground(new Color(248, 248, 255));
-        btnSave.setBounds((int)(desiredWidth*0.62), (int)(desiredHeight*0.76), (int)(desiredWidth*0.17), (int)(desiredHeight*0.085));
+        btnSave.setBounds((int)(desiredWidth*0.62), (int)(desiredHeight*0.76), (int)(desiredWidth*0.15), (int)(desiredHeight*0.075));
         centerPanel.add(btnSave);
         btnSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	if(checkSelection()) {
-            		UserInfo.addGroup(groupName.getText(), chosenColor);
+            		UserInfo.addsubGroup(groupName.getText(), chosenColor, parent.name);
             		parent.updateView();
             		parent.setVisible(true);
                 	dispose();
@@ -179,7 +245,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
             }
 
 			private boolean checkSelection() {
-				if(groupName.getText() == "" || groupName.getText().equalsIgnoreCase("Enter group name") || groupName.getText() == null || chosenColor == null) {
+				if(groupName.getText() == "" || groupName.getText().equalsIgnoreCase("Enter subgroup name") || groupName.getText() == null || chosenColor == null) {
 					return false;
 				}
 				return true;
@@ -190,7 +256,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         btnCancel.setFont(smallFont);
         btnCancel.setForeground(Color.BLACK);
         btnCancel.setBackground(new Color(248, 248, 255));
-        btnCancel.setBounds((int)(desiredWidth*0.8), (int)(desiredHeight*0.76), (int)(desiredWidth*0.17), (int)(desiredHeight*0.085));
+        btnCancel.setBounds((int)(desiredWidth*0.8), (int)(desiredHeight*0.76), (int)(desiredWidth*0.15), (int)(desiredHeight*0.075));
         centerPanel.add(btnCancel);
         btnCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -240,12 +306,12 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
 	    
 	}
 	
-	/*
+/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddGroupOfCards frame = new AddGroupOfCards();
+					AddSubgroupOfCards frame = new AddSubgroupOfCards(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
