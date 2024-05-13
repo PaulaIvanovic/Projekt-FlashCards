@@ -310,8 +310,8 @@ public class EditCards extends JFrame implements GlobalDesign {
 
         // Increase the dimensions for larger panels
         int enlargedWidth = (int) (rectangleWidth * 5);
-        int enlargedHeight = (int) (rectangleHeight * 1.3);
-
+        int enlargedHeight = (int) (rectangleHeight * 1.3); 
+        
         JPanel groupPanel = new JPanel(new GridLayout(numRows, numCols, horizontalGap, horizontalGap)); // panel for 1 group, divided into 3 sides
         groupPanel.setBackground(backgroundColor);
 
