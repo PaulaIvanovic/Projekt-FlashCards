@@ -41,6 +41,7 @@ import views.AddCardsManual.ColorfulButtons;
 public class EditCards extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
 	private JPanel contentPane;
+	private RoundTextField qInput, aInput;
     
     private final int HORIZONTAL_GAP_PERCENTAGE = 2; 
     
@@ -271,24 +272,29 @@ public class EditCards extends JFrame implements GlobalDesign {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(15, 15, 15, 15);
+        gbc.anchor = GridBagConstraints.CENTER; // Align components to the center
         
         
-        int numCols = Math.min(groupNames.length, 2);
+        //int numCols = Math.min(groupNames.length, 2);
+        int numCols = 3;
         int colCounter = 0;
         
+        // Calculate the number of rows needed based on the number of groups
+        int numRows = (int) Math.ceil((double) groupNames.length / 3);
+       
+        
         for (int i = 1; i < groupNames.length; i++) {
-            JPanel groupPanel = createCardsPanel(groupNames[i], groupColors[i]);         
-            
-            editCardsPanel.add(groupPanel, gbc);
-            gbc.gridx++;
-            colCounter++;
-            
-            // if maximum number of columns reached, move to next row
-            if (colCounter == numCols) {
-                colCounter = 0;
-                gbc.gridx = 0;
-                gbc.gridy++;
+        	 JPanel groupPanel = createCardsPanel(groupNames[i], groupColors[i]);
+
+             // Add the panel to the main panel using GridBagConstraints
+             editCardsPanel.add(groupPanel, gbc);
+
+             // Update GridBagConstraints for next panel
+             gbc.gridx++;
+             if (gbc.gridx == 3) { // If three panels have been added, move to the next row
+                 gbc.gridx = 0;
+                 gbc.gridy++;
             }
         }
 
@@ -309,8 +315,8 @@ public class EditCards extends JFrame implements GlobalDesign {
         int rectangleHeight = (frameHeight - (numRows) * horizontalGap) / numRows;
 
         // Increase the dimensions for larger panels
-        int enlargedWidth = (int) (rectangleWidth * 5);
-        int enlargedHeight = (int) (rectangleHeight * 1.3); 
+        int enlargedWidth = (int) (rectangleWidth * 6);
+        int enlargedHeight = (int) (rectangleHeight * 1.2); 
         
         JPanel groupPanel = new JPanel(new GridLayout(numRows, numCols, horizontalGap, horizontalGap)); // panel for 1 group, divided into 3 sides
         groupPanel.setBackground(backgroundColor);
@@ -328,10 +334,10 @@ public class EditCards extends JFrame implements GlobalDesign {
             panel.add(lblQ);
 
             // Create a text field
-            RoundTextField qInput = new RoundTextField(30); // Adjust the column count as needed
+            qInput = new RoundTextField(40); // Adjust the column count as needed
             qInput.setFont(inputText);
             qInput.setText("Enter your question");
-            qInput.setPreferredSize(new Dimension(enlargedWidth, 50)); // Set the preferred size of the text field
+            qInput.setPreferredSize(new Dimension(enlargedWidth, 80)); // Set the preferred size of the text field
             // Text inside of the username field
             qInput.addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent e) {
@@ -355,10 +361,10 @@ public class EditCards extends JFrame implements GlobalDesign {
             panel.add(lblA);
 
             // Create a text field
-            RoundTextField aInput = new RoundTextField(30); // Adjust the column count as needed
+            aInput = new RoundTextField(40); // Adjust the column count as needed
             aInput.setFont(inputText);
             aInput.setText("Enter your question");
-            aInput.setPreferredSize(new Dimension(enlargedWidth, 100)); // Set the preferred size of the text field
+            aInput.setPreferredSize(new Dimension(enlargedWidth, 160)); // Set the preferred size of the text field
             // Text inside of the username field
             aInput.addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent e) {
@@ -386,20 +392,27 @@ public class EditCards extends JFrame implements GlobalDesign {
             //colorfulButtons.setBounds((int)(desiredWidth*0.33), (int)(desiredHeight*0.65), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
             panel.add(colorfulButtons);
             
-            // Add Save and Cancel buttons
+            // Add Save and Delete buttons
+            JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); // FlowLayout for label and text field
+            panelButtons.setPreferredSize(new Dimension(enlargedWidth, enlargedHeight));
+            panelButtons.setBackground(groupColor); // Set individual group color if needed
+            panel.add(panelButtons);
+            
             RoundedButton btnSave = new RoundedButton("Save");
             btnSave.setFont(smallFont);
             btnSave.setForeground(Color.BLACK);
             btnSave.setBackground(new Color(248, 248, 255));
             btnSave.setPreferredSize(new Dimension(95, 35));
-            panel.add(btnSave);
+            panelButtons.add(btnSave);
 
-            RoundedButton btnCancel = new RoundedButton("Cancel");
-            btnCancel.setFont(smallFont);
-            btnCancel.setForeground(Color.BLACK);
-            btnCancel.setBackground(new Color(248, 248, 255));
-            btnCancel.setPreferredSize(new Dimension(95, 35));
-            panel.add(btnCancel);
+            RoundedButton btnDelete = new RoundedButton("Cancel");
+            btnDelete.setFont(smallFont);
+            btnDelete.setForeground(Color.BLACK);
+            btnDelete.setBackground(new Color(248, 248, 255));
+            btnDelete.setPreferredSize(new Dimension(95, 35));
+            panelButtons.add(btnDelete);
+            
+            
             
 
             groupPanel.add(panel);
