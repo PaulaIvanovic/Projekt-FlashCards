@@ -157,7 +157,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 		
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel("Groups of cards - edit");      
+		JLabel mainTitleLabel = new JLabel("Editing - My groups");      
 		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -412,7 +412,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
                     circleButton.addActionListener(e -> {
                         Color buttonColor = circleButton.getBackground();
                         groupOfCards.setBackground(buttonColor);
-;
+
 	    		        UserInfo.changeGroupColor(groupOfCards.help, buttonColor);
                     });
                 }

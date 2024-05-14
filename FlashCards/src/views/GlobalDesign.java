@@ -6,7 +6,7 @@ import java.awt.Font;
 
 public interface GlobalDesign {
 	ScreenDimensions dimensions = new ScreenDimensions();
-	public int charLimit = 40;
+	public int charLimit = 45;
 
 	public Color backgroundColor = new Color(68,62,130);
 	public Color toolbarColor = new Color(31,0,57);

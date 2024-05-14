@@ -59,8 +59,6 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 
     public SubgroupOfCardsPage(int x, int y, int width, int height, String name) {
     	this.name = name;
-    	//get parent group ID
-    	UserInfo.getGroupID(name);
     	UserInfo.getSubgroups();
     	//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
@@ -157,7 +155,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel("Group: " + name);      
+		JLabel mainTitleLabel = new JLabel("Group - " + name);      
 		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -193,6 +191,13 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		editButton.setButtonIcon("icons/EditIcon.png",  buttonDimension, buttonDimension);
 		editButton.setBorder(null);
 		buttonPanel.add(editButton);
+		editButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EditSubgroupPage editGroup = new EditSubgroupPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight, name);
+				dispose();
+				editGroup.setVisible(true);
+			}
+		});
 		
 
 		//add new group button in toolbar

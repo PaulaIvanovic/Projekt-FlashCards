@@ -15,6 +15,7 @@ public class UserInfo implements GlobalDesign{
 	public static ArrayList<String> groupIDs;
 	public static ArrayList<Color> subGroupColors;
 	public static ArrayList<String> subGroupNames;
+	public static ArrayList<String> subGroupIDs;
 	public static Crude crude;
 	
 	public UserInfo(String username, boolean newUser) {
@@ -24,6 +25,7 @@ public class UserInfo implements GlobalDesign{
 		 groupIDs = new ArrayList<>();
 		 subGroupColors = new ArrayList<>();
 		 subGroupNames = new ArrayList<>();
+		 subGroupIDs = new ArrayList<>();
 		 
 		 //get user info
 		 PullFrom u = new PullFrom("user","username", username);
@@ -68,11 +70,13 @@ public class UserInfo implements GlobalDesign{
 	public static void getSubgroups() {
 		subGroupNames.clear();
 		subGroupColors.clear();
+		subGroupIDs.clear();
 		PullFrom subgroupInfo = new PullFrom("subgroup","idgroup", groupID);
 		try {
 			 while(subgroupInfo.rs.next()) {
 				 subGroupNames.add(subgroupInfo.rs.getString("name"));
 				 subGroupColors.add(Color.decode(subgroupInfo.rs.getString("boja")));
+				 subGroupIDs.add(subgroupInfo.rs.getString("idsubgroup"));
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -89,7 +93,7 @@ public class UserInfo implements GlobalDesign{
 		}
 	}
 	
-	public static void addsubGroup(String name, String chosenColor, String group) {
+	public static void addsubGroup(String name, String chosenColor) {
 		try {
 			crude.create("subgroup", name, chosenColor, groupID);
 			getSubgroups();
@@ -130,6 +134,21 @@ public class UserInfo implements GlobalDesign{
 		}
 	}
 	
+	public static void changesubGroupColor(String sgrID, Color newColor) {
+		int index = subGroupIDs.indexOf(sgrID);
+		if(index > -1) {
+			subGroupColors.set(index, newColor);	
+		}
+	}
+
+
+	public static void changesubGroupName(String sgrID, String newName) {
+		int index = subGroupIDs.indexOf(sgrID);
+		if(index > -1) {
+			subGroupNames.set(index, newName);	
+		}
+	}
+	
 	public static void saveEditAllGroups() {
 		for(int i = 0; i < groupIDs.size(); i++) {
 			int red = groupColors.get(i).getRed();
@@ -140,6 +159,20 @@ public class UserInfo implements GlobalDesign{
 	        
 			crude.update("grupa", "boja", "idgroup", groupIDs.get(i), newColor);
 			crude.update("grupa", "name", "idgroup", groupIDs.get(i), groupNames.get(i));
+		}
+	}
+	
+
+	public static void saveEditAllSubgroups() {
+		for(int i = 0; i < subGroupIDs.size(); i++) {
+			int red = subGroupColors.get(i).getRed();
+	        int green = subGroupColors.get(i).getGreen();
+	        int blue = subGroupColors.get(i).getBlue();
+	        // Convert the RGB values to hexadecimal format
+	        String newColor = String.format("0x%02X%02X%02X", red, green, blue);
+	        
+			crude.update("subgroup", "boja", "idsubgroup", subGroupIDs.get(i), newColor);
+			crude.update("subgroup", "name", "idsubgroup", subGroupIDs.get(i), subGroupNames.get(i));
 		}
 	}
 	
@@ -157,10 +190,31 @@ public class UserInfo implements GlobalDesign{
 		}
 	}
 	
+	public static void saveEditsubGroup(String grID) {
+		int index = groupIDs.indexOf(grID);
+		if(index > -1) {
+			int red = subGroupColors.get(index).getRed();
+	        int green = subGroupColors.get(index).getGreen();
+	        int blue = subGroupColors.get(index).getBlue();
+	        // Convert the RGB values to hexadecimal format
+	        String newColor = String.format("0x%02X%02X%02X", red, green, blue);
+	        
+			crude.update("subgroup", "boja", "idsubgroup", subGroupIDs.get(index), newColor);
+			crude.update("subgroup", "name", "idsubgroup", subGroupIDs.get(index), subGroupNames.get(index));
+		}
+	}
+	
 	public static void deleteGroup(String grID) {
 		crude.delete("grupa", "idgroup", grID);
 		getGroups();
 	}
+
+
+	public static void deleteSubgroup(String sgrID) {
+		crude.delete("subgroup", "idsubgroup", sgrID);
+		getSubgroups();
+	}
+
 
 
 }

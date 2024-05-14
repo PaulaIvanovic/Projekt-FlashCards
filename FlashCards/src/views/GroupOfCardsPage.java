@@ -262,11 +262,12 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
             groupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height to 200
             
             String name = UserInfo.groupNames.get(i);
-            Color color = UserInfo.groupColors.get(i);
+            int position = i;
             
             //listens for clicks on group to open its page
             groupOfCards.addActionListener(new ActionListener() {
     			public void actionPerformed(ActionEvent e) {
+    				UserInfo.groupID = UserInfo.groupIDs.get(position);
     				SubgroupOfCardsPage subGroup = new SubgroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight, name);
     				dispose();
     			}
