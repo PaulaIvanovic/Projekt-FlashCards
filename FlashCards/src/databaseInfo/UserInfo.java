@@ -116,7 +116,6 @@ public class UserInfo implements GlobalDesign{
 
 
 	public static void changeGroupColor(String grID, Color newColor) {
-		System.out.println(grID + " " + newColor);
 		int index = groupIDs.indexOf(grID);
 		if(index > -1) {
 			groupColors.set(index, newColor);	
@@ -125,7 +124,6 @@ public class UserInfo implements GlobalDesign{
 
 
 	public static void changeGroupName(String grID, String newName) {
-		System.out.println(grID + " " + newName);
 		int index = groupIDs.indexOf(grID);
 		if(index > -1) {
 			groupNames.set(index, newName);	
@@ -157,6 +155,11 @@ public class UserInfo implements GlobalDesign{
 			crude.update("grupa", "boja", "idgroup", groupIDs.get(index), newColor);
 			crude.update("grupa", "name", "idgroup", groupIDs.get(index), groupNames.get(index));	
 		}
+	}
+	
+	public static void deleteGroup(String grID) {
+		crude.delete("grupa", "idgroup", grID);
+		getGroups();
 	}
 
 

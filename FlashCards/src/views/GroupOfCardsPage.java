@@ -256,7 +256,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         //add groups to the panel
         for (int i = 0; i < UserInfo.groupNames.size(); i++) {
             RoundedButton groupOfCards = new RoundedButton("");
-            groupOfCards.setMultiLineButtonText(UserInfo.groupNames.get(i));
+            groupOfCards.setText(UserInfo.groupNames.get(i));
             groupOfCards.setBackground(UserInfo.groupColors.get(i));
             groupOfCards.setFont(WindowElementResize.mediumFont);
             groupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height to 200
@@ -297,8 +297,8 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     
 	//updates sizes of elements and window
 	public void updateView() {
-		 START_X = (int)(windowWidth * 0.05);
-		 START_Y = (int)(windowHeight * 0.175); 
+		START_X = (int)(windowWidth * 0.05);
+		START_Y = (int)(windowHeight * 0.175); 
 		windowCreate();
 	}
 	

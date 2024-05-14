@@ -157,7 +157,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel(name);      
+		JLabel mainTitleLabel = new JLabel("Group: " + name);      
 		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);

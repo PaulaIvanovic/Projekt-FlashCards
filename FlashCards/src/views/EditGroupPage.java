@@ -278,7 +278,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 
             // Rectangle representing group
             RoundedButton groupOfCards = new RoundedButton("");
-            groupOfCards.setMultiLineButtonText(groupName);
+            groupOfCards.setText(groupName);
             groupOfCards.help = ID;
             groupOfCards.setBackground(groupColor);
             groupOfCards.setFont(WindowElementResize.mediumFont);
@@ -292,12 +292,20 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.anchor = GridBagConstraints.WEST;
             gbc.insets = new Insets(5, 0, 6, 0); // vertical gap between components
+            
+            //message 
+          	JLabel lblNewLabel_3 = new JLabel("");
+          	lblNewLabel_3.setFont(tinyFont);
+          	lblNewLabel_3.setForeground(textRed);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            rightPanel.add(lblNewLabel_3, gbc);
 
             JLabel groupNameLabel = new JLabel("Group name:");
             groupNameLabel.setForeground(Color.WHITE);
             groupNameLabel.setFont(smallFont);
             gbc.gridx = 0;
-            gbc.gridy = 0;
+            gbc.gridy = 1;
             rightPanel.add(groupNameLabel, gbc);
             
             
@@ -309,7 +317,6 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             enterGroupNameField.setText("Enter the new name of group");
             enterGroupNameField.setForeground(Color.GRAY);
             enterGroupNameField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // padding
-            
 
             
             //to change the text when clicked on input field
@@ -334,20 +341,37 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             enterGroupNameField.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e){
+                	boolean backspace = e.getKeyCode() == KeyEvent.VK_BACK_SPACE;
+                	String inputText = enterGroupNameField.getText();
                 	// Set the text with the key typed
                     char keyChar = e.getKeyChar();
-                    if (Character.isLetterOrDigit(keyChar)  || isSpecialCharacter(keyChar)) {
-                        String text = String.valueOf(keyChar);
-                        groupOfCards.setMultiLineButtonText(enterGroupNameField.getText() + text);
-                    } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                        String currentText = enterGroupNameField.getText();
-                        if (!currentText.isEmpty()) {
-                            // Remove the last character
-                            currentText = currentText.substring(0, currentText.length() - 1);
-                            groupOfCards.setMultiLineButtonText(currentText);
-                        }
+                    int totalChar = enterGroupNameField.getText().length();
+                    if(totalChar < charLimit && !backspace) {
+                    	lblNewLabel_3.setText("");
+                    	if (Character.isLetterOrDigit(keyChar)  || isSpecialCharacter(keyChar)) {
+                    		String text = String.valueOf(keyChar);
+                    		groupOfCards.setText(inputText + text);
+                    	}
+                    	UserInfo.changeGroupName(groupOfCards.help, groupOfCards.getText());
+                    }else if (backspace) {
+                    	lblNewLabel_3.setText("");
+                    	if (!inputText.isEmpty()) {
+                    		// Remove the last character
+                    		inputText = inputText.substring(0, inputText.length() - 1);
+                    	}
+                		if(inputText.length() <= charLimit) {
+                			groupOfCards.setText(inputText);
+                			UserInfo.changeGroupName(groupOfCards.help, groupOfCards.getText());
+                		}
+                    }else {
+                    	if(inputText.length() > charLimit) {
+                    		//user tries to go over the limit, dont show letters
+                    		// Remove the last character
+                    		inputText = inputText.substring(0, inputText.length() - 1);
+                    	}
+                    	enterGroupNameField.setText(inputText);
+                    	lblNewLabel_3.setText("Group name is too long");
                     }
-                    UserInfo.changeGroupName(groupOfCards.help, groupOfCards.getText());
                 }
                 
                 private boolean isSpecialCharacter(char c) {
@@ -406,6 +430,16 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             deleteGroupButton.setFont(buttonText);
             deleteGroupButton.setPreferredSize(new Dimension((int)(windowWidth*0.075), (int)(windowWidth*0.0175)));
             buttonPanel.add(deleteGroupButton);
+            deleteGroupButton.addActionListener(new ActionListener() {
+            	public void actionPerformed(ActionEvent e) {
+            		UserInfo.deleteGroup(groupOfCards.help);
+            		contentPane.removeAll();
+            		//add your elements
+                    contentPane.revalidate();
+                    contentPane.repaint();
+            		updateView();
+            	}
+            });
 
             RoundedButton saveChangesButton = new RoundedButton("Save");
             saveChangesButton.setFont(buttonText);
@@ -414,14 +448,18 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             saveChangesButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                	lblNewLabel_3.setText("");
                     // retrieve the text from the input field
-                    String newName = enterGroupNameField.getText(); 
+                    String newName = enterGroupNameField.getText();
+                    if(newName.length() > charLimit) {
+                    	newName = newName.substring(0, charLimit);
+                    }
                     if(newName.equalsIgnoreCase("Enter the new name of group") || newName.isEmpty()) {
                     	PopUpWindow info = new PopUpWindow("WARNING", "Warning: Group name is missing.",(int) (windowWidth*0.2), (int)(windowHeight*0.35));
                     	info.setVisible(true);
                     }else {
                     	// set the new name to the groupOfCards
-                    	groupOfCards.setMultiLineButtonText(newName);
+                    	groupOfCards.setText(newName);
                     	// clear the input field
                     	enterGroupNameField.setText("");
                     	enterGroupNameField.setForeground(Color.GRAY);
