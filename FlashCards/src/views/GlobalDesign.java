@@ -7,6 +7,8 @@ import java.awt.Font;
 public interface GlobalDesign {
 	ScreenDimensions dimensions = new ScreenDimensions();
 	public int charLimit = 45;
+	public int cardQcharLimit = 150;
+	public int cardAcharLimit = 400;
 
 	public Color backgroundColor = new Color(68,62,130);
 	public Color toolbarColor = new Color(31,0,57);
@@ -66,48 +68,6 @@ public interface GlobalDesign {
 			new Color(0xFFFFFF), //white
 			};
 
-	
-	public Color[] subGroupColors = {new Color(0x8CB459), 
-			new Color(0x9391f6),
-			new Color(0xFF5454),
-			new Color(0xEFE078),
-			new Color(0xEFE078),
-			new Color(0x8CB459), 
-			new Color(0x9391f6),
-			new Color(0xFF5454),
-			new Color(0xEFE078)
-	};
-	
-	public String[] subGroupNames = {"", "Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4",
-			"Subgroup1", "SubGroup2", "SubGroup3", "Subgroup4"
-	};     
 
-	public String[] cardQuestion = {"", "Tko ide u kino neka ide slobodno, tko ne ide ne može ići.", 
-			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii.", "SubGroup3", "Subgroup4", 
-			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii.", 
-			"Tko ide u kino neka ide slobodno, tko ne ide ne može ićiiiiiii."
-	};   
-
-	public Color[] cardQuestionColors = {new Color(0x8CB459), 
-			new Color(0x9391f6),
-			new Color(0xFF5454),
-			new Color(0xEFE078),
-			new Color(0x71D3DD), 
-			new Color(0xD068FA),
-			new Color(0xFFA030),
-			new Color(0xFF5899),
-			new Color(0x5148FF),
-			new Color(0x67E1A7),
-			new Color(0x9391f6),
-			new Color(0xFF5454),
-			new Color(0x71D3DD), 
-			new Color(0xD068FA),
-			new Color(0x5148FF),
-			new Color(0x67E1A7),
-			new Color(0x9391f6),
-			new Color(0xD068FA),
-			new Color(0x71D3DD),
-			};
-		
 }
 

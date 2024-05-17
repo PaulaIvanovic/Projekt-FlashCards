@@ -352,7 +352,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
                     		String text = String.valueOf(keyChar);
                     		groupOfCards.setText(inputText + text);
                     	}
-                    	UserInfo.changeGroupName(groupOfCards.help, groupOfCards.getText());
+                    	UserInfo.changeGroupName(groupOfCards.help, inputText + String.valueOf(keyChar));
                     }else if (backspace) {
                     	lblNewLabel_3.setText("");
                     	if (!inputText.isEmpty()) {
@@ -361,7 +361,7 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
                     	}
                 		if(inputText.length() <= charLimit) {
                 			groupOfCards.setText(inputText);
-                			UserInfo.changeGroupName(groupOfCards.help, groupOfCards.getText());
+                			UserInfo.changeGroupName(groupOfCards.help, inputText);
                 		}
                     }else {
                     	if(inputText.length() > charLimit) {

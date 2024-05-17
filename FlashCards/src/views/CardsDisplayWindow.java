@@ -27,6 +27,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import databaseInfo.UserInfo;
+
 
 public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
@@ -37,9 +39,10 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
     private final int MAX_RECTANGLE_HEIGHT = 150;
     private final int MAX_RECTANGLE_WIDTH = 300;
     
-	public int groupsPerPage;
 	public int START_X;
 	public int START_Y;
+	
+	public String name;
     
     int windowWidth;
     int windowHeight;
@@ -54,10 +57,11 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 	int previousHeight;
     
     public CardsDisplayWindow() {
-    	this(0,0,0,0);
+    	this(0,0,0,0, "");
     }
     
-    public CardsDisplayWindow(int x, int y, int width, int height) {
+    public CardsDisplayWindow(int x, int y, int width, int height, String name) {
+    	this.name = name;
     	//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -65,7 +69,7 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 
     	screenSize = new ScreenDimensions();
     	
-    	this.setTitle("SUBGROUP OF CARDS PAGE");
+    	this.setTitle("CARDS PAGE");
     	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	
     	this.setExtendedState(JFrame.MAXIMIZED_BOTH);		//window starts with maximum size
@@ -130,8 +134,11 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
             }
         });
     }
-    public void windowCreate() {
+
+
+	public void windowCreate() {
     	setVisible(true);
+    	UserInfo.getCards();
     	
         windowWidth = getWidth();
         windowHeight = getHeight();
@@ -152,7 +159,7 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 		
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel("Subgroup questions - Cards");      
+		JLabel mainTitleLabel = new JLabel("Subgroup - " + name);      
 		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -182,12 +189,19 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 		playButton.setBorder(null);
 		buttonPanel.add(playButton);
 		
-		//backbutton in toolbar
-		RoundButton backButton = new RoundButton("",buttonDimension ,buttonDimension );
-		backButton.setBackground(toolbarColor);
-		backButton.setButtonIcon("icons/ReturnArrowIcon.png",  buttonDimension, buttonDimension);
-		backButton.setBorder(null);
-		buttonPanel.add(backButton);
+		//return button in toolbar
+		RoundButton returnButton = new RoundButton("",buttonDimension ,buttonDimension );
+		returnButton.setBackground(toolbarColor);
+		returnButton.setButtonIcon("icons/ReturnArrowIcon.png",  buttonDimension, buttonDimension);
+		returnButton.setBorder(null);
+		buttonPanel.add(returnButton);
+		returnButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SubgroupOfCardsPage subGroup = new SubgroupOfCardsPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight, UserInfo.getname(true));
+				dispose();
+				subGroup.setVisible(true);
+			}
+		});
 		
 		//edit button in toolbar
 		RoundButton editButton = new RoundButton("",buttonDimension ,buttonDimension );
@@ -195,14 +209,29 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 		editButton.setButtonIcon("icons/EditIcon.png",  buttonDimension, buttonDimension);
 		editButton.setBorder(null);
 		buttonPanel.add(editButton);
+		
+		editButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EditCards editCards = new EditCards(xPositionWindow, yPositionWindow, windowWidth, windowHeight, name);
+				dispose();
+				editCards.setVisible(true);
+			}
+		});
 
 		//add new group button in toolbar
-		RoundButton addsubGroupButton = new RoundButton("",  buttonDimension, buttonDimension);
-		addsubGroupButton.setButtonIcon("icons/addIcon.png",  buttonDimension, buttonDimension);
-		addsubGroupButton.setBackground(toolbarColor);
-		addsubGroupButton.setForeground(backgroundColor);
-		addsubGroupButton.setBorder(null);
-		buttonPanel.add(addsubGroupButton);
+		RoundButton addCardButton = new RoundButton("",  buttonDimension, buttonDimension);
+		addCardButton.setButtonIcon("icons/addIcon.png",  buttonDimension, buttonDimension);
+		addCardButton.setBackground(toolbarColor);
+		addCardButton.setForeground(backgroundColor);
+		addCardButton.setBorder(null);
+		buttonPanel.add(addCardButton);
+		CardsDisplayWindow parent = this;
+		addCardButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AddCardsManual addCard = new AddCardsManual(parent);
+				addCard.setVisible(true);
+			}
+		});
 		
 		//settings button in toolbar
 		RoundButton settingsButton = new RoundButton("",buttonDimension,buttonDimension);
@@ -224,6 +253,7 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
+		userIcon.setEnabled(false);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
@@ -238,8 +268,8 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
     }
     
     public JPanel groupsCollection() {
-        JPanel groupsPanel = new JPanel(new GridBagLayout());
-        groupsPanel.setBackground(backgroundColor);
+        JPanel cardPanel = new JPanel(new GridBagLayout());
+        cardPanel.setBackground(backgroundColor);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -249,9 +279,15 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
         int frameWidth = windowWidth;
         int frameHeight = windowHeight;
         int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
-
+        
+        int help = 5;
         //calculates the number of rows and columns for the current page
-        int numCols = Math.min(cardQuestion.length, 5);
+        if(UserInfo.cardColors.size() > 0) {
+        	help = UserInfo.cardColors.size();
+        	//make sure it is not 0
+        }
+        
+        int numCols = Math.min(help, 5);
         int numRows = (numCols - 1) / 5 + 1;
 
         //calculates the width and height of each rectangle
@@ -261,21 +297,21 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
         
 
         //add groups to the panel
-        for (int i = 1; i < cardQuestion.length; i++) {
-        	 RoundedButton subGroupOfCards = new RoundedButton("<html><center>" + cardQuestion[i] + "</center></html>");
-             subGroupOfCards.setBackground(cardQuestionColors[i]);
-             subGroupOfCards.setFont(WindowElementResize.mediumFont); // Postavite font na željenu veličinu
-             subGroupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Postavite dimenzije
-             subGroupOfCards.setVerticalAlignment(SwingConstants.CENTER); // Centriraj tekst vertikalno
+        for (int i = 0; i < UserInfo.cardColors.size(); i++) {
+        	RoundedButton cardArea = new RoundedButton("");
+        	cardArea.setText(UserInfo.cardQuestion.get(i));
+        	cardArea.setBackground(UserInfo.cardColors.get(i));
+        	cardArea.setFont(WindowElementResize.mediumFont);
+        	cardArea.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height 
 
             
-            String name = cardQuestion[i];
-            Color color = cardQuestionColors[i];
+            String question = UserInfo.cardQuestion.get(i);
+            Color color = UserInfo.cardColors.get(i);
             
             //listens for clicks on group to open its page
-            subGroupOfCards.addMouseListener(new MouseAdapter() {
+            cardArea.addMouseListener(new MouseAdapter() {
     			public void mouseClicked(MouseEvent e) {
-    				new GroupPage(name, color).setVisible(true);;
+    				new GroupPage(question, color).setVisible(true);;
     			}
     		});
             
@@ -290,16 +326,16 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
                 gbc.insets = new Insets(10, 10, 10, 10); 
             }
 
-            groupsPanel.add(subGroupOfCards, gbc);
+            cardPanel.add(cardArea, gbc);
             gbc.gridx++;
             
             // start a new row after every 5 groups
-            if (i % 5 == 0) {
+            if ((i+1) % 5 == 0) {
                 gbc.gridx = 0;
                 gbc.gridy++;
             }
         }
-        return groupsPanel;
+        return cardPanel;
     }
     
 	//updates sizes of elements and window
@@ -350,11 +386,12 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 				}
 	}
 
+	/*
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    CardsDisplayWindow frame = new CardsDisplayWindow(0, 0, 0, 0);
+                    CardsDisplayWindow frame = new CardsDisplayWindow(0, 0, 0, 0, " ");
                     frame.setVisible(true);
 
                 } catch (Exception e) {
@@ -362,5 +399,5 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
                 }
             }
         });
-    }
+    }*/
 }

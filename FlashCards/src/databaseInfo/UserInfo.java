@@ -9,23 +9,39 @@ import views.GlobalDesign;
 public class UserInfo implements GlobalDesign{
 	public static String userID;
 	public static String groupID;
+	public static String subGroupID;
 	
 	public static ArrayList<Color> groupColors;
 	public static ArrayList<String> groupNames;
 	public static ArrayList<String> groupIDs;
+	
 	public static ArrayList<Color> subGroupColors;
 	public static ArrayList<String> subGroupNames;
 	public static ArrayList<String> subGroupIDs;
+	
+	public static ArrayList<Color> cardColors;
+	public static ArrayList<String> cardQuestion;
+	public static ArrayList<String> cardAnswer;
+	public static ArrayList<String> cardCorrect;
+	public static ArrayList<String> cardID;
 	public static Crude crude;
 	
 	public UserInfo(String username, boolean newUser) {
 		 crude = new Crude();
+		 
 		 groupColors = new ArrayList<>();
 		 groupNames = new ArrayList<>();
 		 groupIDs = new ArrayList<>();
+		 
 		 subGroupColors = new ArrayList<>();
 		 subGroupNames = new ArrayList<>();
 		 subGroupIDs = new ArrayList<>();
+		 
+		 cardColors = new ArrayList<>();
+		 cardQuestion = new ArrayList<>();
+		 cardAnswer = new ArrayList<>();
+		 cardCorrect = new ArrayList<>();
+		 cardID = new ArrayList<>();
 		 
 		 //get user info
 		 PullFrom u = new PullFrom("user","username", username);
@@ -82,6 +98,26 @@ public class UserInfo implements GlobalDesign{
 			e.printStackTrace();
 		}
 	}
+	
+	public static void getCards() {
+		cardColors.clear();
+		cardQuestion.clear();
+		cardAnswer.clear();
+		cardCorrect.clear();
+		cardID.clear();
+		PullFrom cardInfo = new PullFrom("card","idsubgroup", subGroupID);
+		try {
+			 while(cardInfo.rs.next()) {
+				 cardQuestion.add(cardInfo.rs.getString("title"));
+				 cardAnswer.add(cardInfo.rs.getString("paragraph"));
+				 cardColors.add(Color.decode(cardInfo.rs.getString("boja")));
+				 cardCorrect.add(cardInfo.rs.getString("T/F"));
+				 cardID.add(cardInfo.rs.getString("idcard"));
+			 }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 
 	public static void addGroup(String name, String chosenColor) {
@@ -102,6 +138,15 @@ public class UserInfo implements GlobalDesign{
 		}
 	}
 	
+	public static void addCard(String question, String answer, String chosenColor) {
+		try {
+			crude.create("card", question, answer, chosenColor, subGroupID);
+			getCards();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void getGroupID(String name) {
 		//get group
 		 PullFrom group = new PullFrom("grupa","name", name);
@@ -111,6 +156,22 @@ public class UserInfo implements GlobalDesign{
 			 while (group.rs.next()) {
 				 if(group.rs.getString("iduser").equals(userID)) {
 					 groupID = group.rs.getString("idgroup"); 
+				 }
+			 }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void getsubGroupID(String name) {
+		//get subgroup
+		 PullFrom subgroup = new PullFrom("subgroup","name", name);
+		
+		 //get subgroup ID
+		 try {
+			 while (subgroup.rs.next()) {
+				 if(subgroup.rs.getString("idgroup").equals(groupID)) {
+					 subGroupID = subgroup.rs.getString("idgroup"); 
 				 }
 			 }
 		} catch (SQLException e) {
@@ -176,6 +237,20 @@ public class UserInfo implements GlobalDesign{
 		}
 	}
 	
+	public static void saveEditAllCards() {
+		for(int i = 0; i < cardID.size(); i++) {
+			int red = cardColors.get(i).getRed();
+	        int green = cardColors.get(i).getGreen();
+	        int blue = cardColors.get(i).getBlue();
+	        // Convert the RGB values to hexadecimal format
+	        String newColor = String.format("0x%02X%02X%02X", red, green, blue);
+	        
+			crude.update("card", "boja", "idcard", cardID.get(i), newColor);
+			crude.update("card", "title", "idcard", cardID.get(i), cardQuestion.get(i));
+			crude.update("card", "paragraph", "idcard", cardID.get(i), cardAnswer.get(i));
+		}
+	}
+	
 	public static void saveEditGroup(String grID) {
 		int index = groupIDs.indexOf(grID);
 		if(index > -1) {
@@ -214,7 +289,34 @@ public class UserInfo implements GlobalDesign{
 		crude.delete("subgroup", "idsubgroup", sgrID);
 		getSubgroups();
 	}
-
+	
+	
+	public static String getname(boolean choice) {
+		if(choice) {
+			//get group name
+			PullFrom groupInfo = new PullFrom("grupa","idgroup", groupID);
+				 try {
+					while(groupInfo.rs.next()) {
+						  return (groupInfo.rs.getString("name"));
+					 }
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}else {
+			//get subgroup name
+			PullFrom subgroupInfo = new PullFrom("subgroup","idsubgroup", subGroupID);
+			 try {
+				while(subgroupInfo.rs.next()) {
+					  return (subgroupInfo.rs.getString("name"));
+				 }
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return "";
+	}
 
 
 }

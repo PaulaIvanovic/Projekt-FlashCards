@@ -363,7 +363,7 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
                 		String text = String.valueOf(keyChar);
                 		subgroupOfCards.setText(inputText + text);
                 	}
-                	UserInfo.changeGroupName(subgroupOfCards.help, subgroupOfCards.getText());
+                	UserInfo.changesubGroupName(subgroupOfCards.help, inputText + String.valueOf(keyChar));
                 }else if (backspace) {
                 	lblNewLabel_3.setText("");
                 	if (!inputText.isEmpty()) {
@@ -372,7 +372,7 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
                 	}
             		if(inputText.length() <= charLimit) {
             			subgroupOfCards.setText(inputText);
-            			UserInfo.changeGroupName(subgroupOfCards.help, subgroupOfCards.getText());
+            			UserInfo.changesubGroupName(subgroupOfCards.help, inputText);
             		}
                 }else {
                 	if(inputText.length() > charLimit) {
@@ -432,7 +432,7 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
                     Color buttonColor = circleButton.getBackground();
                     subgroupOfCards.setBackground(buttonColor);
                     
-                    UserInfo.changeGroupColor(subgroupOfCards.help, buttonColor);
+                    UserInfo.changesubGroupColor(subgroupOfCards.help, buttonColor);
                 });
             }
         }

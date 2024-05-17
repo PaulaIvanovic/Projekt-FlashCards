@@ -59,7 +59,6 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 
     public SubgroupOfCardsPage(int x, int y, int width, int height, String name) {
     	this.name = name;
-    	UserInfo.getSubgroups();
     	//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -135,7 +134,8 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 
     public void windowCreate() {
     	setVisible(true);
-
+    	UserInfo.getSubgroups();
+    	
         windowWidth = getWidth();
         windowHeight = getHeight();
         views.WindowElementResize.getFontForWindowSize(windowHeight);
@@ -263,8 +263,13 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
         int frameHeight = windowHeight;
         int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
 
+        int help = 5;
         //calculates the number of rows and columns for the current page
-        int numCols = Math.min(UserInfo.groupNames.size(), 5);
+        if(UserInfo.subGroupNames.size() > 0) {
+        	help = UserInfo.subGroupNames.size();
+        }
+        
+        int numCols = Math.min(help, 5);
         int numRows = (numCols - 1) / 5 + 1;
 
         //calculates the width and height of each rectangle
@@ -276,18 +281,23 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 
         //add groups to the panel
         for (int i = 0; i < UserInfo.subGroupNames.size(); i++) {
-            RoundedButton subGroupOfCards = new RoundedButton(UserInfo.subGroupNames.get(i));
+            RoundedButton subGroupOfCards = new RoundedButton("");
+            subGroupOfCards.setText(UserInfo.subGroupNames.get(i));
             subGroupOfCards.setBackground(UserInfo.subGroupColors.get(i));
             subGroupOfCards.setFont(WindowElementResize.mediumFont);
             subGroupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height to 200
 
-            String name2 = UserInfo.subGroupNames.get(i);
-            Color color = UserInfo.subGroupColors.get(i);
-
+            String name = UserInfo.subGroupNames.get(i);
+            int position = i;
+            
             //listens for clicks on group to open its page
             subGroupOfCards.addActionListener(new ActionListener() {
     			public void actionPerformed(ActionEvent e) {
-    				new GroupPage(name2, color).setVisible(true);;
+    				UserInfo.subGroupID = UserInfo.subGroupIDs.get(position);
+    				dispose();
+    				CardsDisplayWindow cards = new CardsDisplayWindow(xPositionWindow, yPositionWindow, windowWidth, windowHeight, name);
+    				cards.setVisible(true);
+    				//new GroupPage(name2, color).setVisible(true);;
     			}
     		});
 

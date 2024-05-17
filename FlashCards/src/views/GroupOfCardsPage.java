@@ -242,9 +242,14 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
         int frameWidth = windowWidth;
         int frameHeight = windowHeight;
         int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
-
+        
+        int help = 5;
         //calculates the number of rows and columns for the current page
-        int numCols = Math.min(UserInfo.groupNames.size(), 5);
+        if(UserInfo.groupNames.size() > 0) {
+        	help = UserInfo.groupNames.size();
+        }
+        
+        int numCols = Math.min(help, 5);
         int numRows = (numCols - 1) / 5 + 1;
 
         //calculates the width and height of each rectangle
