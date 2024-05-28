@@ -1,4 +1,13 @@
 Python Script
+
+Enable Google Sheets API:
+
+Go to the Google Cloud Console.
+Create a new project or select an existing one.
+Navigate to the API library and enable the Google Sheets API.
+Create credentials (OAuth 2.0 Client IDs) and download the credentials.json file.
+
+
 Save the following as flashcards_to_sheets.py:
 
 # Install the required libraries
