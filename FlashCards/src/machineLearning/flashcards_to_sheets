@@ -1,0 +1,86 @@
+Python Script
+Save the following as flashcards_to_sheets.py:
+
+# Install the required libraries
+!pip install transformers torch PyMuPDF python-pptx google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+# Import the necessary libraries
+from transformers import T5Tokenizer, T5ForConditionalGeneration, pipeline
+import fitz  # PyMuPDF
+from pptx import Presentation
+import os
+import pickle
+import google.auth
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+
+# If modifying these SCOPES, delete the file token.pickle.
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+# The ID and range of the spreadsheet.
+SPREADSHEET_ID = 'your-spreadsheet-id'  # Replace with your spreadsheet ID
+RANGE_NAME = 'Sheet1!A1'  # Adjust the range as needed
+
+def authenticate_google_sheets():
+    creds = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+    service = build('sheets', 'v4', credentials=creds)
+    return service
+
+def append_flashcards_to_sheets(flashcards):
+    service = authenticate_google_sheets()
+    sheet = service.spreadsheets()
+    values = [[fc['question'], fc['answer']] for fc in flashcards]
+    body = {
+        'values': values
+    }
+    result = sheet.values().append(
+        spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME,
+        valueInputOption="RAW", body=body).execute()
+    print('{0} cells appended.'.format(result \
+        .get('updates') \
+        .get('updatedCells')))
+
+def summarize_text(text):
+    input_text = "summarize: " + text
+    inputs = tokenizer.encode(input_text, return_tensors="pt", max_length=512, truncation=True)
+    summary_ids = summarizer.generate(inputs, max_length=150, min_length=40, length_penalty=2.0, num_beams=4, early_stopping=True)
+    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+    return summary
+
+def generate_questions(text):
+    questions = question_generator(text)
+    return [q['generated_text'] for q in questions]
+
+def create_flashcards_from_text(text):
+    summarized_text = summarize_text(text)
+    questions = generate_questions(summarized_text)
+    flashcards = [{"question": q, "answer": summarized_text} for q in questions]
+    return flashcards
+
+# Load the T5 summarization model and tokenizer
+summarizer = T5ForConditionalGeneration.from_pretrained('t5-small')
+tokenizer = T5Tokenizer.from_pretrained('t5-small')
+
+# Load the question generation pipeline
+question_generator = pipeline("text2text-generation", model="valhalla/t5-base-qg-hl")
+
+# Example usage with generated flashcards
+text = """
+Machine learning is a field of artificial intelligence (AI) that uses statistical techniques to give computer systems the ability to "learn" (e.g., progressively improve performance on a specific task) from data, without being explicitly programmed. The name machine learning was coined in 1959 by Arthur Samuel. Evolved from the study of pattern recognition and computational learning theory in AI, machine learning explores the study and construction of algorithms that can learn from and make predictions on data – such algorithms overcome following strictly static program instructions by making data-driven predictions or decisions, through building a model from sample inputs.
+"""
+
+flashcards = create_flashcards_from_text(text)
+append_flashcards_to_sheets(flashcards)
