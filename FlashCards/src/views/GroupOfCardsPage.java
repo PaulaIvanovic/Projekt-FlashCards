@@ -38,6 +38,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	public int groupsPerPage;
 	public int START_X;
 	public int START_Y;
+	GroupOfCardsPage parent;
     
     int windowWidth;
     int windowHeight;
@@ -57,6 +58,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
     
     public GroupOfCardsPage(int x, int y, int width, int height) {
     	//set icon for app
+		parent = this;
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
 		setIconImage(Icon.getImage());
@@ -151,7 +153,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 		
 		//toolbar label (name of page)
-		JLabel mainTitleLabel = new JLabel("My groups of cards");      
+		JLabel mainTitleLabel = new JLabel(UserInfo.username + "'s groups of cards");      
 		mainTitleLabel.setFont(WindowElementResize.mainFont);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
@@ -180,6 +182,12 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 				editGroup.setVisible(true);
 			}
 		});
+		//when there is nothing to edit the button is disabled
+		if(UserInfo.groupNames.size() <= 0) {
+			editButton.setEnabled(false);
+		}else {
+			editButton.setEnabled(true);
+		}
 
 		//add new group button in toolbar
 		RoundButton addGroupButton = new RoundButton("",  buttonDimension, buttonDimension);
@@ -188,7 +196,6 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		addGroupButton.setForeground(backgroundColor);
 		addGroupButton.setBorder(null);
 		buttonPanel.add(addGroupButton);
-		GroupOfCardsPage parent = this;
 		addGroupButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AddGroupOfCards addGroup = new AddGroupOfCards(parent);
@@ -213,10 +220,10 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 		
 		//user icon / button in toolbar
 		RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
-		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
+		userIcon.setButtonIcon("Pictures/" + UserInfo.profilePic, biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
-		userIcon.setEnabled(false);
+		//userIcon.setEnabled(false);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
@@ -297,6 +304,25 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
                 gbc.gridx = 0;
                 gbc.gridy++;
             }
+        }
+        
+        if(UserInfo.groupNames.size() <= 0) {
+        	 RoundedButton addGroup = new RoundedButton("");
+        	 addGroup.setText("No groups found! Add a group<br>" + "<b>+</b>");
+        	 addGroup.setForeground(Color.WHITE);
+        	 addGroup.setBackground(new Color(0,0,0, 128));
+        	 addGroup.setFont(WindowElementResize.mediumFont);
+        	 addGroup.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height 
+        	 //listens for clicks on group to open its page
+        	 addGroup.addActionListener(new ActionListener() {
+        		 public void actionPerformed(ActionEvent e) {
+     				AddGroupOfCards addGroup = new AddGroupOfCards(parent);
+     				addGroup.setVisible(true);
+     			}
+     		});
+             
+             
+        	groupsPanel.add(addGroup, gbc);
         }
         return groupsPanel;
     }

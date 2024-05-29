@@ -27,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -431,14 +432,23 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
             deleteGroupButton.setPreferredSize(new Dimension((int)(windowWidth*0.075), (int)(windowWidth*0.0175)));
             buttonPanel.add(deleteGroupButton);
             deleteGroupButton.addActionListener(new ActionListener() {
-            	public void actionPerformed(ActionEvent e) {
-            		UserInfo.deleteGroup(groupOfCards.help);
-            		contentPane.removeAll();
-            		//add your elements
-                    contentPane.revalidate();
-                    contentPane.repaint();
-            		updateView();
-            	}
+                public void actionPerformed(ActionEvent e) {
+                    int response = JOptionPane.showConfirmDialog(
+                            null, 
+                            "Are you sure you want to delete the group " + groupName + "? This change cannot be undone", 
+                            "Confirm Deletion", 
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    
+                    if (response == JOptionPane.YES_OPTION) {
+                        UserInfo.deleteGroup(groupOfCards.help);
+                        contentPane.removeAll();
+                        // add your elements
+                        contentPane.revalidate();
+                        contentPane.repaint();
+                        updateView();
+                    }
+                }
             });
 
             RoundedButton saveChangesButton = new RoundedButton("Save");
@@ -454,18 +464,16 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
                     if(newName.length() > charLimit) {
                     	newName = newName.substring(0, charLimit);
                     }
-                    if(newName.equalsIgnoreCase("Enter the new name of group") || newName.isEmpty()) {
-                    	PopUpWindow info = new PopUpWindow("WARNING", "Warning: Group name is missing.",(int) (windowWidth*0.2), (int)(windowHeight*0.35));
-                    	info.setVisible(true);
-                    }else {
+                    if(!(newName.equalsIgnoreCase("Enter the new name of group") || newName.isEmpty())) {
                     	// set the new name to the groupOfCards
                     	groupOfCards.setText(newName);
                     	// clear the input field
                     	enterGroupNameField.setText("");
-                    	enterGroupNameField.setForeground(Color.GRAY);
                     	UserInfo.changeGroupName(groupOfCards.help, newName);
-                    	UserInfo.saveEditGroup(groupOfCards.help);
-                    }
+                   }
+                    enterGroupNameField.setForeground(Color.GRAY);
+                    UserInfo.saveEditGroup(groupOfCards.help);
+                    
                 }
             });
 

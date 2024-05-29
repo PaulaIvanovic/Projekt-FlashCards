@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import views.GlobalDesign;
 
 public class UserInfo implements GlobalDesign{
+	public static String username;
+	public static String profilePic;
+	
 	public static String userID;
 	public static String groupID;
 	public static String subGroupID;
@@ -25,6 +28,8 @@ public class UserInfo implements GlobalDesign{
 	public static ArrayList<String> cardCorrect;
 	public static ArrayList<String> cardID;
 	public static Crude crude;
+	
+	public static int help = 0;
 	
 	public UserInfo(String username, boolean newUser) {
 		 crude = new Crude();
@@ -50,6 +55,7 @@ public class UserInfo implements GlobalDesign{
 		 try {
 			 if (u.rs.next()) {
 				 userID = u.rs.getString("iduser");
+				 this.profilePic = u.rs.getString("profilePic");
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -59,6 +65,7 @@ public class UserInfo implements GlobalDesign{
 			 defaultGroup();
 		 }
 		 getGroups();
+		 this.username = username;
 	}
 	
 	

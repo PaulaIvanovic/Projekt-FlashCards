@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -448,14 +449,23 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 	        deleteSubgroupButton.setPreferredSize(new Dimension(80, 30));
 	        buttonPanel.add(deleteSubgroupButton);
 	        deleteSubgroupButton.addActionListener(new ActionListener() {
-            	public void actionPerformed(ActionEvent e) {
-            		UserInfo.deleteSubgroup(subgroupOfCards.help);
-            		contentPane.removeAll();
-            		//add your elements
-                    contentPane.revalidate();
-                    contentPane.repaint();
-            		updateView();
-            	}
+                public void actionPerformed(ActionEvent e) {
+                    int response = JOptionPane.showConfirmDialog(
+                            null, 
+                            "Are you sure you want to delete the subgroup " + subgroupName + "? This change cannot be undone", 
+                            "Confirm Deletion", 
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    
+                    if (response == JOptionPane.YES_OPTION) {
+                        UserInfo.deleteSubgroup(subgroupOfCards.help);
+                        contentPane.removeAll();
+                        // add your elements
+                        contentPane.revalidate();
+                        contentPane.repaint();
+                        updateView();
+                    }
+                }
             });
 
 
@@ -472,18 +482,15 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
                     if(newName.length() > charLimit) {
                     	newName = newName.substring(0, charLimit);
                     }
-                    if(newName.equalsIgnoreCase("Enter the new name of subgroup") || newName.isEmpty()) {
-                    	PopUpWindow info = new PopUpWindow("WARNING", "Warning: Subgroup name is missing.",(int) (windowWidth*0.2), (int)(windowHeight*0.35));
-                    	info.setVisible(true);
-                    }else {
+                    if(!(newName.equalsIgnoreCase("Enter the new name of subgroup") || newName.isEmpty())) {
                     	// set the new name to the groupOfCards
                     	subgroupOfCards.setText(newName);
-                    	// clear the input field
-                    	enterSubgroupNameField.setText("");
-                    	enterSubgroupNameField.setForeground(Color.GRAY);
                     	UserInfo.changesubGroupName(subgroupOfCards.help, newName);
-                    	UserInfo.saveEditsubGroup(subgroupOfCards.help);
+                    	// clear the input field
+                    	enterSubgroupNameField.setText("Enter the new name of subgroup");
                     }
+                	enterSubgroupNameField.setForeground(Color.GRAY);
+                	UserInfo.saveEditsubGroup(subgroupOfCards.help);
                 }
             });
 	

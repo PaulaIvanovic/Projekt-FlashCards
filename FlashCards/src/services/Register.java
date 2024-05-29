@@ -11,7 +11,7 @@ public class Register {
 	String username;
 	String pw;
 	String email;
-	String profilePic = "default.jpg"; //need to access the basic picture
+	String profilePic = "default.png"; //need to access the basic picture
 	public String message = "";
 	Crude crude;
 	PullFrom p;

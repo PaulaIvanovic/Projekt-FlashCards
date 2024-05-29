@@ -38,12 +38,12 @@ public interface GlobalDesign {
     public Font tinyFont = new Font("Tahoma", Font.PLAIN , tinyFontSize);
 	
     String[] profilePictures = {
-            "1.jpg",
-            "2.jpg",
-            "3.jpeg",
-            "4.jpg",
-            "5.jpg",
-            "6.jpg"
+            "default.png",
+            "nika.png",
+            "lucia.png",
+            "mia.png",
+            "bedi.png",
+            "mia2.png"
         };
 	public String defaultGroupName = "Default";
 	public String defaultGroupColor = "0xFFFFFF";
