@@ -38,6 +38,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 	public int groupsPerPage;
 	public int START_X;
 	public int START_Y;
+	
 	GroupOfCardsPage parent;
     
     int windowWidth;
@@ -133,6 +134,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
 
     public void windowCreate() {
     	setVisible(true);
+    	UserInfo.getGroups();
     	
         windowWidth = getWidth();
         windowHeight = getHeight();

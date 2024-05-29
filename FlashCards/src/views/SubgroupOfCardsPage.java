@@ -39,6 +39,8 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 	public int START_X;
 	public int START_Y;
 	
+	SubgroupOfCardsPage parent;
+	
 	public String name;
 
     int windowWidth;
@@ -59,6 +61,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 
     public SubgroupOfCardsPage(int x, int y, int width, int height, String name) {
     	this.name = name;
+    	parent = this;
     	//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -193,11 +196,17 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		buttonPanel.add(editButton);
 		editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				EditSubgroupPage editGroup = new EditSubgroupPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight, name);
+				EditSubgroupPage editsubGroup = new EditSubgroupPage(xPositionWindow, yPositionWindow, windowWidth, windowHeight, name);
 				dispose();
-				editGroup.setVisible(true);
+				editsubGroup.setVisible(true);
 			}
 		});
+		//when there is nothing to edit the button is disabled
+		if(UserInfo.subGroupNames.size() <= 0) {
+			editButton.setEnabled(false);
+		}else {
+			editButton.setEnabled(true);
+		}
 		
 
 		//add new group button in toolbar
@@ -207,7 +216,6 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		addsubGroupButton.setForeground(backgroundColor);
 		addsubGroupButton.setBorder(null);
 		buttonPanel.add(addsubGroupButton);
-		SubgroupOfCardsPage parent = this;
 		addsubGroupButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AddSubgroupOfCards addSubgroup = new AddSubgroupOfCards(parent);
@@ -232,13 +240,13 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
 		});
 
 		//user icon / button in toolbar
-		RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
-		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
-		userIcon.setBackground(toolbarColor);
-		userIcon.setBorder(null);
-		userIcon.setEnabled(false);
-		buttonPanel.add(userIcon);
-
+				RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
+				userIcon.setButtonIcon("Pictures/" + UserInfo.profilePic, biggerButtonDimension, biggerButtonDimension);
+				userIcon.setBackground(toolbarColor);
+				userIcon.setBorder(null);
+				//userIcon.setEnabled(false);
+				buttonPanel.add(userIcon);
+				
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
 
 
@@ -321,6 +329,27 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
                 gbc.gridy++;
             }
         }
+        
+        
+        if(UserInfo.subGroupNames.size() <= 0) {
+        	 RoundedButton addGroup = new RoundedButton("");
+        	 addGroup.setText("No groups found! Add a subgroup<br>" + "<b>+</b>");
+        	 addGroup.setForeground(Color.WHITE);
+        	 addGroup.setBackground(new Color(0,0,0, 128));
+        	 addGroup.setFont(WindowElementResize.mediumFont);
+        	 addGroup.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height 
+        	 //listens for clicks on group to open its page
+        	 addGroup.addActionListener(new ActionListener() {
+        		 public void actionPerformed(ActionEvent e) {
+     				AddSubgroupOfCards addGroup = new AddSubgroupOfCards(parent);
+     				addGroup.setVisible(true);
+     			}
+     		});
+             
+             
+        	groupsPanel.add(addGroup, gbc);
+        }
+        
         return groupsPanel;
     }
 

@@ -225,13 +225,14 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
 					}
 				});
 				
-				RoundButton userIcon = new RoundButton("", biggerButtonDimension, biggerButtonDimension);
-				userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
+				//user icon / button in toolbar
+				RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
+				userIcon.setButtonIcon("Pictures/" + UserInfo.profilePic, biggerButtonDimension, biggerButtonDimension);
 				userIcon.setBackground(toolbarColor);
 				userIcon.setBorder(null);
-				userIcon.setEnabled(false);
+				//userIcon.setEnabled(false);
 				buttonPanel.add(userIcon);
-
+				
 			toolbarPanel.add(buttonPanel, BorderLayout.EAST);
 			
 			//scrollbar to get to all subgroups

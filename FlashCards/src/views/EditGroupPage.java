@@ -218,12 +218,13 @@ public class EditGroupPage extends JFrame implements GlobalDesign {
 		});
 		
 		//user icon / button in toolbar
-		RoundButton userIcon = new RoundButton("", biggerButtonDimension, biggerButtonDimension);
-		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
-		userIcon.setBackground(toolbarColor);
-		userIcon.setBorder(null);
-		userIcon.setEnabled(false);
-		buttonPanel.add(userIcon);
+				RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
+				userIcon.setButtonIcon("Pictures/" + UserInfo.profilePic, biggerButtonDimension, biggerButtonDimension);
+				userIcon.setBackground(toolbarColor);
+				userIcon.setBorder(null);
+				//userIcon.setEnabled(false);
+				buttonPanel.add(userIcon);
+				
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
 		
