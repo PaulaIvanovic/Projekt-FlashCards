@@ -1,0 +1,31 @@
+name: Send email to assigned user on new issue
+
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  send_email:
+    runs-on: windows-latest
+
+    steps:
+    - name: Send email
+      uses: dawidd6/action-send-mail@v2
+      with:
+        server_address: smtp.sendgrid.net
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: New issue assigned to you
+        body: |
+          Hello,
+
+          Your colleagues have a new assigment for you!
+          Enjoy the work. :)
+ 
+          Issue Title: ${{ github.event.issue.title }}
+          Issue URL: ${{ github.event.issue.html_url }}
+
+          Regards,
+          Your GitHub Action
+        to: ${{ github.event.issue.assignee.email }}
