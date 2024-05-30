@@ -23,8 +23,8 @@ jobs:
           Your colleagues have a new assigment for you!
           Enjoy the work. :)
  
-          Issue Title: ${{ github.event.issue.title }}
-          Issue URL: ${{ github.event.issue.html_url }}
+          Issue Title: ${GITHUB_EVENT_ISSUE_TITLE}
+          Issue URL: ${GITHUB_EVENT_ISSUE_URL}
 
           Regards,
           Your GitHub Action
