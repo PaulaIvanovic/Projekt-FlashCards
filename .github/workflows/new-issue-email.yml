@@ -17,7 +17,7 @@ jobs:
       run: |
         email_map=(
           "PaulaIvanovic:paulaivanovic6@gmail.com"
-          "ljovic:joviclucia10@gmail.comm"
+          "ljovic:joviclucia10@gmail.com"
           "Mia2404:mia.zuvic1234@gmail.com"
           "bazon8e82:nikabazon2002@gmail.com"
           # "githubuser5:user5@example.com"
