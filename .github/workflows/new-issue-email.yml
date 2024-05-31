@@ -9,13 +9,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Debug assignee
-      run: echo "Assignee: ${{ github.event.issue.assignee.login }}"
-
     - name: Map GitHub username to email
       id: map_email
       run: |
-        # Zamijeni s stvarnim korisničkim imenima i email adresama
+        # Replace with your actual mappings
         declare -A email_map
         email_map["PaulaIvanovic"]="paulaivanovic6@gmail.com"
         email_map["ljovic"]="joviclucia10@gmail.com"
@@ -24,11 +21,8 @@ jobs:
         email_map["githubuser5"]="user5@example.com"
         email_map["githubuser6"]="user6@example.com"
         
-        assignee="${{ github.event.issue.assignee.login }}"
-        echo "Assignee: $assignee"
-        
-        email="${email_map[$assignee]}"
-        echo "Mapped email: $email"
+        assignee=${{ github.event.issue.assignee.login }}
+        email=${email_map[$assignee]}
         
         if [ -z "$email" ]; then
           echo "No email found for the user: $assignee"
@@ -36,10 +30,7 @@ jobs:
         fi
         
         echo "::set-output name=email::$email"
-
-    - name: Debug mapped email
-      run: echo "Mapped email is ${{ steps.map_email.outputs.email }}"
-
+      
     - name: Send email
       uses: dawidd6/action-send-mail@v2
       with:
@@ -47,7 +38,7 @@ jobs:
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        from: ${{ secrets.EMAIL_USERNAME }}
+        from: ${{ secrets.EMAIL_USERNAME }}  # Koristimo username kao sender email adresu
         to: ${{ steps.map_email.outputs.email }}
         subject: New issue assigned to you
         body: |
