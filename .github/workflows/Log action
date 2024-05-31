@@ -1,0 +1,12 @@
+name: Log action
+on:
+ label:
+ types: [created]
+ issues:
+ types: [opened]
+jobs:
+ log:
+ runs-on: windows-latest
+ steps:
+ - run: echo "Trigger - ${{ github.event_name }},
+ user - ${{ github.actor }}, date - `date`"
