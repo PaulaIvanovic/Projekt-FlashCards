@@ -24,11 +24,6 @@ jobs:
         assignee=${{ github.event.issue.assignee.login }}
         email=${email_map[$assignee]}
         
-        if [ -z "$email" ]; then
-          echo "No email found for the user: $assignee"
-          exit 1
-        fi
-        
         echo "::set-output name=email::$email"
       
     - name: Send email
