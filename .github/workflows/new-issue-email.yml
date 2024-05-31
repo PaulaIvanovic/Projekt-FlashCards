@@ -18,8 +18,8 @@ jobs:
         email_map["ljovic"]="joviclucia10@gmail.com"
         email_map["Mia2404"]="mia.zuvic1234@gmail.com"
         email_map["bazon8e82"]="nikabazon2002@gmail.com"
-        email_map["githubuser5"]="user5@example.com"
-        email_map["githubuser6"]="user6@example.com"
+        # email_map["githubuser5"]="user5@example.com"
+        # email_map["githubuser6"]="user6@example.com"
         
         assignee=${{ github.event.issue.assignee.login }}
         email=${email_map[$assignee]}
