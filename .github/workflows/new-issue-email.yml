@@ -9,20 +9,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - name: Debug assignee
+      run: echo "Assignee: ${{ github.event.issue.assignee.login }}"
+
     - name: Map GitHub username to email
       id: map_email
       run: |
-        # Replace with your actual mappings
+        # Zamijeni s stvarnim korisničkim imenima i email adresama
         declare -A email_map
-        email_map["githubuser1"]="paulaivanovic6@gmail.com"
-        email_map["githubuser2"]="joviclucia10@gmail.com"
-        email_map["githubuser3"]="mia.zuvic1234@gmail.com"
-        email_map["githubuser4"]="nikabazon2002@gmail.com"
-        # email_map["githubuser5"]="user5@example.com"
-        # email_map["githubuser6"]="user6@example.com"
+        email_map["PaulaIvanovic"]="paulaivanovic6@gmail.com"
+        email_map["ljovic"]="joviclucia10@gmail.com"
+        email_map["Mia2404"]="mia.zuvic1234@gmail.com"
+        email_map["bazon8e82"]="nikabazon2002@gmail.com"
+        email_map["githubuser5"]="user5@example.com"
+        email_map["githubuser6"]="user6@example.com"
         
-        assignee=${{ github.event.issue.assignee.login }}
-        email=${email_map[$assignee]}
+        assignee="${{ github.event.issue.assignee.login }}"
+        echo "Assignee: $assignee"
+        
+        email="${email_map[$assignee]}"
+        echo "Mapped email: $email"
         
         if [ -z "$email" ]; then
           echo "No email found for the user: $assignee"
@@ -30,7 +36,10 @@ jobs:
         fi
         
         echo "::set-output name=email::$email"
-      
+
+    - name: Debug mapped email
+      run: echo "Mapped email is ${{ steps.map_email.outputs.email }}"
+
     - name: Send email
       uses: dawidd6/action-send-mail@v2
       with:
@@ -38,7 +47,8 @@ jobs:
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        from: ${{ secrets.EMAIL_USERNAME }}  # Koristimo username kao sender email adresu
+        from: ${{ secrets.EMAIL_USERNAME }}
+        to: ${{ steps.map_email.outputs.email }}
         subject: New issue assigned to you
         body: |
           Hello,
@@ -51,4 +61,3 @@ jobs:
 
           Regards,
           Your GitHub Action
-        to: ${{ steps.map_email.outputs.email }}
