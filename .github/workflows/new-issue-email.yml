@@ -10,7 +10,8 @@ jobs:
 
     steps:
     - name: Debug assignee
-      run: echo "Assignee: ${{ github.event.issue.assignee.login }}"
+    run: echo "Assignee: ${{ github.event.issue.assignee.login }}"
+
 
     - name: Map GitHub username to email
       id: map_email
@@ -23,8 +24,6 @@ jobs:
           # "githubuser5:user5@example.com"
           # "githubuser6:user6@example.com"
         )
-        assignee="${{ github.event.issue.assignee.login }}"
-        echo "Assignee: $assignee"
         
         email=""
         for entry in "${email_map[@]}"; do
