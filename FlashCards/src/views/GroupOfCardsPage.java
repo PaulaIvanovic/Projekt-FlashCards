@@ -274,6 +274,7 @@ public class GroupOfCardsPage extends JFrame implements GlobalDesign {
             groupOfCards.setBackground(UserInfo.groupColors.get(i));
             groupOfCards.setFont(WindowElementResize.mediumFont);
             groupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height to 200
+            groupOfCards.setForeground(Color.BLACK);
             
             String name = UserInfo.groupNames.get(i);
             int position = i;

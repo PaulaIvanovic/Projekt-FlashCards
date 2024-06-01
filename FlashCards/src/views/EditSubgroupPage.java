@@ -117,6 +117,7 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
     	    }
     	});
     	
+    	
     	//check if moved
     			addComponentListener(new ComponentAdapter() {
     	            @Override
@@ -140,6 +141,8 @@ public class EditSubgroupPage extends JFrame implements GlobalDesign {
     	            }
     	        });
     	    }	
+    
+    
     	
     
     public void windowCreate() {

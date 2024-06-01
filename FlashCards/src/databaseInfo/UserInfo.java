@@ -3,6 +3,8 @@ package databaseInfo;
 import java.awt.Color;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 import views.GlobalDesign;
 
@@ -25,11 +27,16 @@ public class UserInfo implements GlobalDesign{
 	public static ArrayList<Color> cardColors;
 	public static ArrayList<String> cardQuestion;
 	public static ArrayList<String> cardAnswer;
-	public static ArrayList<String> cardCorrect;
+	public static ArrayList<String> cardCorrect;	//NULL - not answeredd	0 - correct	1-incorrect
 	public static ArrayList<String> cardID;
+	
+	public static ArrayList<String> cardIDLineup;
+	public static ArrayList<Integer> visited; // 0 = not visited		1 = visited		2 = answer correct	3=answer incorrect
+	//4 current or the same as variable 'card'
 	public static Crude crude;
 	
 	public static int help = 0;
+	public static int card = 0;
 	
 	public UserInfo(String username, boolean newUser) {
 		 crude = new Crude();
@@ -47,6 +54,8 @@ public class UserInfo implements GlobalDesign{
 		 cardAnswer = new ArrayList<>();
 		 cardCorrect = new ArrayList<>();
 		 cardID = new ArrayList<>();
+		 cardIDLineup = new ArrayList<>();
+		visited = new ArrayList();
 		 
 		 //get user info
 		 PullFrom u = new PullFrom("user","username", username);
@@ -217,6 +226,28 @@ public class UserInfo implements GlobalDesign{
 		}
 	}
 	
+	public static void changeCardColor(String cID, Color newColor) {
+		int index = cardID.indexOf(cID);
+		if(index > -1) {
+			cardColors.set(index, newColor);	
+		}
+	}
+
+
+	public static void changeCardQuestion(String cID, String question) {
+		int index = cardID.indexOf(cID);
+		if(index > -1) {
+			cardQuestion.set(index, question);	
+		}
+	}
+	
+	public static void changeCardAnswer(String cID, String answer) {
+		int index = cardID.indexOf(cID);
+		if(index > -1) {
+			cardAnswer.set(index, answer);	
+		}
+	}
+	
 	public static void saveEditAllGroups() {
 		for(int i = 0; i < groupIDs.size(); i++) {
 			int red = groupColors.get(i).getRed();
@@ -273,7 +304,7 @@ public class UserInfo implements GlobalDesign{
 	}
 	
 	public static void saveEditsubGroup(String grID) {
-		int index = groupIDs.indexOf(grID);
+		int index = subGroupIDs.indexOf(grID);
 		if(index > -1) {
 			int red = subGroupColors.get(index).getRed();
 	        int green = subGroupColors.get(index).getGreen();
@@ -286,6 +317,23 @@ public class UserInfo implements GlobalDesign{
 		}
 	}
 	
+	public static void saveEditCard(String grID) {
+		int index = cardID.indexOf(grID);
+		if(index > -1) {
+			int red = cardColors.get(index).getRed();
+	        int green = cardColors.get(index).getGreen();
+	        int blue = cardColors.get(index).getBlue();
+	        // Convert the RGB values to hexadecimal format
+	        String newColor = String.format("0x%02X%02X%02X", red, green, blue);
+	        
+			crude.update("card", "boja", "idcard", cardID.get(index), newColor);
+			crude.update("card", "title", "idcard", cardID.get(index), cardQuestion.get(index));
+			crude.update("card", "paragraph", "idcard", cardID.get(index), cardAnswer.get(index));
+		}
+	}
+	
+	
+	
 	public static void deleteGroup(String grID) {
 		crude.delete("grupa", "idgroup", grID);
 		getGroups();
@@ -295,6 +343,13 @@ public class UserInfo implements GlobalDesign{
 	public static void deleteSubgroup(String sgrID) {
 		crude.delete("subgroup", "idsubgroup", sgrID);
 		getSubgroups();
+	}
+	
+
+	public static void deleteCard(String iD) {
+		crude.delete("card", "idcard", iD);
+		getCards();
+
 	}
 	
 	
@@ -324,6 +379,39 @@ public class UserInfo implements GlobalDesign{
 		}
 		return "";
 	}
+
+
+	public static void generateCardLineup() {
+		visited.clear();
+		getCards();
+		int min = 2;
+		int max = 4;
+		//int added = 0;
+		for(int i = 0; i < cardID.size(); i++) {
+			if(cardCorrect.get(i) == null || cardCorrect.get(i).equals("0")) {
+				cardIDLineup.add(cardID.get(i));
+				visited.add(0);
+			}else {
+				Random rn = new Random();
+				int randomNum = rn.nextInt((max - min) + 1) + min;
+				
+				for(int j = 0; j < randomNum; j++) {
+					cardIDLineup.add(cardID.get(i));
+					visited.add(0);
+				}
+			}
+		}
+		Collections.shuffle(cardIDLineup);
+
+	}
+
+
+	public static String getFirstCardID() {
+		card = 0;
+		return cardIDLineup.get(0);
+	}
+	
+
 
 
 }

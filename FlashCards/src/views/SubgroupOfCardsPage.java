@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import databaseInfo.UserInfo;
+import services.ColorUtils;
 
 
 public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
@@ -294,7 +295,8 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
             subGroupOfCards.setBackground(UserInfo.subGroupColors.get(i));
             subGroupOfCards.setFont(WindowElementResize.mediumFont);
             subGroupOfCards.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height to 200
-
+            subGroupOfCards.setForeground(Color.BLACK);
+            
             String name = UserInfo.subGroupNames.get(i);
             int position = i;
             
@@ -333,7 +335,7 @@ public class SubgroupOfCardsPage extends JFrame implements GlobalDesign {
         
         if(UserInfo.subGroupNames.size() <= 0) {
         	 RoundedButton addGroup = new RoundedButton("");
-        	 addGroup.setText("No groups found! Add a subgroup<br>" + "<b>+</b>");
+        	 addGroup.setText("No subgroups found! Add a subgroup<br>" + "<b>+</b>");
         	 addGroup.setForeground(Color.WHITE);
         	 addGroup.setBackground(new Color(0,0,0, 128));
         	 addGroup.setFont(WindowElementResize.mediumFont);

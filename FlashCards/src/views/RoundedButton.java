@@ -13,7 +13,7 @@ import views.ScreenDimensions;
 
 class RoundedButton extends JButton {
 
-private static final int MAX_CHARS_PER_LINE = 17;
+private static final int MAX_CHARS_PER_LINE = 20;
 
 	ScreenDimensions dimensions = new ScreenDimensions();
 	int windowWidth;

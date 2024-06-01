@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -30,7 +31,8 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField qInput, aInput;
+	JTextArea qInput;
+	private JTextArea aInput;
 	public String chosenColor;
 	
 	  ScreenDimensions dimensions = new ScreenDimensions();
@@ -127,10 +129,11 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         centerPanel.add(lblQ);
         
         //question input
-        qInput = new RoundTextField(0);
+        qInput = new RoundMultilineText("Enter your question"); // 5 rows, 20 columns
         qInput.setFont(inputText);
+        qInput.setLineWrap(true); // Enable line wrapping
+        qInput.setWrapStyleWord(true); // Wrap on word boundary
         qInput.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.13), (int)(desiredWidth*0.9), (int)(desiredHeight*0.15));
-        qInput.setText("Enter your question");
         
         //text inside of username field
         qInput.addFocusListener(new FocusListener() {
@@ -155,7 +158,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
             	// Set the text with the key typed
                 char keyChar = e.getKeyChar();
                 int totalChar = qInput.getText().length();
-                if(totalChar < charLimit || backspace) {
+                if(totalChar < cardQcharLimit || backspace) {
                 	lblInfo.setText("");
                 }else {
                 	if(inputText.length() > cardQcharLimit) {
@@ -177,11 +180,12 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         lblA.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.30), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
         centerPanel.add(lblA);
         
-        //answer input
-        aInput = new RoundTextField(0);
+      //answer input
+        aInput = new RoundMultilineText("Enter your answer"); 
         aInput.setFont(inputText);
+        aInput.setLineWrap(true); // Enable line wrapping
+        aInput.setWrapStyleWord(true); // Wrap on word boundary
         aInput.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.40), (int)(desiredWidth*0.9), (int)(desiredHeight*0.2));
-        aInput.setText("Enter your answer");
         
         //text inside of username field
         aInput.addFocusListener(new FocusListener() {
@@ -206,7 +210,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
             	// Set the text with the key typed
                 char keyChar = e.getKeyChar();
                 int totalChar = aInput.getText().length();
-                if(totalChar < charLimit || backspace) {
+                if(totalChar < cardAcharLimit || backspace) {
                 	lblInfo.setText("");
                 }else {
                 	if(inputText.length() > cardAcharLimit) {
@@ -257,7 +261,15 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
             }
 
 			private boolean checkSelection() {
-				if(qInput.getText() == "" || qInput.getText().equalsIgnoreCase("Enter your question") || aInput.getText() == "" || aInput.getText().equalsIgnoreCase("Enter your answer") || chosenColor == null) {
+				if(chosenColor == null) {
+	                // Update the background color of the button
+    				int red = cardDefaultColor.getRed();
+    		        int green = cardDefaultColor.getGreen();
+    		        int blue = cardDefaultColor.getBlue();
+    		        
+    		        chosenColor = String.format("0x%02X%02X%02X", red, green, blue);
+				}
+				if(qInput.getText() == "" || qInput.getText().equalsIgnoreCase("Enter your question") || aInput.getText() == "" || aInput.getText().equalsIgnoreCase("Enter your answer")) {
 					return false;
 				}
 				return true;
@@ -302,7 +314,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 	        setOpaque(false); // Make the panel transparent
 	    }
 
-	    private class ButtonClickListener implements ActionListener {
+	    public class ButtonClickListener implements ActionListener {
 	        public void actionPerformed(ActionEvent e) {
 	            RoundButton source = (RoundButton) e.getSource();
 	            Color selectedColor = JColorChooser.showDialog(parentPanel, "Choose a color", source.getBackground());

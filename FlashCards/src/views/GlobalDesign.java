@@ -8,7 +8,7 @@ public interface GlobalDesign {
 	ScreenDimensions dimensions = new ScreenDimensions();
 	public int charLimit = 45;
 	public int cardQcharLimit = 150;
-	public int cardAcharLimit = 400;
+	public int cardAcharLimit = 300;
 
 	public Color backgroundColor = new Color(68,62,130);
 	public Color toolbarColor = new Color(31,0,57);
@@ -17,6 +17,7 @@ public interface GlobalDesign {
 	
 	public Color white = new Color(0xFFFFFF);
 	public Color groupDefaultColor = new Color(0x8CB459);
+	public Color cardDefaultColor = new Color(0xEFE078);
 	
 	String groupDefaultName = "Default";
 	

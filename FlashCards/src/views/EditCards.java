@@ -16,6 +16,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -27,6 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -35,14 +39,16 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import databaseInfo.UserInfo;
+import services.ColorUtils;
 import views.AddCardsManual.ColorfulButtons;
+import views.AddCardsManual.ColorfulButtons.ButtonClickListener;
 
 
 
 public class EditCards extends JFrame implements GlobalDesign {
 	private static final long serialVersionUID = 1L;	
 	private JPanel contentPane;
-	private RoundTextField qInput, aInput;
+
     
     private final int HORIZONTAL_GAP_PERCENTAGE = 2; 
     
@@ -86,6 +92,7 @@ public class EditCards extends JFrame implements GlobalDesign {
     	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
     	updateView();
 
+    	
     	//function for resizing components
     	addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent e) {
@@ -114,61 +121,41 @@ public class EditCards extends JFrame implements GlobalDesign {
     	        		windowWidth = newSize.width;
     	        		windowHeight = newSize.height;
     	        	}
-    	            updateView();   
+    	        	
+    	        	 updateView(); 
+    	        
     	        }
     	    }
     	});
     	
-    	// listener for window state changes
-        addWindowStateListener(new WindowAdapter() {
-            @Override
-            public void windowStateChanged(WindowEvent e) {
-                if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) == 0) {
-                    // store the previous size when the window is not maximized
-                    previousWidth = getWidth();
-                    previousHeight = getHeight();
-                }
-            }
-        });
-        
-    	//when minimize/maximize button is clicked, 
-        //window goes to 50% of its original (fullscreen) size
-    	this. addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                if ((getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0) {
-                    setSize(previousWidth / 2, previousHeight / 2);
-                 
-                    revalidate();
-                    repaint();
-                }
-            }
-        });
-    	
-    	//listener for window state changes
-    	addWindowStateListener(new WindowAdapter() {
-    	    public void windowStateChanged(WindowEvent e) {
-    	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
-    	            updateView();
-    	        }else if (e.getNewState() == JFrame.NORMAL) {
-    	            updateView();
-    	        }
-    	    }
-    	});
     	
     	//check if moved
-		addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentMoved(ComponentEvent e) {
-        		xPositionWindow = e.getComponent().getX();
-        		yPositionWindow = e.getComponent().getY();
-            }
-        });	
-  
-    }
+    			addComponentListener(new ComponentAdapter() {
+    	            @Override
+    	            public void componentMoved(ComponentEvent e) {
+    	        		xPositionWindow = e.getComponent().getX();
+    	        		yPositionWindow = e.getComponent().getY();
+    	            }
+    	        });	 
+    			
+    			
+    			addWindowStateListener(new WindowStateListener() {
+    	            @Override
+    	            public void windowStateChanged(WindowEvent e) {
+    	                if (e.getNewState() != JFrame.ICONIFIED && e.getNewState() != JFrame.MAXIMIZED_BOTH) {
+    	                	setSize(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight);
+    	                	windowWidth = dimensions.minimumWindowWidth;
+    	                	windowHeight = dimensions.minimumWindowHeight;
+    	                }
+    	                updateView();
+    	                
+    	            }
+    	        });
+    	    }	
     
     
     public void windowCreate() {
+    	UserInfo.getCards();
     	setVisible(true);
     	
         windowWidth = getWidth();
@@ -255,10 +242,10 @@ public class EditCards extends JFrame implements GlobalDesign {
 		
 		//user icon / button in toolbar
 		RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
-		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
+		userIcon.setButtonIcon("Pictures/" + UserInfo.profilePic, biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
-		userIcon.setEnabled(false);
+		//userIcon.setEnabled(false);
 		buttonPanel.add(userIcon);
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
@@ -287,7 +274,7 @@ public class EditCards extends JFrame implements GlobalDesign {
         int colCounter = 0;
 
         for (int i = 0; i < UserInfo.cardQuestion.size(); i++) {
-        	JPanel groupPanel = createCardsPanel(UserInfo.cardQuestion.get(i), UserInfo.cardColors.get(i), UserInfo.cardID.get(i));         
+        	JPanel groupPanel = createCardsPanel(UserInfo.cardQuestion.get(i), UserInfo.cardAnswer.get(i), UserInfo.cardColors.get(i), UserInfo.cardID.get(i));         
         	editCardsPanel.add(groupPanel, gbc);
             gbc.gridx++;
             colCounter++;
@@ -303,7 +290,7 @@ public class EditCards extends JFrame implements GlobalDesign {
         return editCardsPanel;
     }
     
-    private JPanel createCardsPanel(String name, Color cardColor, String ID) {
+    private JPanel createCardsPanel(String question, String answer,  Color cardColor, String ID) {
         int frameWidth = windowWidth;
         int frameHeight = windowHeight;
         int horizontalGap = (int) (frameWidth * HORIZONTAL_GAP_PERCENTAGE / 100.0);
@@ -314,64 +301,98 @@ public class EditCards extends JFrame implements GlobalDesign {
 
         // Calculate the width and height for each rectangle
         int rectangleWidth = (frameWidth - (numCols) * horizontalGap) / numCols;
-        int rectangleHeight = (frameHeight - (numRows) * horizontalGap) / numRows;
+        int rectangleHeight = (frameHeight - (numRows-1) * horizontalGap) / numRows;
+        rectangleHeight = (int)(frameHeight*0.475);
 
         
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); // FlowLayout for label and text field
         panel.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight));
         panel.setBackground(cardColor); // Set individual group color if needed
+        
+        
+        //message "these fields can not be empty"
+      	JLabel lblInfo = new JLabel("");
+      	lblInfo.setPreferredSize(new Dimension((int) (rectangleWidth * 0.9), (int) (rectangleHeight * 0.05))); // Set height
+      	lblInfo.setFont(tinyFont);
+      	lblInfo.setForeground(ColorUtils.getContrastingTextColor(cardColor));
+        panel.add(lblInfo);
+        
 
         // Create a label
         JLabel lblQ = new JLabel("Question:");
         lblQ.setFont(secFont);
-        lblQ.setForeground(Color.WHITE);
+        lblQ.setForeground(ColorUtils.getContrastingTextColor(cardColor));
         panel.add(lblQ);
 
-            // Create a text field
-            qInput = new RoundTextField(40); // Adjust the column count as needed
-            qInput.setFont(inputText);
-            qInput.setText("Enter your question");
-            qInput.setPreferredSize(new Dimension(rectangleWidth, 80)); // Set the preferred size of the text field
-            // Text inside of the username field
-            qInput.addFocusListener(new FocusListener() {
-                public void focusGained(FocusEvent e) {
-                    if (qInput.getText().equals("Edit your question")) {
-                        qInput.setText("");
-                    }
+        // Create a text field
+        RoundMultilineText  qInput = new RoundMultilineText(question); // Adjust the column count as needed
+        qInput.setFont(inputText);
+        qInput.setLineWrap(true);
+        qInput.setWrapStyleWord(true);
+        qInput.setPreferredSize(new Dimension((int) (rectangleWidth * 0.9), (int) (rectangleHeight * 0.2))); // Set height
+        
+            
+        qInput.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e){
+            	boolean backspace = e.getKeyCode() == KeyEvent.VK_BACK_SPACE;
+            	String inputText = qInput.getText();
+            	// Set the text with the key typed
+                char keyChar = e.getKeyChar();
+                int totalChar = qInput.getText().length();
+                if(totalChar < cardQcharLimit || backspace) {
+                	lblInfo.setText("");
+                	
+                }else {
+                	if(inputText.length() > cardQcharLimit) {
+                		//user tries to go over the limit, dont show letters
+                		// Remove the last character
+                		inputText = inputText.substring(0, inputText.length() - 1);
+                	}
+                	qInput.setText(inputText);
+                	lblInfo.setText("Question is too long");
                 }
-
-                public void focusLost(FocusEvent e) {
-                    if (qInput.getText().isEmpty()) {
-                        qInput.setText("Edit your question");
-                    }
-                }
-            });
+                UserInfo.changeCardQuestion(ID, qInput.getText());
+            }
+        });
+            
+            
             panel.add(qInput);
             
             // Create a label
             JLabel lblA = new JLabel("Answer:");
             lblA.setFont(secFont);
-            lblA.setForeground(Color.WHITE);
+            lblA.setForeground(ColorUtils.getContrastingTextColor(cardColor));
             panel.add(lblA);
 
             // Create a text field
-            aInput = new RoundTextField(40); // Adjust the column count as needed
+            RoundMultilineText aInput = new RoundMultilineText(answer); 
             aInput.setFont(inputText);
-            aInput.setText("Enter your question");
-            aInput.setPreferredSize(new Dimension(rectangleWidth, 160)); // Set the preferred size of the text field
-            // Text inside of the username field
-            aInput.addFocusListener(new FocusListener() {
-                public void focusGained(FocusEvent e) {
-                    if (aInput.getText().equals("Edit your answer")) {
-                        aInput.setText("");
+            aInput.setLineWrap(true); // Enable line wrapping
+            aInput.setWrapStyleWord(true); // Wrap on word boundary
+            aInput.setPreferredSize(new Dimension((int) (rectangleWidth * 0.9), (int) (rectangleHeight * 0.3))); // Set fixed height
+            
+            aInput.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e){
+                	boolean backspace = e.getKeyCode() == KeyEvent.VK_BACK_SPACE;
+                	String inputText = aInput.getText();
+                	// Set the text with the key typed
+                    char keyChar = e.getKeyChar();
+                    int totalChar = aInput.getText().length();
+                    if(totalChar < cardAcharLimit || backspace) {
+                    	lblInfo.setText("");
+                    }else {
+                    	if(inputText.length() > cardAcharLimit) {
+                    		//user tries to go over the limit, dont show letters
+                    		// Remove the last character
+                    		inputText = inputText.substring(0, inputText.length() - 1);
+                    	}
+                    	aInput.setText(inputText);
+                    	lblInfo.setText("Answer is too long");
                     }
-                }
-
-                public void focusLost(FocusEvent e) {
-                    if (aInput.getText().isEmpty()) {
-                        aInput.setText("Edit your answer");
-                    }
+                    UserInfo.changeCardAnswer(ID, aInput.getText());
                 }
             });
             panel.add(aInput);
@@ -379,11 +400,11 @@ public class EditCards extends JFrame implements GlobalDesign {
             //adding label for color
             JLabel lblColor = new JLabel("Choose new color:");
             lblColor.setFont(secFont);
-            lblColor.setForeground(Color.WHITE);
+            lblColor.setForeground(ColorUtils.getContrastingTextColor(cardColor));
             panel.add(lblColor);
             
             // Create an instance of ColorfulButtons
-            ColorfulButtons colorfulButtons = new ColorfulButtons(panel);
+            ColorfulButtons colorfulButtons = new ColorfulButtons(panel, ID);
             //colorfulButtons.setBounds((int)(desiredWidth*0.33), (int)(desiredHeight*0.65), (int)(desiredWidth*0.93), (int)(desiredHeight*0.17)); // Adjust the bounds as needed
             panel.add(colorfulButtons);
             
@@ -393,19 +414,45 @@ public class EditCards extends JFrame implements GlobalDesign {
             panelButtons.setBackground(cardColor); // Set individual group color if needed
             panel.add(panelButtons);
             
+            RoundedButton btnDelete = new RoundedButton("Delete");
+            btnDelete.setFont(smallFont);
+            btnDelete.setBackground(Color.RED);
+            btnDelete.setPreferredSize(new Dimension(95, 35));
+            panelButtons.add(btnDelete);
+            btnDelete.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    int response = JOptionPane.showConfirmDialog(
+                            null, 
+                            "Are you sure you want to delete this card? This change cannot be undone", 
+                            "Confirm Deletion", 
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    
+                    if (response == JOptionPane.YES_OPTION) {
+                        UserInfo.deleteCard(ID);
+                        contentPane.removeAll();
+                        // add your elements
+                        contentPane.revalidate();
+                        contentPane.repaint();
+                        updateView();
+                    }
+                }
+            });
+            
             RoundedButton btnSave = new RoundedButton("Save");
             btnSave.setFont(smallFont);
             btnSave.setForeground(Color.BLACK);
             btnSave.setBackground(new Color(248, 248, 255));
             btnSave.setPreferredSize(new Dimension(95, 35));
+            
+            btnSave.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                	UserInfo.saveEditCard(ID);
+                }
+            });
+            
             panelButtons.add(btnSave);
-
-            RoundedButton btnDelete = new RoundedButton("Cancel");
-            btnDelete.setFont(smallFont);
-            btnDelete.setForeground(Color.BLACK);
-            btnDelete.setBackground(new Color(248, 248, 255));
-            btnDelete.setPreferredSize(new Dimension(95, 35));
-            panelButtons.add(btnDelete);
 
         
 
@@ -416,8 +463,9 @@ public class EditCards extends JFrame implements GlobalDesign {
 	class ColorfulButtons extends JPanel {
 
 		private JPanel parentPanel;
+		public Color chosenColor;
 		
-	    public ColorfulButtons(JPanel parentPanel) {
+	    public ColorfulButtons(JPanel parentPanel, String ID) {
 	        this.parentPanel = parentPanel;
 	    	setLayout(new FlowLayout(FlowLayout.LEFT)); // Buttons will be aligned to the left
 	        
@@ -428,22 +476,28 @@ public class EditCards extends JFrame implements GlobalDesign {
             // Create a button with a default color
 		    RoundButton button = new RoundButton(" ", (int)(desiredWidth*0.063), (int)(desiredHeight*0.103)); // Adjust button size as needed
             button.setBackground(Color.WHITE);
-            button.addActionListener(new ButtonClickListener());
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                	RoundButton source = (RoundButton) e.getSource();
+                	Color selectedColor = JColorChooser.showDialog(parentPanel, "Choose a color", source.getBackground());
+                	if (selectedColor != null) {
+                		// Update the background color of the button
+                		int red = selectedColor.getRed();
+                		int green = selectedColor.getGreen();
+                		int blue = selectedColor.getBlue();
+    		        
+                		chosenColor = selectedColor;
+                		
+                		UserInfo.changeCardColor(ID, chosenColor);
+                		source.setBackground(selectedColor);
+                	}
+                }
+	    });
             add(button);
-
 	        setOpaque(false); // Make the panel transparent
 	    }
 
-	    private class ButtonClickListener implements ActionListener {
-	        public void actionPerformed(ActionEvent e) {
-	            RoundButton source = (RoundButton) e.getSource();
-	            Color selectedColor = JColorChooser.showDialog(parentPanel, "Choose a color", source.getBackground());
-	            if (selectedColor != null) {
-	                // Update the background color of the button
-	                source.setBackground(selectedColor);
-	        }
-	    }
-	}   
+	  
 }
 
     

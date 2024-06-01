@@ -28,6 +28,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import databaseInfo.UserInfo;
+import services.ColorUtils;
 
 
 public class CardsDisplayWindow extends JFrame implements GlobalDesign {
@@ -36,11 +37,13 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
     
     private final int HORIZONTAL_GAP_PERCENTAGE = 2; 
     
-    private final int MAX_RECTANGLE_HEIGHT = 150;
-    private final int MAX_RECTANGLE_WIDTH = 300;
+    private final int MAX_RECTANGLE_HEIGHT = 325;
+    private final int MAX_RECTANGLE_WIDTH = 325;
     
 	public int START_X;
 	public int START_Y;
+	
+	CardsDisplayWindow parent;
 	
 	public String name;
     
@@ -62,6 +65,7 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
     
     public CardsDisplayWindow(int x, int y, int width, int height, String name) {
     	this.name = name;
+    	parent = this;
     	//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -188,6 +192,14 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 		playButton.setButtonIcon("icons/PlaycardsIcon.png",  buttonDimension, buttonDimension);
 		playButton.setBorder(null);
 		buttonPanel.add(playButton);
+		playButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				UserInfo.generateCardLineup();
+				CardRun cards = new CardRun(xPositionWindow, yPositionWindow, windowWidth, windowHeight, UserInfo.getFirstCardID());
+				dispose();
+				cards.setVisible(true);
+			}
+		});
 		
 		//return button in toolbar
 		RoundButton returnButton = new RoundButton("",buttonDimension ,buttonDimension );
@@ -217,6 +229,14 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 				editCards.setVisible(true);
 			}
 		});
+		//when there is nothing to edit the button is disabled
+		if(UserInfo.cardQuestion.size() <= 0) {
+			editButton.setEnabled(false);
+			playButton.setEnabled(false);
+		}else {
+			editButton.setEnabled(true);
+			playButton.setEnabled(true);
+		}
 
 		//add new group button in toolbar
 		RoundButton addCardButton = new RoundButton("",  buttonDimension, buttonDimension);
@@ -250,11 +270,12 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
 		
 		//user icon / button in toolbar
 		RoundButton userIcon = new RoundButton("",biggerButtonDimension, biggerButtonDimension);
-		userIcon.setButtonIcon("icons/UserIconBasic.png", biggerButtonDimension, biggerButtonDimension);
+		userIcon.setButtonIcon("Pictures/" + UserInfo.profilePic, biggerButtonDimension, biggerButtonDimension);
 		userIcon.setBackground(toolbarColor);
 		userIcon.setBorder(null);
-		userIcon.setEnabled(false);
+		//userIcon.setEnabled(false);
 		buttonPanel.add(userIcon);
+		
 		
 		toolbarPanel.add(buttonPanel, BorderLayout.EAST);
 		 
@@ -293,7 +314,7 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
         //calculates the width and height of each rectangle
         int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
         int availableHeight = frameHeight - (int)(frameHeight * 0.2);
-        int rectangleHeight = Math.min(availableHeight / numRows, MAX_RECTANGLE_HEIGHT);
+        int rectangleHeight = Math.min(MAX_RECTANGLE_HEIGHT, availableHeight / 4);
         
 
         //add groups to the panel
@@ -301,19 +322,26 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
         	RoundedButton cardArea = new RoundedButton("");
         	cardArea.setText(UserInfo.cardQuestion.get(i));
         	cardArea.setBackground(UserInfo.cardColors.get(i));
-        	cardArea.setFont(WindowElementResize.mediumFont);
+        	cardArea.setFont(WindowElementResize.secFont);
         	cardArea.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height 
+        	cardArea.setForeground(ColorUtils.getContrastingTextColor(UserInfo.cardColors.get(i)));
 
-            
             String question = UserInfo.cardQuestion.get(i);
             Color color = UserInfo.cardColors.get(i);
-            
-            //listens for clicks on group to open its page
+            int index = i;
             cardArea.addMouseListener(new MouseAdapter() {
-    			public void mouseClicked(MouseEvent e) {
-    				new GroupPage(question, color).setVisible(true);;
-    			}
-    		});
+                private boolean showingAnswer = false; // Track if the answer is currently being shown
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (showingAnswer) {
+                        cardArea.setText(UserInfo.cardQuestion.get(index));
+                    } else {
+                        cardArea.setText(UserInfo.cardAnswer.get(index));
+                    }
+                    showingAnswer = !showingAnswer; // Toggle the state
+                }
+            });
             
             gbc.anchor = GridBagConstraints.NORTHWEST;
 
@@ -335,6 +363,27 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
                 gbc.gridy++;
             }
         }
+        
+        if(UserInfo.cardColors.size() <= 0) {
+       	 RoundedButton addGroup = new RoundedButton("");
+       	 addGroup.setText("No cards found! Add a card<br>" + "<b>+</b>");
+       	 addGroup.setForeground(Color.WHITE);
+       	 addGroup.setBackground(new Color(0,0,0, 128));
+       	 addGroup.setFont(WindowElementResize.mediumFont);
+       	 addGroup.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height 
+       	 //listens for clicks on group to open its page
+       	 addGroup.addActionListener(new ActionListener() {
+       		 public void actionPerformed(ActionEvent e) {
+    				AddCardsManual addCard = new AddCardsManual(parent);
+    				addCard.setVisible(true);
+    			}
+    		});
+            
+            
+       	cardPanel.add(addGroup, gbc);
+       }
+        
+        
         return cardPanel;
     }
     
