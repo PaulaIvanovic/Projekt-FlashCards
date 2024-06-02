@@ -92,7 +92,6 @@ public class EditCards extends JFrame implements GlobalDesign {
     	this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
     	updateView();
 
-    	
     	//function for resizing components
     	addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent e) {
@@ -121,38 +120,58 @@ public class EditCards extends JFrame implements GlobalDesign {
     	        		windowWidth = newSize.width;
     	        		windowHeight = newSize.height;
     	        	}
-    	        	
-    	        	 updateView(); 
-    	        
+    	            updateView();   
     	        }
     	    }
     	});
     	
+    	// listener for window state changes
+        addWindowStateListener(new WindowAdapter() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) == 0) {
+                    // store the previous size when the window is not maximized
+                    previousWidth = getWidth();
+                    previousHeight = getHeight();
+                }
+            }
+        });
+        
+    	//when minimize/maximize button is clicked, 
+        //window goes to 50% of its original (fullscreen) size
+    	this. addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if ((getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0) {
+                    setSize(previousWidth / 2, previousHeight / 2);
+                 
+                    revalidate();
+                    repaint();
+                }
+            }
+        });
+    	
+    	//listener for window state changes
+    	addWindowStateListener(new WindowAdapter() {
+    	    public void windowStateChanged(WindowEvent e) {
+    	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
+    	            updateView();
+    	        }else if (e.getNewState() == JFrame.NORMAL) {
+    	            updateView();
+    	        }
+    	    }
+    	});
     	
     	//check if moved
-    			addComponentListener(new ComponentAdapter() {
-    	            @Override
-    	            public void componentMoved(ComponentEvent e) {
-    	        		xPositionWindow = e.getComponent().getX();
-    	        		yPositionWindow = e.getComponent().getY();
-    	            }
-    	        });	 
-    			
-    			
-    			addWindowStateListener(new WindowStateListener() {
-    	            @Override
-    	            public void windowStateChanged(WindowEvent e) {
-    	                if (e.getNewState() != JFrame.ICONIFIED && e.getNewState() != JFrame.MAXIMIZED_BOTH) {
-    	                	setSize(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight);
-    	                	windowWidth = dimensions.minimumWindowWidth;
-    	                	windowHeight = dimensions.minimumWindowHeight;
-    	                }
-    	                updateView();
-    	                
-    	            }
-    	        });
-    	    }	
-    
+		addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+        		xPositionWindow = e.getComponent().getX();
+        		yPositionWindow = e.getComponent().getY();
+            }
+        });	
+  
+    }
     
     public void windowCreate() {
     	UserInfo.getCards();

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.util.ArrayList;
@@ -78,58 +79,87 @@ public class CardRun extends JFrame implements GlobalDesign {
         this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
         windowCreate();
 
-        addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                Dimension newSize = e.getComponent().getSize();
-
-                if (windowWidth != newSize.width || windowHeight != newSize.height) {
-                    if (newSize.width <= dimensions.minimumWindowWidth && newSize.height <= dimensions.minimumWindowHeight) {
-                        windowWidth = dimensions.minimumWindowWidth;
-                        windowHeight = dimensions.minimumWindowHeight;
-                    } else if (newSize.width <= dimensions.minimumWindowWidth && newSize.height > dimensions.minimumWindowHeight) {
-                        windowWidth = dimensions.minimumWindowWidth;
-                        windowHeight = newSize.height;
-                    } else if (newSize.height <= dimensions.minimumWindowHeight && newSize.width > dimensions.minimumWindowWidth) {
-                        windowWidth = newSize.width;
-                        windowHeight = dimensions.minimumWindowHeight;
-                    } else if (newSize.width == dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
-                        windowWidth = dimensions.screenWidth;
-                        windowHeight = dimensions.screenHeight;
-                    } else if (newSize.width == dimensions.screenWidth && newSize.height != dimensions.screenHeight) {
-                        windowWidth = dimensions.screenWidth;
-                        windowHeight = newSize.height;
-                    } else if (newSize.width != dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
-                        windowWidth = newSize.width;
-                        windowHeight = dimensions.screenHeight;
-                    } else {
-                        windowWidth = newSize.width;
-                        windowHeight = newSize.height;
-                    }
-                    updateView();
-                }
-            }
-        });
-
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentMoved(ComponentEvent e) {
-                xPositionWindow = e.getComponent().getX();
-                yPositionWindow = e.getComponent().getY();
-            }
-        });
-
-        addWindowStateListener(new WindowStateListener() {
+    	//function for resizing components
+    	addComponentListener(new ComponentAdapter() {
+    	    public void componentResized(ComponentEvent e) {
+    	        Dimension newSize = e.getComponent().getSize();
+    	          	       
+    	        if (windowWidth != newSize.width || windowHeight != newSize.height) {
+    	        	if(newSize.width <= dimensions.minimumWindowWidth && newSize.height <= dimensions.minimumWindowHeight) {
+    	        		windowWidth = dimensions.minimumWindowWidth;
+        	            windowHeight = dimensions.minimumWindowHeight;
+    	        	} else if (newSize.width <= dimensions.minimumWindowWidth && newSize.height > dimensions.minimumWindowHeight) {
+    	        		windowWidth = dimensions.minimumWindowWidth;
+        	            windowHeight = newSize.height;
+    	        	} else if (newSize.height <= dimensions.minimumWindowHeight && newSize.width > dimensions.minimumWindowWidth) {
+    	        		windowWidth = newSize.width;
+        	            windowHeight = dimensions.minimumWindowHeight;
+    	        	} else if (newSize.width == dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        		windowWidth = dimensions.screenWidth;
+    	        		windowHeight = dimensions.screenHeight;
+    	        	} else if (newSize.width == dimensions.screenWidth && newSize.height != dimensions.screenHeight) {
+    	        		windowWidth = dimensions.screenWidth;
+    	        		windowHeight = newSize.height;
+    	        	} else if (newSize.width != dimensions.screenWidth && newSize.height == dimensions.screenHeight) {
+    	        		windowWidth = newSize.width;
+    	        		windowHeight = dimensions.screenHeight;
+    	        	} else {
+    	        		windowWidth = newSize.width;
+    	        		windowHeight = newSize.height;
+    	        	}
+    	            updateView();   
+    	        }
+    	    }
+    	});
+    	
+    	// listener for window state changes
+        addWindowStateListener(new WindowAdapter() {
             @Override
             public void windowStateChanged(WindowEvent e) {
-                if (e.getNewState() != JFrame.ICONIFIED && e.getNewState() != JFrame.MAXIMIZED_BOTH) {
-                    setSize(dimensions.minimumWindowWidth, dimensions.minimumWindowHeight);
-                    windowWidth = dimensions.minimumWindowWidth;
-                    windowHeight = dimensions.minimumWindowHeight;
+                if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) == 0) {
+                    // store the previous size when the window is not maximized
+                    previousWidth = getWidth();
+                    previousHeight = getHeight();
                 }
-                updateView();
             }
         });
+        
+    	//when minimize/maximize button is clicked, 
+        //window goes to 50% of its original (fullscreen) size
+    	this. addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if ((getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0) {
+                    setSize(previousWidth / 2, previousHeight / 2);
+                 
+                    revalidate();
+                    repaint();
+                }
+            }
+        });
+    	
+    	//listener for window state changes
+    	addWindowStateListener(new WindowAdapter() {
+    	    public void windowStateChanged(WindowEvent e) {
+    	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
+    	            updateView();
+    	        }else if (e.getNewState() == JFrame.NORMAL) {
+    	            updateView();
+    	        }
+    	    }
+    	});
+    	
+    	//check if moved
+		addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+        		xPositionWindow = e.getComponent().getX();
+        		yPositionWindow = e.getComponent().getY();
+            }
+        });	
+  
     }
+    
 
     public void windowCreate() {
         setVisible(true);
@@ -184,6 +214,7 @@ public class CardRun extends JFrame implements GlobalDesign {
         buttonPanel.add(returnArr);
         returnArr.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	UserInfo.saveCardsStats();
                 CardsDisplayWindow cdw = new CardsDisplayWindow(xPositionWindow, yPositionWindow, windowWidth, windowHeight, UserInfo.getname(false));
                 dispose();
                 cdw.setVisible(true);
@@ -216,6 +247,7 @@ public class CardRun extends JFrame implements GlobalDesign {
         save.setPreferredSize(new Dimension(100, 50));
         save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	UserInfo.saveCardsStats();
                 CardsDisplayWindow cdw = new CardsDisplayWindow(xPositionWindow, yPositionWindow, windowWidth, windowHeight, UserInfo.getname(false));
                 dispose();
                 cdw.setVisible(true);
@@ -374,6 +406,14 @@ public class CardRun extends JFrame implements GlobalDesign {
     }
     
     public void checkSwitch(boolean forward) {
+    	if(!UserInfo.visited.contains(0) && !UserInfo.visited.contains(1)) {
+    		//try to go forward if there are cards left
+       	 	if(UserInfo.card+1 >= UserInfo.cardIDLineup.size()) {
+       	 		//start from begining
+       	 		UserInfo.card = -1; 	//becaurse we add 1
+       	 	}
+       	 	UserInfo.card++;
+    	}
     	if(forward) {
     		//try to go forward if there are cards left
        	 	if(UserInfo.card+1 >= UserInfo.cardIDLineup.size()) {

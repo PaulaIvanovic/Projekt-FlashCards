@@ -388,7 +388,7 @@ public class UserInfo implements GlobalDesign{
 		int max = 4;
 		//int added = 0;
 		for(int i = 0; i < cardID.size(); i++) {
-			if(cardCorrect.get(i) == null || cardCorrect.get(i).equals("0")) {
+			if(cardCorrect.get(i) == null || cardCorrect.get(i).equals("0") || cardCorrect.get(i).equals("2") || cardCorrect.get(i).equals("1")) {
 				cardIDLineup.add(cardID.get(i));
 				visited.add(0);
 			}else {
@@ -411,7 +411,13 @@ public class UserInfo implements GlobalDesign{
 		return cardIDLineup.get(0);
 	}
 	
-
+	public static void saveCardsStats() {
+		for(int i = 0; i < visited.size(); i++) {
+			int index = cardID.indexOf(cardIDLineup.get(i));
+	        
+			crude.update("card", "'T/F'", "idcard", cardID.get(index), String.valueOf( visited.get(i)));
+		}
+	}
 
 
 }
