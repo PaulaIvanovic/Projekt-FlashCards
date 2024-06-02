@@ -1,0 +1,66 @@
+name: sending
+
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  send_email:
+    runs-on: windows-latest
+
+    steps:
+    - name: Debug assignee
+   # run: echo "Assignee: ${{ github.event.issue.assignee.login }}"
+
+
+    - name: Map GitHub username to email
+      id: map_email
+      run: |
+        email_map=(
+          "PaulaIvanovic:paulaivanovic6@gmail.com"
+          "ljovic:joviclucia10@gmail.com"
+          "Mia2404:mia.zuvic1234@gmail.com"
+          "bazon8e82:nikabazon2002@gmail.com"
+          "mbedi11:bredinestedi@gmail.com"
+          "HanaDzin:dzinhana@hotmail.com.com"
+        )
+        assignee="${{ github.event.issue.assignee.login }}"
+        echo "Assignee: $assignee"
+        
+        email=""
+        for entry in "${email_map[@]}"; do
+          key="${entry%%:*}"
+          value="${entry#*:}"
+          if [ "$key" == "$assignee" ]; then
+            email="$value"
+            break
+          fi
+        done
+        
+        if [ -z "$email" ]; then
+          echo "No email found for the user: $assignee"
+          exit 1
+        fi
+        
+        echo "::set-output name=email::$email"
+    - name: Debug mapped email
+      run: echo "Mapped email is ${{ steps.map_email.outputs.email }}"
+
+    - name: Send email
+      uses: dawidd6/action-send-mail@v2
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        from: ${{ secrets.EMAIL_USERNAME }}
+        to: ${{ steps.map_email.outputs.email }}
+        subject: New issue assigned to you
+        body: |
+          Hello,
+          Your colleagues have a new assignment for you!
+          Enjoy the work. :)
+          Issue Title: ${{ github.event.issue.title }}
+          Issue URL: ${{ github.event.issue.html_url }}
+          Regards,
+          Your GitHub Action
