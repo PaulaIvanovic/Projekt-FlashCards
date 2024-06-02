@@ -256,7 +256,7 @@ public class CardRun extends JFrame implements GlobalDesign {
         	//answer on top
         	cardComponent = new RoundedButton(UserInfo.cardAnswer.get(UserInfo.cardID.indexOf(ID)));
         }
-        cardComponent.setFont(buttonText);
+        cardComponent.setFont(mediumFont);
         cardComponent.setForeground(Color.BLACK);
         cardComponent.setBounds((int)(windowWidth * 0.15), (int)(windowHeight * 0.250), (int)(windowWidth * 0.700), (int)(windowHeight * 0.500));
         
@@ -300,45 +300,59 @@ public class CardRun extends JFrame implements GlobalDesign {
         navigationRight.add(moveRight);
         
         CardRun window = this;
-        if(side) {
+        
+        if (side) {
+        	 //if the card is turned to question side - arrows left & right are visible
         	 moveLeft.setButtonIcon("icons/LeftArrowIcon.png", buttonDimension * 2, buttonDimension * 2);
-        	 moveLeft.addActionListener(new ActionListener() {
-                 public void actionPerformed(ActionEvent e) {
-                     //set visited to visited
-                	 UserInfo.visited.set(UserInfo.card, 1);
-                	 if(UserInfo.card-1 >= 0) {
-                		 UserInfo.card--;
-                		 switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
-                	 }
-                     updateView();
+        	 	
+        	 	//when clicked on the left (go back) arrow - mark current as visited + go back if you can 
+        	 	moveLeft.addActionListener(new ActionListener() {
+        	 		public void actionPerformed(ActionEvent e) {
+        	 			//set the current card as visited
+        	 			UserInfo.visited.set(UserInfo.card, 1);
+        	 			
+        	 			if (UserInfo.card - 1 >= 0) {	//move to previous card
+                		UserInfo.card--;
+                		switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
+        	 			}
+        	 		updateView();
                    }
                });
+        	 	
+        	 	
         	 moveRight.setButtonIcon("icons/RightArrowIcon.png", buttonDimension * 2, buttonDimension * 2);
+        	 
+        	 //when clicked on right arrow - go forward - mark the current as visited + go to the next
         	 moveRight.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent e) {
-                     //set visited to visited
+                     //set current card as visited
                 	 UserInfo.visited.set(UserInfo.card, 1);
-                	 checkSwitch(true);
-                 	switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
+                	 checkSwitch(true);	//if last card is reached, go from the beginning
+                 	 switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
                      updateView();
                    }
                });
         }else {
-        	///jednu od ovih slika treba postavit kao x a jednu kao tocno
-       	 	moveLeft.setButtonIcon("Pictures/default.png", buttonDimension * 2, buttonDimension * 2);
-       	 	moveLeft.addActionListener(new ActionListener() {
-             public void actionPerformed(ActionEvent e) {
-            	 //set visited to correct answer
+        	
+        	
+       	 	moveLeft.setButtonIcon("Icons/CorrectIcon.png", buttonDimension * 2, buttonDimension * 2);
+       	 	
+       	 	//set visited to correct answer
+       	 	moveLeft.addActionListener(new ActionListener() { 
+       	 		public void actionPerformed(ActionEvent e) { 
             	 UserInfo.visited.set(UserInfo.card, 2);
             	 checkSwitch(true);
-            	switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
+            	 switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
                  updateView();
                }
        	 	});
-       	 	moveRight.setButtonIcon("icons/CloseIcon.png", buttonDimension * 2, buttonDimension * 2);
+       	 	
+       	 	moveRight.setButtonIcon("icons/WrongIcon.png", buttonDimension * 2, buttonDimension * 2);
+       	 	
+       	 	//set visited to wrong answer
        	 	moveRight.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent e) {
-                //set visited to wrong answer
+                
             	 UserInfo.visited.set(UserInfo.card, 3);
             	 checkSwitch(true);
             	switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
@@ -406,22 +420,23 @@ public class CardRun extends JFrame implements GlobalDesign {
     }
     
     public void checkSwitch(boolean forward) {
-    	if(!UserInfo.visited.contains(0) && !UserInfo.visited.contains(1)) {
+    	if (!UserInfo.visited.contains(0) && !UserInfo.visited.contains(1)) {
     		//try to go forward if there are cards left
-       	 	if(UserInfo.card+1 >= UserInfo.cardIDLineup.size()) {
-       	 		//start from begining
-       	 		UserInfo.card = -1; 	//becaurse we add 1
+       	 	if (UserInfo.card +1 >= UserInfo.cardIDLineup.size()) {
+       	 		//start from beginning
+       	 		UserInfo.card = -1; 	//because we add 1
        	 	}
        	 	UserInfo.card++;
     	}
+    	
     	if(forward) {
     		//try to go forward if there are cards left
        	 	if(UserInfo.card+1 >= UserInfo.cardIDLineup.size()) {
-       	 		//start from begining
-       	 		UserInfo.card = -1; 	//becaurse we add 1
+       	 		//start from beginning
+       	 		UserInfo.card = -1; 	//because we add 1
        	 	}
        	 	
-       	 	//check if cards are visited/uopened
+       	 	//check if cards are visited/opened
        	 	if(UserInfo.visited.get(UserInfo.card+1) == 0 || UserInfo.visited.get(UserInfo.card+1) == 1) {//visited or unopened
        	 		if(UserInfo.card == -1) {
        	 			UserInfo.card = UserInfo.cardIDLineup.size()-1;
@@ -479,7 +494,9 @@ public class CardRun extends JFrame implements GlobalDesign {
 
  // Define the ColorfulButtons class
     class ColorfulButtons extends JPanel {
-        private JPanel buttonLayout; // Store reference to the layout panel
+
+		private static final long serialVersionUID = 1L;
+		private JPanel buttonLayout; // Store reference to the layout panel
         public static ArrayList<RoundButton> buttonList = new ArrayList();
 
         public ColorfulButtons(CardRun window) {

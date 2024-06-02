@@ -27,7 +27,7 @@ public class UserInfo implements GlobalDesign{
 	public static ArrayList<Color> cardColors;
 	public static ArrayList<String> cardQuestion;
 	public static ArrayList<String> cardAnswer;
-	public static ArrayList<String> cardCorrect;	//NULL - not answeredd	0 - correct	1-incorrect
+	public static ArrayList<String> cardCorrect;	//NULL - not answered	0 - correct	1-incorrect
 	public static ArrayList<String> cardID;
 	
 	public static ArrayList<String> cardIDLineup;
