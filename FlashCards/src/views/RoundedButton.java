@@ -13,7 +13,8 @@ import views.ScreenDimensions;
 
 class RoundedButton extends JButton {
 
-private static final int MAX_CHARS_PER_LINE = 20;
+private static final int MAX_CHARS_PER_LINE = 40;
+private static final String HTML_TEMPLATE = "<html><div style='display: flex; justify-content: center; align-items: center; height: 100%%; width: 100%%; text-align: center;'>%s</div></html>";
 
 	ScreenDimensions dimensions = new ScreenDimensions();
 	int windowWidth;
@@ -94,7 +95,8 @@ private static final int MAX_CHARS_PER_LINE = 20;
         
         @Override
         public void setText(String text) {
-            super.setText("<html><center>" + insertLineBreaks(text) + "</center></html>");
+            String htmlText = String.format(HTML_TEMPLATE, text);
+            super.setText(htmlText);
         }
 
         private String insertLineBreaks(String text) {

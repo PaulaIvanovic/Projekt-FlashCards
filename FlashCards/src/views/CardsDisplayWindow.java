@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -37,8 +38,8 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
     
     private final int HORIZONTAL_GAP_PERCENTAGE = 2; 
     
-    private final int MAX_RECTANGLE_HEIGHT = 325;
-    private final int MAX_RECTANGLE_WIDTH = 325;
+    private final int MAX_RECTANGLE_HEIGHT = 350;
+    private final int MAX_RECTANGLE_WIDTH = 350;
     
 	public int START_X;
 	public int START_Y;
@@ -332,8 +333,7 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
         	//make sure it is not 0
         }
         
-        int numCols = Math.min(help, 5);
-        int numRows = (numCols - 1) / 5 + 1;
+        int numCols = Math.min(help, 5);;
 
         //calculates the width and height of each rectangle
         int rectangleWidth = Math.min((frameWidth - START_X * 2 - (numCols - 1) * horizontalGap) / numCols, MAX_RECTANGLE_WIDTH);
@@ -341,28 +341,40 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
         int rectangleHeight = Math.min(MAX_RECTANGLE_HEIGHT, availableHeight / 4);
         
 
-        //add groups to the panel
+        //add cards to the panel
         for (int i = 0; i < UserInfo.cardColors.size(); i++) {
         	RoundedButton cardArea = new RoundedButton("");
+        	
+        	//sets the appropriate question from database
         	cardArea.setText(UserInfo.cardQuestion.get(i));
+        	cardArea.setMargin(new Insets(2, 2, 2, 2)); 
+        	
         	cardArea.setBackground(UserInfo.cardColors.get(i));
         	cardArea.setFont(WindowElementResize.secFont);
         	cardArea.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height 
         	cardArea.setForeground(ColorUtils.getContrastingTextColor(UserInfo.cardColors.get(i)));
 
-            String question = UserInfo.cardQuestion.get(i);
             Color color = UserInfo.cardColors.get(i);
             int index = i;
             cardArea.addMouseListener(new MouseAdapter() {
                 private boolean showingAnswer = false; // Track if the answer is currently being shown
 
-                @Override
                 public void mouseClicked(MouseEvent e) {
+                    String textToShow;
                     if (showingAnswer) {
-                        cardArea.setText(UserInfo.cardQuestion.get(index));
+                        textToShow = UserInfo.cardQuestion.get(index);
                     } else {
-                        cardArea.setText(UserInfo.cardAnswer.get(index));
+                        textToShow = UserInfo.cardAnswer.get(index);
                     }
+
+                    // adjust font size based on text length
+                    if (textToShow.length() > 50) {
+                        cardArea.setFont(WindowElementResize.smallFont); // smaller font size
+                    } else {
+                        cardArea.setFont(WindowElementResize.secFont); // default font size
+                    }
+
+                    cardArea.setText(textToShow);
                     showingAnswer = !showingAnswer; // Toggle the state
                 }
             });
@@ -395,6 +407,7 @@ public class CardsDisplayWindow extends JFrame implements GlobalDesign {
        	 addGroup.setBackground(new Color(0,0,0, 128));
        	 addGroup.setFont(WindowElementResize.mediumFont);
        	 addGroup.setPreferredSize(new Dimension(rectangleWidth, rectangleHeight)); // Set height 
+       	 
        	 //listens for clicks on group to open its page
        	 addGroup.addActionListener(new ActionListener() {
        		 public void actionPerformed(ActionEvent e) {

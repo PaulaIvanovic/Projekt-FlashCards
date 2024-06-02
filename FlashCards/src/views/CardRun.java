@@ -27,19 +27,13 @@ public class CardRun extends JFrame implements GlobalDesign {
     private static final long serialVersionUID = 1L;    
     private JPanel contentPane;
     private JPanel mainPanel;
-    private RoundedButton A;
+    private RoundedButton cardComponent;
 
-    private final int HORIZONTAL_GAP_PERCENTAGE = 2; 
-    private final int VERTICAL_GAP_PERCENTAGE = 3; 
-    private final int MAX_RECTANGLE_HEIGHT = 150;
-    private final int MAX_RECTANGLE_WIDTH = 300;
 
     public int groupsPerPage;
     public int START_X;
     public int START_Y;
 
-    private final int ARC_WIDTH = 30;
-    private final int ARC_HEIGHT = 30;
 
     int windowWidth;
     int windowHeight;
@@ -53,7 +47,7 @@ public class CardRun extends JFrame implements GlobalDesign {
     int previousWidth;
     int previousHeight;
     
-    boolean side = true;	//true on question side		false on answer side
+    boolean side = true;	//true on question side, false on answer side
 
     static String ID;
 
@@ -63,6 +57,7 @@ public class CardRun extends JFrame implements GlobalDesign {
 
     public CardRun(int x, int y, int width, int height, String ID) {
         this.ID = ID;
+        
         java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
         ImageIcon Icon = new ImageIcon(IconURL);
         setIconImage(Icon.getImage());
@@ -198,7 +193,6 @@ public class CardRun extends JFrame implements GlobalDesign {
 
         int buttonDimension = (int) (windowWidth * 0.025);
         int biggerButtonDimension = (int) (windowWidth * 0.035);
-        int saveButtonDimension = (int) (windowWidth * 0.010);
 
         RoundButton editButton = new RoundButton("", buttonDimension, buttonDimension);
         editButton.setBackground(toolbarColor);
@@ -254,22 +248,28 @@ public class CardRun extends JFrame implements GlobalDesign {
             }
         });
         
-        if(side) {
-        	A = new RoundedButton(UserInfo.cardQuestion.get(UserInfo.cardID.indexOf(ID)));
-        }else {
-        	A = new RoundedButton(UserInfo.cardAnswer.get(UserInfo.cardID.indexOf(ID)));
+        
+        if (side) {
+        	//question on top
+        	cardComponent = new RoundedButton(UserInfo.cardQuestion.get(UserInfo.cardID.indexOf(ID)));
+        } else {
+        	//answer on top
+        	cardComponent = new RoundedButton(UserInfo.cardAnswer.get(UserInfo.cardID.indexOf(ID)));
         }
-        A.setFont(buttonText);
-        A.setForeground(Color.BLACK);
-        A.setBounds((int)(windowWidth * 0.15), (int)(windowHeight * 0.250), (int)(windowWidth * 0.700), (int)(windowHeight * 0.500));
-        A.addActionListener(new ActionListener() {
+        cardComponent.setFont(buttonText);
+        cardComponent.setForeground(Color.BLACK);
+        cardComponent.setBounds((int)(windowWidth * 0.15), (int)(windowHeight * 0.250), (int)(windowWidth * 0.700), (int)(windowHeight * 0.500));
+        
+        //when the card gets clicked, side flips
+        cardComponent.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-              A.setText(UserInfo.cardAnswer.get(UserInfo.cardID.indexOf(ID)));
-              side = false;
-              updateView();
+            	cardComponent.setText(UserInfo.cardAnswer.get(UserInfo.cardID.indexOf(ID)));
+            	side = false;
+            	updateView();
             }
         });
-        mainPanel.add(A);
+        
+        mainPanel.add(cardComponent);
         toolbarPanel.add(buttonPanel, BorderLayout.EAST);
         mainPanel.add(save);
 
@@ -397,7 +397,7 @@ public class CardRun extends JFrame implements GlobalDesign {
     	side = true;
         try {
             ID = newID;
-            A.setText(UserInfo.cardQuestion.get(UserInfo.cardID.indexOf(newID)));
+            cardComponent.setText(UserInfo.cardQuestion.get(UserInfo.cardID.indexOf(newID)));
         } catch (Exception e) {
             e.printStackTrace();
         }
