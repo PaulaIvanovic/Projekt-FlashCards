@@ -1,49 +1,63 @@
-name: Send Email on Issue Assignment
+name: Send email to assigned user on new issue
 'on':
   issues:
     types:
       - assigned
 jobs:
   send_email:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Install mail command
-        run: sudo apt-get update && sudo apt-get install -y mailutils
+      - name: Debug assignee
+      - name: Map GitHub username to email
+        id: map_email
+        run: |
+          email_map=(
+            "PaulaIvanovic:paulaivanovic6@gmail.com"
+            "ljovic:joviclucia10@gmail.com"
+            "Mia2404:mia.zuvic1234@gmail.com"
+            "bazon8e82:nikabazon2002@gmail.com"
+            # "githubuser5:user5@example.com"
+            # "githubuser6:user6@example.com"
+          )
+          assignee="${{ github.event.issue.assignee.login }}"
+          echo "Assignee: $assignee"
+
+          email=""
+          for entry in "${email_map[@]}"; do
+            key="${entry%%:*}"
+            value="${entry#*:}"
+            if [ "$key" == "$assignee" ]; then
+              email="$value"
+              break
+            fi
+          done
+
+          if [ -z "$email" ]; then
+            echo "No email found for the user: $assignee"
+            exit 1
+          fi
+
+          echo "::set-output name=email::$email"
+      - name: Debug mapped email
+        run: 'echo "Mapped email is ${{ steps.map_email.outputs.email }}"'
       - name: Send email
-        env:
-          SMTP_SERVER: smtp.gmail.com
-          SMTP_PORT: 587
-          EMAIL_USERNAME: '${{ secrets.EMAIL_USERNAME }}'
-          EMAIL_PASSWORD: '${{ secrets.EMAIL_PASSWORD }}'
-          RECIPIENT_EMAIL: '${{ github.event.issue.assignee.email }}'
-        run: >
-          echo "Subject: New Issue Assigned: ${{ github.event.issue.title }}" >
-          email.txt
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: '${{ secrets.EMAIL_USERNAME }}'
+          password: '${{ secrets.EMAIL_PASSWORD }}'
+          from: '${{ secrets.EMAIL_USERNAME }}'
+          to: '${{ steps.map_email.outputs.email }}'
+          subject: New issue assigned to you
+          body: |
+            Hello,
 
-          echo "" >> email.txt
+            Your colleagues have a new assignment for you!
+            Enjoy the work. :)
 
-          echo "Hello," >> email.txt
+            Issue Title: ${{ github.event.issue.title }}
+            Issue URL: ${{ github.event.issue.html_url }}
 
-          echo "" >> email.txt
-
-          echo "You have been assigned to the following issue:" >> email.txt
-
-          echo "" >> email.txt
-
-          echo "Title: ${{ github.event.issue.title }}" >> email.txt
-
-          echo "URL: ${{ github.event.issue.html_url }}" >> email.txt
-
-          echo "" >> email.txt
-
-          echo "Best regards, Luc" >> email.txt
-
-          echo "Your GitHub Actions" >> email.txt
-
-          cat email.txt | sendmail -t
+            Regards,
+            Your GitHub Action
