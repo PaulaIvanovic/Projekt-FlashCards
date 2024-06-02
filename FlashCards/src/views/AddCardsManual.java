@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -18,21 +20,25 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import databaseInfo.UserInfo;
 import views.AddCardsManual.ColorfulButtons;
 
 public class AddCardsManual extends JFrame implements GlobalDesign{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	 private JTextField qInput, aInput;
+	JTextArea qInput;
+	private JTextArea aInput;
+	public String chosenColor;
 	
 	  ScreenDimensions dimensions = new ScreenDimensions();
 
 
-	public AddCardsManual() {
+	public AddCardsManual(CardsDisplayWindow parent) {
 		//set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
@@ -48,6 +54,8 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         setTitle("NEW CARD");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(0, 0, desiredWidth, desiredHeight);
+        setUndecorated(true);
+        getRootPane().setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
         setResizable(false); 
         setLocationRelativeTo(null);
         setVisible(true);  
@@ -88,7 +96,9 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 		exitButton.setBorder(null);
 		exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                dispose();
+            	parent.updateView();
+            	parent.setVisible(true);
+            	dispose();
             }
         });
 		tbPane.add(exitButton);
@@ -103,6 +113,14 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         centerPanel.setBackground(new Color(69, 62, 130));
         centerPanel.setLayout(null);
         
+        //message "these fields can not be empty"
+      	JLabel lblInfo = new JLabel("");
+      	lblInfo.setBounds((int)(desiredWidth * 0.03), (int)(desiredHeight * 0.725), (int)(desiredWidth * 0.5), (int)(desiredHeight * 0.04));
+      	centerPanel.add(lblInfo);
+      	lblInfo.setFont(tinyFont);
+      	lblInfo.setForeground(textRed);
+        
+        
         //adding label for q
         JLabel lblQ = new JLabel("Question:");
         lblQ.setFont(secFont);
@@ -111,10 +129,11 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         centerPanel.add(lblQ);
         
         //question input
-        qInput = new RoundTextField(0);
+        qInput = new RoundMultilineText("Enter your question"); // 5 rows, 20 columns
         qInput.setFont(inputText);
+        qInput.setLineWrap(true); // Enable line wrapping
+        qInput.setWrapStyleWord(true); // Wrap on word boundary
         qInput.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.13), (int)(desiredWidth*0.9), (int)(desiredHeight*0.15));
-        qInput.setText("Enter your question");
         
         //text inside of username field
         qInput.addFocusListener(new FocusListener() {
@@ -130,6 +149,28 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
                 }
             }
         });
+        
+        qInput.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e){
+            	boolean backspace = e.getKeyCode() == KeyEvent.VK_BACK_SPACE;
+            	String inputText = qInput.getText();
+            	// Set the text with the key typed
+                char keyChar = e.getKeyChar();
+                int totalChar = qInput.getText().length();
+                if(totalChar < cardQcharLimit || backspace) {
+                	lblInfo.setText("");
+                }else {
+                	if(inputText.length() > cardQcharLimit) {
+                		//user tries to go over the limit, dont show letters
+                		// Remove the last character
+                		inputText = inputText.substring(0, inputText.length() - 1);
+                	}
+                	qInput.setText(inputText);
+                	lblInfo.setText("Question is too long");
+                }
+            }
+        });
         centerPanel.add(qInput);
         
         //adding label for a
@@ -139,11 +180,12 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         lblA.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.30), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
         centerPanel.add(lblA);
         
-        //answer input
-        aInput = new RoundTextField(0);
+      //answer input
+        aInput = new RoundMultilineText("Enter your answer"); 
         aInput.setFont(inputText);
+        aInput.setLineWrap(true); // Enable line wrapping
+        aInput.setWrapStyleWord(true); // Wrap on word boundary
         aInput.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.40), (int)(desiredWidth*0.9), (int)(desiredHeight*0.2));
-        aInput.setText("Enter your answer");
         
         //text inside of username field
         aInput.addFocusListener(new FocusListener() {
@@ -156,6 +198,28 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
             public void focusLost(FocusEvent e) {
                 if (aInput.getText().isEmpty()) {
                 	aInput.setText("Enter your answer");
+                }
+            }
+        });
+        
+        aInput.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e){
+            	boolean backspace = e.getKeyCode() == KeyEvent.VK_BACK_SPACE;
+            	String inputText = aInput.getText();
+            	// Set the text with the key typed
+                char keyChar = e.getKeyChar();
+                int totalChar = aInput.getText().length();
+                if(totalChar < cardAcharLimit || backspace) {
+                	lblInfo.setText("");
+                }else {
+                	if(inputText.length() > cardAcharLimit) {
+                		//user tries to go over the limit, dont show letters
+                		// Remove the last character
+                		inputText = inputText.substring(0, inputText.length() - 1);
+                	}
+                	aInput.setText(inputText);
+                	lblInfo.setText("Answer is too long");
                 }
             }
         });
@@ -174,6 +238,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         centerPanel.add(colorfulButtons);
         
         
+        
         // Add Save and Cancel buttons
         RoundedButton btnSave = new RoundedButton("Save");
         btnSave.setFont(smallFont);
@@ -181,6 +246,35 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         btnSave.setBackground(new Color(248, 248, 255));
         btnSave.setBounds((int)(desiredWidth*0.62), (int)(desiredHeight*0.76), (int)(desiredWidth*0.17), (int)(desiredHeight*0.085));
         centerPanel.add(btnSave);
+        btnSave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	if(checkSelection()) {
+            		if(!lblInfo.getText().equals("Question is too long") && !lblInfo.getText().equals("Answer is too long")) {
+                		UserInfo.addCard(qInput.getText(), aInput.getText(), chosenColor);
+                		parent.updateView();
+                		parent.setVisible(true);
+                    	dispose();
+            		}
+            	}else {
+            		lblInfo.setText("Warning: Information incomplete. Make sure no field is empty.");
+            	}
+            }
+
+			private boolean checkSelection() {
+				if(chosenColor == null) {
+	                // Update the background color of the button
+    				int red = cardDefaultColor.getRed();
+    		        int green = cardDefaultColor.getGreen();
+    		        int blue = cardDefaultColor.getBlue();
+    		        
+    		        chosenColor = String.format("0x%02X%02X%02X", red, green, blue);
+				}
+				if(qInput.getText() == "" || qInput.getText().equalsIgnoreCase("Enter your question") || aInput.getText() == "" || aInput.getText().equalsIgnoreCase("Enter your answer")) {
+					return false;
+				}
+				return true;
+			}
+        });
 
         RoundedButton btnCancel = new RoundedButton("Cancel");
         btnCancel.setFont(smallFont);
@@ -188,6 +282,13 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         btnCancel.setBackground(new Color(248, 248, 255));
         btnCancel.setBounds((int)(desiredWidth*0.8), (int)(desiredHeight*0.76), (int)(desiredWidth*0.17), (int)(desiredHeight*0.085));
         centerPanel.add(btnCancel);
+        btnCancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	parent.updateView();
+            	parent.setVisible(true);
+                dispose();
+            }
+        });
 		
 	}
 	
@@ -213,12 +314,18 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 	        setOpaque(false); // Make the panel transparent
 	    }
 
-	    private class ButtonClickListener implements ActionListener {
+	    public class ButtonClickListener implements ActionListener {
 	        public void actionPerformed(ActionEvent e) {
 	            RoundButton source = (RoundButton) e.getSource();
 	            Color selectedColor = JColorChooser.showDialog(parentPanel, "Choose a color", source.getBackground());
 	            if (selectedColor != null) {
 	                // Update the background color of the button
+    				int red = selectedColor.getRed();
+    		        int green = selectedColor.getGreen();
+    		        int blue = selectedColor.getBlue();
+    		        
+    		        chosenColor = String.format("0x%02X%02X%02X", red, green, blue);
+	    	
 	                source.setBackground(selectedColor);
 	        }
 	    }
@@ -226,6 +333,8 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 	
 	    
 	}
+	
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -237,7 +346,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 				}
 			}
 		});
-	}
+	}*/
 }
 
 

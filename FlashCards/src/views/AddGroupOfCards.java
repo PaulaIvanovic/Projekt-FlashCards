@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -118,6 +120,13 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         lblGroupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.03), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
         centerPanel.add(lblGroupName);
         
+        //message "these fields can not be empty"
+      	JLabel lblInfo = new JLabel("");
+      	lblInfo.setBounds((int)(desiredWidth * 0.03), (int)(desiredHeight * 0.725), (int)(desiredWidth * 0.5), (int)(desiredHeight * 0.04));
+      	centerPanel.add(lblInfo);
+      	lblInfo.setFont(tinyFont);
+      	lblInfo.setForeground(textRed);
+        
         //group name input
         groupName = new RoundTextField(0);
         groupName.setFont(inputText);
@@ -138,7 +147,32 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
                 }
             }
         });
+        
+        groupName.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e){
+            	boolean backspace = e.getKeyCode() == KeyEvent.VK_BACK_SPACE;
+            	String inputText = groupName.getText();
+            	// Set the text with the key typed
+                char keyChar = e.getKeyChar();
+                int totalChar = groupName.getText().length();
+                if(totalChar < charLimit || backspace) {
+                	lblInfo.setText("");
+                }else {
+                	if(inputText.length() > charLimit) {
+                		//user tries to go over the limit, dont show letters
+                		// Remove the last character
+                		inputText = inputText.substring(0, inputText.length() - 1);
+                	}
+                	groupName.setText(inputText);
+                	lblInfo.setText("Group name is too long");
+                }
+            }
+        });
+            
         centerPanel.add(groupName);
+        
+        
         
         //adding label for group color
         JLabel lblGroupColor = new JLabel("Choose group color:");
@@ -151,13 +185,7 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         ColorfulButtons colorfulButtons = new ColorfulButtons();
         colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.39), (int)(desiredWidth*0.93), (int)(desiredHeight*0.3)); // Adjust the bounds as needed
         centerPanel.add(colorfulButtons);
-        
-        //message "these fields can not be empty"
-      	JLabel lblInfo = new JLabel("");
-      	lblInfo.setBounds((int)(desiredWidth * 0.03), (int)(desiredHeight * 0.725), (int)(desiredWidth * 0.5), (int)(desiredHeight * 0.04));
-      	centerPanel.add(lblInfo);
-      	lblInfo.setFont(tinyFont);
-      	lblInfo.setForeground(textRed);
+       
         
         // Add Save and Cancel buttons
         RoundedButton btnSave = new RoundedButton("Save");
@@ -169,10 +197,12 @@ public class AddGroupOfCards extends JFrame implements GlobalDesign{
         btnSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	if(checkSelection()) {
-            		UserInfo.addGroup(groupName.getText(), chosenColor);
-            		parent.updateView();
-            		parent.setVisible(true);
-                	dispose();
+            		if(!lblInfo.getText().equals("Group name is too long")) {
+                		UserInfo.addGroup(groupName.getText(), chosenColor);
+                		parent.updateView();
+                		parent.setVisible(true);
+                    	dispose();
+            		}
             	}else {
             		lblInfo.setText("Warning: Information incomplete. Make sure no field is empty.");
             	}

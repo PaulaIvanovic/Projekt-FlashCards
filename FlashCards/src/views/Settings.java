@@ -4,6 +4,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import databaseInfo.UserInfo;
+
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -203,7 +206,7 @@ public class Settings extends JFrame implements GlobalDesign{
 		mainPanel.add(lblChoose);
         
 
-        for (int i = 0; i < profilePictures.length; i++) {
+        for (int i = 0; i <= profilePictures.length; i++) {
         	int firstPicWidth = (int)(windowWidth*0.175);
         	int firstPicHeight = (int)(windowHeight*0.3);
         	int PicWidth = (int)(windowWidth*0.1);
@@ -214,7 +217,7 @@ public class Settings extends JFrame implements GlobalDesign{
         	//first chosen picture
         	if(i == 0) {
         		RoundButton userIcon = new RoundButton("", firstPicWidth, firstPicHeight);
-            	userIcon.setButtonIcon("Pictures/" + "UserIconBasic.png", firstPicWidth, firstPicHeight);
+            	userIcon.setButtonIcon("Pictures/" + UserInfo.profilePic, firstPicWidth, firstPicHeight);
             	userIcon.setBounds((int)(windowWidth*0.015)+(i)*distance, (int)(windowHeight*0.055), firstPicWidth, firstPicHeight);
             	userIcon.setBorder(null);
             	userIcon.setBackground(backgroundColor);

@@ -2,6 +2,7 @@ package views;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
@@ -11,11 +12,14 @@ import javax.swing.JButton;
 import views.ScreenDimensions;
 
 class RoundedButton extends JButton {
-	
-		ScreenDimensions dimensions = new ScreenDimensions();
-		int windowWidth;
-		int windowHeight;
-	
+
+private static final int MAX_CHARS_PER_LINE = 20;
+
+	ScreenDimensions dimensions = new ScreenDimensions();
+	int windowWidth;
+	int windowHeight;
+	String help; //used for storing groupIDs
+
         public RoundedButton(String label) {
             super(label);
             this.windowWidth = dimensions.screenWidth;
@@ -60,4 +64,59 @@ class RoundedButton extends JButton {
             }
             return shape.contains(x, y);
         }
+        /*
+        @Override
+        public Dimension getPreferredSize() {
+            Dimension size = super.getPreferredSize();
+            // Wrap text if it exceeds MAX_CHARS_PER_LINE characters
+            String text = getText();
+            if (text != null && text.length() > MAX_CHARS_PER_LINE) {
+                FontMetrics fm = getFontMetrics(getFont());
+                int lineHeight = fm.getHeight();
+                int lines = (int) Math.ceil((double) text.length() / MAX_CHARS_PER_LINE);
+            }
+            return size;
+        }*/
+        
+        public static StringBuilder insertBrAfterNChars(String str) {
+            StringBuilder sb = new StringBuilder();
+            int length = str.length();
+
+            for (int i = 0; i < length; i++) {
+                sb.append(str.charAt(i));
+                if ((i + 1) % MAX_CHARS_PER_LINE == 0 && i != length - 1) {
+                    sb.append("<br>");
+                }
+            }
+
+            return sb;
+        }
+        
+        @Override
+        public void setText(String text) {
+            super.setText("<html><center>" + insertLineBreaks(text) + "</center></html>");
+        }
+
+        private String insertLineBreaks(String text) {
+            StringBuilder wrappedText = new StringBuilder();
+            
+            //break lines by space
+            String[] words = text.split(" ");
+            int count = 0;
+            for (String word : words) {
+                if (count + word.length() > MAX_CHARS_PER_LINE) {
+                    wrappedText.append("<br>");
+                    count = 0;
+                }
+                wrappedText.append(word).append(" ");
+                count += word.length() + 1; // Add 1 for the space between words
+            }
+            
+            //if no space break by char only
+            if(!text.contains(" ")) {
+            	wrappedText = insertBrAfterNChars(text);
+            }
+            return wrappedText.toString();
+        }
+    
     }

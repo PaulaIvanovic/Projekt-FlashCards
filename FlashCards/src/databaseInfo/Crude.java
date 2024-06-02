@@ -107,6 +107,19 @@ public class Crude {
 		    }
 	}
 	
+	public void update(String tableName, String columnName, String columnName2, String before, String after) { 
+		if(tableName.equals("user") && columnName.equals("password")) {
+			before = PasswordEncryption.encrypt(before);
+			after = PasswordEncryption.encrypt(after);
+		}
+	    this.query = "UPDATE " + tableName + " SET " + columnName + " = '" + after + "' WHERE " + columnName2 + " = '" + before + "';";
+			try {
+		        st.executeUpdate(query);
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+	}
+	
 	public void closeConnection() {
 		try {
 			this.rs.close();
