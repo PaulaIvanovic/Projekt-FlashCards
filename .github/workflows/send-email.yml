@@ -16,9 +16,6 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install smtplib
-        run: pip install smtplib
-
       - name: Send email
         env:
           SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
