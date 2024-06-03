@@ -35,7 +35,7 @@ jobs:
           smtp_port = int('${{ secrets.SMTP_PORT }}')
           smtp_username = '${{ secrets.SMTP_USERNAME }}'
           smtp_password = '${{ secrets.SMTP_PASSWORD }}'
-          recipient_usernames = '${{ secrets.RECIPIENT_USERNAMES }}'.split(',')
+          recipient_usernames = '${{ secrets.RECIPIENT_USERNAMES }}'
 
           msg = EmailMessage()
           msg.set_content('Your colleagues have an issue for you. Enjoy coding!')
