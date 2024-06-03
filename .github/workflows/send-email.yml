@@ -46,6 +46,9 @@ jobs:
           payload = json.loads(os.environ["GITHUB_EVENT"])
           assignee_login = payload.get("issue", {}).get("assignees", [{}])[0].get("login")
 
+          # Manually specify the list of valid usernames
+          valid_usernames = ['PaulaIvanovic', 'ljovic', 'HanaDzin', 'Mia2404', 'bazon8e82', 'mbedi11']
+
           recipient_email = None
           for username in recipient_usernames:
               if username == assignee_login:
