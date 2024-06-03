@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.x"
 
@@ -25,31 +25,34 @@ jobs:
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          RECIPIENT_EMAILS: ${{ secrets.RECIPIENT_EMAILS }}
+          RECIPIENT_USERNAMES: ${{ secrets.RECIPIENT_USERNAMES }} # Store GitHub usernames as a comma-separated string
         run: |
           python - <<EOF
           import os
           import smtplib
           from email.message import EmailMessage
+          import json
 
           # Setup the SMTP server connection
           smtp_server = '${{ secrets.SMTP_SERVER }}'
           smtp_port = int('${{ secrets.SMTP_PORT }}')
           smtp_username = '${{ secrets.SMTP_USERNAME }}'
           smtp_password = '${{ secrets.SMTP_PASSWORD }}'
-          recipient_emails = '${{ secrets.RECIPIENT_EMAILS }}'.splitlines()
+          recipient_usernames = '${{ secrets.RECIPIENT_USERNAMES }}'.split(',')
 
           msg = EmailMessage()
           msg.set_content('Your colleagues have an issue for you. Enjoy coding!')
           msg['Subject'] = 'Issue Assigned Notification'
           msg['From'] = smtp_username
 
-          # Determine the recipient based on the assignee
-          assignee_email = os.getenv('ISSUE_ASSIGNEE_EMAIL')  # This needs to be fetched from the issue event payload
+          # Retrieve the assignee's login name from the GitHub context
+          payload = json.loads(os.environ["GITHUB_EVENT"])
+          assignee_login = payload.get("issue", {}).get("assignees", [{}])[0].get("login")
+
           recipient_email = None
-          for email in recipient_emails:
-              if email == assignee_email:
-                  recipient_email = email
+          for username in recipient_usernames:
+              if username == assignee_login:
+                  recipient_email = f'{username}@yourdomain.com'  # Replace @yourdomain.com with the domain you use for email addresses
                   break
 
           if recipient_email:
