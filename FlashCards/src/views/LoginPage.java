@@ -23,12 +23,12 @@ public class LoginPage extends JFrame implements GlobalDesign{
     ScreenDimensions dimensions = new ScreenDimensions();
    
     public LoginPage() {
-        //set icon for app
+        // Set icon for app
         java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
         ImageIcon Icon = new ImageIcon(IconURL);
         setIconImage(Icon.getImage());
         
-        //calculated variables for window height and width
+        // Calculated variables for window height and width
         int desiredHeight = (int) (dimensions.screenHeight * 0.8);
         int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 
@@ -61,7 +61,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
         setLocationRelativeTo(null);
         setVisible(true);  
         
-        //main panel 
+        // Create a main panel
         contentPane = new JPanel();
         contentPane = (JPanel) getContentPane();
         contentPane.setBackground(backgroundColor);
@@ -69,14 +69,14 @@ public class LoginPage extends JFrame implements GlobalDesign{
         setContentPane(contentPane);
         contentPane.setLayout(null);
         
-        //panel for labels and buttons
+        // Create panel for labels and buttons
         JPanel panel_1 = new JPanel();
         panel_1.setBounds((int)(desiredWidth * 0.115), (int)(desiredHeight * 0.115), desiredWidth, desiredHeight);
         contentPane.add(panel_1);
         panel_1.setBackground(new Color(69, 62, 130));
         panel_1.setLayout(null);
         
-  		//adding the logo
+  		// Set the logo
         JLabel photoLabel = new JLabel("");
         Image IMG = new ImageIcon(this.getClass().getResource("Pictures/logo.png"))
         		.getImage().getScaledInstance((int)(desiredWidth * 0.125), (int)(desiredHeight * 0.11),Image.SCALE_SMOOTH);
@@ -84,29 +84,28 @@ public class LoginPage extends JFrame implements GlobalDesign{
         photoLabel.setBounds((int)(desiredWidth * 0.01), (int)(desiredHeight * 0.05), (int)(desiredWidth * 0.115), (int)(desiredHeight * 0.115));
         panel_1.add(photoLabel);
         
-        //adding label for title 
+        // Add label for title 
         JLabel lblNewLabel = new JLabel("FLASH CARDS");
         lblNewLabel.setForeground(new Color(255, 255, 255));
         lblNewLabel.setFont(mainTitle);
         lblNewLabel.setBounds((int)(desiredWidth * 0.15), (int)(desiredHeight * 0.05), (int)(desiredWidth * 0.6), (int)(desiredHeight * 0.115));
         panel_1.add(lblNewLabel);
         
-        
-        
-        //adding label for username
+     
+        // Add label for username
         JLabel usernameText = new JLabel("Username:");
         usernameText.setFont(secFont);
         usernameText.setForeground(Color.WHITE);
         usernameText.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.235), (int)(desiredWidth * 0.26), (int)(desiredHeight * 0.035));
         panel_1.add(usernameText);
         
-        //username input
+        // Add username input
         user = new RoundTextField(0);
         user.setFont(inputText);
         user.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.285), (int)(desiredWidth * 0.55), (int)(desiredHeight * 0.04));
         user.setText("Enter your name");
         
-        //text inside of username field
+        // Set text inside of username field
         user.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (user.getText().equals("Enter your name")) {
@@ -124,14 +123,14 @@ public class LoginPage extends JFrame implements GlobalDesign{
         
         
         
-        //adding label for password
+        // Add label for password
         JLabel textpass = new JLabel("Password:");
         textpass.setFont(secFont);
         textpass.setForeground(Color.WHITE);
         textpass.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.35), (int)(desiredWidth * 0.26), (int)(desiredHeight * 0.035));
         panel_1.add(textpass);
         
-        //making round password field
+        // Add round password field
         RoundPasswordField pass = new RoundPasswordField(0);
         pass.setFont(inputText);
         pass.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.4), (int)(desiredWidth * 0.55), (int)(desiredHeight * 0.04));
@@ -142,7 +141,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
         passPlaceholder.setForeground(Color.GRAY);
         panel_1.add(passPlaceholder); 
 
-        // "Enter your password" in text field
+        // Set "Enter your password" in text field
         pass.setEchoChar((char) 0); 
         pass.setText("Enter your password");
 
@@ -164,7 +163,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
             }
         });
 
-        //password insert function
+        // Function for inserting password
         pass.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 updatePasswordVisibility();
@@ -188,14 +187,14 @@ public class LoginPage extends JFrame implements GlobalDesign{
      
         });
         
-        //message "these fields can not be empty"
+        // Set message "these fields can not be empty"
       	JLabel lblNewLabel_3 = new JLabel("");
       	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.45), (int)(desiredWidth * 0.315), (int)(desiredHeight * 0.035));
       	panel_1.add(lblNewLabel_3);
       	lblNewLabel_3.setFont(tinyFont);
       	lblNewLabel_3.setForeground(textRed);
         
-        //login button function
+        // Function for login buttons
         RoundedButton loginBtn = new RoundedButton("Login");
         loginBtn.setFont(buttonText);
         loginBtn.setForeground(Color.BLACK);
@@ -203,16 +202,17 @@ public class LoginPage extends JFrame implements GlobalDesign{
         panel_1.add(loginBtn);
         loginBtn.addActionListener(new ActionListener(){
         	boolean i = false;
-        	int flag = 0; //0 krivo ime ili pw, 1 one or more fields is empty, 2 uspjesni login
+        	int flag = 0; //0 wrong name or pw, 1 one or more fields is empty, 2 succeeded login
         	String msg;
+        	
+        	// Login logic
             public void actionPerformed(ActionEvent e) {
             	String username = user.getText();
             	String password = new String(pass.getPassword());
             	
-            	
-            	//logika logina
+            	// 1 = one or more fields is empty
             	if(username.equals("Enter your name") || password.equals("Enter your password") || username == null || password == null) {
-            		flag = 1; // 1 = one or more fields is empty
+            		flag = 1; 
             		msg = "One or more fields is empty.";
             		lblNewLabel_3.setText(msg);
             		return;
@@ -221,8 +221,8 @@ public class LoginPage extends JFrame implements GlobalDesign{
             	Login l = new Login();
             	 i = l.loginValidation(username,password); // i is true when username matches
             	 
-            	if(i) flag = 2; // 2 = suc. login
-            	else {flag = 0;} // 0 = incor. username/pw
+            	if(i) flag = 2; // 2 = succeeded login
+            	else {flag = 0;} // 0 = incorrect username or password
             	
             	if(flag == 0) {
             		msg = "Incorrect username/password.";
@@ -241,7 +241,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
             }
         });
         
-     // ActionListener for text fields
+        // ActionListener for text fields
         ActionListener textFieldListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -255,7 +255,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
      
 
         
-        //register button function
+        // Function for register button
         RoundedButton registerBtn = new RoundedButton("Register");
         registerBtn.setFont(buttonText);
         registerBtn.setForeground(Color.BLACK);
@@ -272,7 +272,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
       
 
       	
-      	//message "Don't have an account?"
+      	// Set message "Don't have an account?"
       	JLabel lblNewLabel_2 = new JLabel("Don't have an account?");
       	lblNewLabel_2.setFont(smallFont);
       	lblNewLabel_2.setForeground(new Color(255, 255, 255));
@@ -281,7 +281,7 @@ public class LoginPage extends JFrame implements GlobalDesign{
     }
     
     
-    //launching a GUI application
+    // launching a GUI application
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {

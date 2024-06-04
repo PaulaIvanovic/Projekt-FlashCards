@@ -53,7 +53,7 @@ public class CardRun extends JFrame implements GlobalDesign {
     int previousWidth;
     int previousHeight;
     
-    boolean side = true;	//true on question side		false on answer side
+    boolean side = true; //true on question side and false on answer side
 
     static String ID;
 
@@ -63,23 +63,24 @@ public class CardRun extends JFrame implements GlobalDesign {
 
     public CardRun(int x, int y, int width, int height, String ID) {
         this.ID = ID;
+        
+        // Set icon for app
         java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
         ImageIcon Icon = new ImageIcon(IconURL);
         setIconImage(Icon.getImage());
 
         screenSize = new ScreenDimensions();
-
+        
+        // Set window settings
         this.setTitle("STARTING GROUP OF CARDS");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setMinimumSize(new Dimension(screenSize.minimumWindowWidth, screenSize.minimumWindowHeight));
-
         checkBounds(x, y, width, height);
         this.setBounds(xPositionWindow, yPositionWindow, windowWidth, windowHeight);
         windowCreate();
 
-    	//function for resizing components
+    	// Function for resizing components
     	addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent e) {
     	        Dimension newSize = e.getComponent().getSize();
@@ -112,20 +113,20 @@ public class CardRun extends JFrame implements GlobalDesign {
     	    }
     	});
     	
-    	// listener for window state changes
+    	// Listener for window state changes
         addWindowStateListener(new WindowAdapter() {
             @Override
             public void windowStateChanged(WindowEvent e) {
                 if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) == 0) {
-                    // store the previous size when the window is not maximized
+                    // Store the previous size when the window is not maximized
                     previousWidth = getWidth();
                     previousHeight = getHeight();
                 }
             }
         });
         
-    	//when minimize/maximize button is clicked, 
-        //window goes to 50% of its original (fullscreen) size
+    	// when minimize/maximize button is clicked, 
+        // window goes to 50% of its original (fullscreen) size
     	this. addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -138,7 +139,7 @@ public class CardRun extends JFrame implements GlobalDesign {
             }
         });
     	
-    	//listener for window state changes
+    	// Listener for window state changes
     	addWindowStateListener(new WindowAdapter() {
     	    public void windowStateChanged(WindowEvent e) {
     	        if ((e.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
@@ -149,7 +150,7 @@ public class CardRun extends JFrame implements GlobalDesign {
     	    }
     	});
     	
-    	//check if moved
+    	// Check if moved
 		addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {
@@ -164,20 +165,24 @@ public class CardRun extends JFrame implements GlobalDesign {
     public void windowCreate() {
         setVisible(true);
 
+        // Calculated variables for window height and width
         windowWidth = getWidth();
         windowHeight = getHeight();
         views.WindowElementResize.getFontForWindowSize(windowHeight);
 
+        // Create a main panel
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBounds(0, 0, windowWidth, windowHeight - 80);
         mainPanel.setBorder(new EmptyBorder(50, 10, 5, 5));
         mainPanel.setOpaque(false);
 
+        // Create content panel
         contentPane = new JPanel();
         contentPane.setBackground(backgroundColor);        
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout());
 
+        // Add toolbar panel on top of the window
         JPanel toolbarPanel = new JPanel(new BorderLayout());
         toolbarPanel.setBackground(toolbarColor);
         toolbarPanel.setBounds(0, 0, windowWidth, 80);
@@ -185,27 +190,32 @@ public class CardRun extends JFrame implements GlobalDesign {
         toolbarPanel.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 10));
         contentPane.add(toolbarPanel, BorderLayout.NORTH);
 
+        // Set toolbar label (name of page)
         JLabel mainTitleLabel = new JLabel("Starting group of cards");      
         mainTitleLabel.setFont(WindowElementResize.mainFont);
         mainTitleLabel.setForeground(Color.WHITE);
         toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
 
+        // Create button panel
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
         flowLayout.setHgap(10); 
         buttonPanel.setLayout(flowLayout);
 
+        // Set button sizes
         int buttonDimension = (int) (windowWidth * 0.025);
         int biggerButtonDimension = (int) (windowWidth * 0.035);
         int saveButtonDimension = (int) (windowWidth * 0.010);
 
+        // Add edit button
         RoundButton editButton = new RoundButton("", buttonDimension, buttonDimension);
         editButton.setBackground(toolbarColor);
         editButton.setButtonIcon("icons/PlayCardsIcon.png", buttonDimension, buttonDimension);
         editButton.setBorder(null);
         buttonPanel.add(editButton);
-
+        
+        // Add return button
         RoundButton returnArr = new RoundButton("", buttonDimension, buttonDimension);
         returnArr.setButtonIcon("icons/ReturnArrowIcon.png", buttonDimension, buttonDimension);
         returnArr.setBackground(toolbarColor);
@@ -221,6 +231,7 @@ public class CardRun extends JFrame implements GlobalDesign {
             }
         });
 
+        // Add settings button
         RoundButton settingsButton = new RoundButton("", buttonDimension, buttonDimension);
         settingsButton.setButtonIcon("icons/settingsIcon.png", buttonDimension, buttonDimension);
         settingsButton.setBackground(toolbarColor);
@@ -235,12 +246,14 @@ public class CardRun extends JFrame implements GlobalDesign {
             }
         });
 
+        // Add user icon
         RoundButton userIcon = new RoundButton("", biggerButtonDimension, biggerButtonDimension);
         userIcon.setButtonIcon("Pictures/" + UserInfo.profilePic, biggerButtonDimension, biggerButtonDimension);
         userIcon.setBackground(toolbarColor);
         userIcon.setBorder(null);
         buttonPanel.add(userIcon);
 
+        // Add save button 
         RoundedButton save = new RoundedButton("End");
         save.setFont(WindowElementResize.buttonText);
         save.setBounds((int)(windowWidth * 0.45), (int)(windowHeight * 0.800), (int)(windowWidth * 0.115), (int)(windowHeight * 0.040));
@@ -254,6 +267,7 @@ public class CardRun extends JFrame implements GlobalDesign {
             }
         });
         
+        // Display of cards
         if(side) {
         	A = new RoundedButton(UserInfo.cardQuestion.get(UserInfo.cardID.indexOf(ID)));
         }else {
@@ -272,15 +286,18 @@ public class CardRun extends JFrame implements GlobalDesign {
         mainPanel.add(A);
         toolbarPanel.add(buttonPanel, BorderLayout.EAST);
         mainPanel.add(save);
-
+        
+        // Create an instance of ColorfulButtons
         ColorfulButtons colorfulButtons = new ColorfulButtons(this);
         colorfulButtons.setBounds((int)(windowWidth * 0.03), (int)(windowHeight * 0.09), (int)(windowWidth * 0.99), (int)(windowHeight * 0.3));
         mainPanel.add(colorfulButtons);
 
+        // Create left panel
         JPanel navigationLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, (int)(windowWidth * 0.05), (int)(windowHeight * 0.25)));
         navigationLeft.setOpaque(false);
         navigationLeft.setBounds((int)(windowWidth * 0.1), (int)(windowHeight * 0.45), buttonDimension * 3, buttonDimension * 3);
-
+        
+        // Add button for moving left
         RoundButton moveLeft = new RoundButton("", buttonDimension * 2, buttonDimension * 2);
         moveLeft.setBackground(backgroundColor);
         moveLeft.setForeground(backgroundColor);
@@ -289,22 +306,25 @@ public class CardRun extends JFrame implements GlobalDesign {
 
         mainPanel.add(navigationLeft, BorderLayout.WEST);
 
+        // Create right panel
         JPanel navigationRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, (int)(windowWidth * 0.05), (int)(windowHeight * 0.25)));
         navigationRight.setOpaque(false);
         navigationRight.setBounds((int)(windowWidth * 0.85), (int)(windowHeight * 0.5), buttonDimension * 3, buttonDimension * 3);
 
+        // Add button for moving left
         RoundButton moveRight = new RoundButton("", buttonDimension * 2, buttonDimension * 2);
         moveRight.setBackground(backgroundColor);
         moveRight.setForeground(backgroundColor);
         moveRight.setBorder(null);
         navigationRight.add(moveRight);
         
+        // Function for moving through cards
         CardRun window = this;
         if(side) {
         	 moveLeft.setButtonIcon("icons/LeftArrowIcon.png", buttonDimension * 2, buttonDimension * 2);
         	 moveLeft.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent e) {
-                     //set visited to visited
+                     // set visited to visited
                 	 UserInfo.visited.set(UserInfo.card, 1);
                 	 if(UserInfo.card-1 >= 0) {
                 		 UserInfo.card--;
@@ -324,11 +344,11 @@ public class CardRun extends JFrame implements GlobalDesign {
                    }
                });
         }else {
-        	///jednu od ovih slika treba postavit kao x a jednu kao tocno
+        	// one of this picture needs to put like X and other like it's correct 
        	 	moveLeft.setButtonIcon("Pictures/default.png", buttonDimension * 2, buttonDimension * 2);
        	 	moveLeft.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent e) {
-            	 //set visited to correct answer
+            	 // set visited to correct answer
             	 UserInfo.visited.set(UserInfo.card, 2);
             	 checkSwitch(true);
             	switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
@@ -338,7 +358,7 @@ public class CardRun extends JFrame implements GlobalDesign {
        	 	moveRight.setButtonIcon("icons/CloseIcon.png", buttonDimension * 2, buttonDimension * 2);
        	 	moveRight.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent e) {
-                //set visited to wrong answer
+                // set visited to wrong answer
             	 UserInfo.visited.set(UserInfo.card, 3);
             	 checkSwitch(true);
             	switchCard(window, UserInfo.cardIDLineup.get(UserInfo.card));
@@ -351,12 +371,14 @@ public class CardRun extends JFrame implements GlobalDesign {
         contentPane.add(mainPanel, BorderLayout.CENTER);
     }
 
+    // Calculating window sizes
     public void updateView() {
         START_X = (int)(windowWidth * 0.05);
         START_Y = (int)(windowHeight * 0.175); 
         windowCreate();
     }
 
+    // Calculating x and y positions on screen
     public void checkBounds(int x, int y, int width, int height) {
         if (x <= -10 || y <= -10) {
             xPositionWindow = 0;
@@ -393,6 +415,7 @@ public class CardRun extends JFrame implements GlobalDesign {
         }
     }
 
+    // Function for switching cards
     public void switchCard(CardRun window, String newID) {
     	side = true;
         try {
@@ -405,23 +428,24 @@ public class CardRun extends JFrame implements GlobalDesign {
         window.repaint();
     }
     
+    // Function for checking if card is already visited
     public void checkSwitch(boolean forward) {
     	if(!UserInfo.visited.contains(0) && !UserInfo.visited.contains(1)) {
-    		//try to go forward if there are cards left
+    		// try to go forward if there are cards left
        	 	if(UserInfo.card+1 >= UserInfo.cardIDLineup.size()) {
-       	 		//start from begining
-       	 		UserInfo.card = -1; 	//becaurse we add 1
+       	 		// start from beggining
+       	 		UserInfo.card = -1; 	// because we add 1
        	 	}
        	 	UserInfo.card++;
     	}
     	if(forward) {
-    		//try to go forward if there are cards left
+    		// try to go forward if there are cards left
        	 	if(UserInfo.card+1 >= UserInfo.cardIDLineup.size()) {
-       	 		//start from begining
-       	 		UserInfo.card = -1; 	//becaurse we add 1
+       	 		// start from beggining
+       	 		UserInfo.card = -1; 	// because we add 1
        	 	}
        	 	
-       	 	//check if cards are visited/uopened
+       	 	// check if cards are visited/uopened
        	 	if(UserInfo.visited.get(UserInfo.card+1) == 0 || UserInfo.visited.get(UserInfo.card+1) == 1) {//visited or unopened
        	 		if(UserInfo.card == -1) {
        	 			UserInfo.card = UserInfo.cardIDLineup.size()-1;
@@ -433,7 +457,7 @@ public class CardRun extends JFrame implements GlobalDesign {
    	           	changeButtonCol();
            	 	return;
        	 	}else {
-       	 		//if not visited/unopened find first which is
+       	 		// if not visited/unopened find first which is
        	 		for(int i = UserInfo.card+1; i < UserInfo.cardIDLineup.size(); i++) {
        	       	 	if(UserInfo.visited.get(i) == 0 || UserInfo.visited.get(i) == 1) {//visited or unopened
        	       	 		changeButtonCol();
@@ -443,7 +467,7 @@ public class CardRun extends JFrame implements GlobalDesign {
        	           	 	return;
        	       	 	}
        	 		}
-       	 		//if still not found go to beginning
+       	 		// if still not found go to beginning
        	 		for(int i = 0; i < UserInfo.cardIDLineup.size(); i++) {
        	       	 	if(UserInfo.visited.get(i) == 0 || UserInfo.visited.get(i) == 1) {//visited or unopened
        	       	 		changeButtonCol();
@@ -462,6 +486,7 @@ public class CardRun extends JFrame implements GlobalDesign {
     	
     }
     
+    // Function for changing button colors
     public void changeButtonCol() {
     	RoundButton newColor = ColorfulButtons.buttonList.get(UserInfo.card);
     	if (UserInfo.visited.get(UserInfo.card) == 1) {
@@ -477,7 +502,7 @@ public class CardRun extends JFrame implements GlobalDesign {
         }
     }
 
- // Define the ColorfulButtons class
+    // Define the ColorfulButtons class
     class ColorfulButtons extends JPanel {
         private JPanel buttonLayout; // Store reference to the layout panel
         public static ArrayList<RoundButton> buttonList = new ArrayList();
@@ -515,7 +540,7 @@ public class CardRun extends JFrame implements GlobalDesign {
                     	if(UserInfo.visited.get(UserInfo.card) == 0) {
                     		UserInfo.visited.set(UserInfo.card, 1);
                     	}
-                    	//change button color
+                    	// Change button color
                     	if(UserInfo.visited.get(UserInfo.card) == 2) {
                     		startingPoint.setBackground(Color.green);
                     	}else if (UserInfo.visited.get(UserInfo.card) == 3) {

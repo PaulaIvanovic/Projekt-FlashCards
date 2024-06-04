@@ -39,12 +39,12 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 
 
 	public AddCardsManual(CardsDisplayWindow parent) {
-		//set icon for app
+		// Set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
 		setIconImage(Icon.getImage());
 		
-		//calculated variables for window height and width
+		// Calculated variables for window height and width
 	    int desiredHeight = (int) (dimensions.screenHeight * 0.435);
 	    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 		
@@ -60,7 +60,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         setLocationRelativeTo(null);
         setVisible(true);  
      
-	    //main panel
+        // Create a main panel
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		contentPane.setBackground(backgroundColor);
@@ -69,27 +69,27 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 		contentPane.setLayout(new BorderLayout());
 		
 		
-		//toolbar panel on top of the window
+		// Add toolbar panel on top of the window
 		JPanel toolbarPanel = new JPanel(new BorderLayout());
 		toolbarPanel.setBackground(toolbarColor);
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 					
-		//class for font size
+		// Set class for font size
 		WindowElementResize.getFontForWindowSize(desiredHeight);
 		
-		//toolbar label (name of page)
+		// Set toolbar label (name of page)
 		JLabel mainTitleLabel = new JLabel(" New card");      
 		mainTitleLabel.setFont(WindowElementResize.mainTitle);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
 		
-		// panel for buttons in toolbar
+		// Create panel for buttons in toolbar
 		JPanel tbPane = new JPanel();
 		tbPane.setOpaque(false);
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
 		tbPane.setLayout(flowLayout);
 				
-		//exit button in toolbar
+		// Add exit button in toolbar
 		RoundButton exitButton = new RoundButton("",(int)(desiredWidth*0.05) ,(int)(desiredHeight*0.085));
 		exitButton.setButtonIcon("icons/CloseIcon.png", (int)(desiredWidth*0.05), (int)(desiredHeight*0.085));
 		exitButton.setBackground(toolbarColor);
@@ -106,14 +106,14 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 		toolbarPanel.add(tbPane, BorderLayout.EAST);
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 		
-		//panel for labels and buttons
+		// Create panel for labels and buttons
         JPanel centerPanel = new JPanel();
         centerPanel.setBounds(0, 0, desiredWidth, desiredHeight);
         contentPane.add(centerPanel);
         centerPanel.setBackground(new Color(69, 62, 130));
         centerPanel.setLayout(null);
         
-        //message "these fields can not be empty"
+        // Set message "these fields can not be empty"
       	JLabel lblInfo = new JLabel("");
       	lblInfo.setBounds((int)(desiredWidth * 0.03), (int)(desiredHeight * 0.725), (int)(desiredWidth * 0.5), (int)(desiredHeight * 0.04));
       	centerPanel.add(lblInfo);
@@ -121,21 +121,21 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
       	lblInfo.setForeground(textRed);
         
         
-        //adding label for q
+        // Add label for question
         JLabel lblQ = new JLabel("Question:");
         lblQ.setFont(secFont);
         lblQ.setForeground(Color.WHITE);
         lblQ.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.03), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
         centerPanel.add(lblQ);
         
-        //question input
+        // Set input boundaries
         qInput = new RoundMultilineText("Enter your question"); // 5 rows, 20 columns
         qInput.setFont(inputText);
         qInput.setLineWrap(true); // Enable line wrapping
         qInput.setWrapStyleWord(true); // Wrap on word boundary
         qInput.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.13), (int)(desiredWidth*0.9), (int)(desiredHeight*0.15));
         
-        //text inside of username field
+        // Set text inside of username field
         qInput.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (qInput.getText().equals("Enter your question")) {
@@ -150,6 +150,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
             }
         });
         
+        // Function for inserting questions
         qInput.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e){
@@ -162,7 +163,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
                 	lblInfo.setText("");
                 }else {
                 	if(inputText.length() > cardQcharLimit) {
-                		//user tries to go over the limit, dont show letters
+                		// user tries to go over the limit, don't show letters
                 		// Remove the last character
                 		inputText = inputText.substring(0, inputText.length() - 1);
                 	}
@@ -173,21 +174,21 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         });
         centerPanel.add(qInput);
         
-        //adding label for a
+        // Add label for answer
         JLabel lblA = new JLabel("Answer:");
         lblA.setFont(secFont);
         lblA.setForeground(Color.WHITE);
         lblA.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.30), (int)(desiredWidth*0.3), (int)(desiredHeight*0.085));
         centerPanel.add(lblA);
         
-      //answer input
+        // Set answer input boundaries
         aInput = new RoundMultilineText("Enter your answer"); 
         aInput.setFont(inputText);
         aInput.setLineWrap(true); // Enable line wrapping
         aInput.setWrapStyleWord(true); // Wrap on word boundary
         aInput.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.40), (int)(desiredWidth*0.9), (int)(desiredHeight*0.2));
         
-        //text inside of username field
+        // Set text inside of username field
         aInput.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (aInput.getText().equals("Enter your answer")) {
@@ -202,6 +203,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
             }
         });
         
+     // Function for inserting answers
         aInput.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e){
@@ -225,7 +227,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         });
         centerPanel.add(aInput);
         
-        //adding label for color
+        // Add label for color
         JLabel lblColor = new JLabel("Choose new color:");
         lblColor.setFont(secFont);
         lblColor.setForeground(Color.WHITE);
@@ -238,8 +240,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         centerPanel.add(colorfulButtons);
         
         
-        
-        // Add Save and Cancel buttons
+        // Add Save button
         RoundedButton btnSave = new RoundedButton("Save");
         btnSave.setFont(smallFont);
         btnSave.setForeground(Color.BLACK);
@@ -247,6 +248,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
         btnSave.setBounds((int)(desiredWidth*0.62), (int)(desiredHeight*0.76), (int)(desiredWidth*0.17), (int)(desiredHeight*0.085));
         centerPanel.add(btnSave);
         btnSave.addActionListener(new ActionListener() {
+        	// Check if everything is correct
             public void actionPerformed(ActionEvent e) {
             	if(checkSelection()) {
             		if(!lblInfo.getText().equals("Question is too long") && !lblInfo.getText().equals("Answer is too long")) {
@@ -275,7 +277,8 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 				return true;
 			}
         });
-
+        
+        // Add button for cancel
         RoundedButton btnCancel = new RoundedButton("Cancel");
         btnCancel.setFont(smallFont);
         btnCancel.setForeground(Color.BLACK);
@@ -292,7 +295,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 		
 	}
 	
-	
+	// Class for choosing costum colors
 	class ColorfulButtons extends JPanel {
 
 		private JPanel parentPanel;
@@ -301,7 +304,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 	        this.parentPanel = parentPanel;
 	    	setLayout(new FlowLayout(FlowLayout.LEFT)); // Buttons will be aligned to the left
 	        
-	        //calculated variables for window height and width
+	        // Calculated variables for window height and width
 		    int desiredHeight = (int) (dimensions.screenHeight * 0.435);
 		    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 			
@@ -333,20 +336,7 @@ public class AddCardsManual extends JFrame implements GlobalDesign{
 	
 	    
 	}
-	
-	/*
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AddCardsManual frame = new AddCardsManual();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
+
 }
 
 

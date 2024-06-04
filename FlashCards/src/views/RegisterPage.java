@@ -76,12 +76,12 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 	
 	
 	public RegisterPage() {
-		//set icon for app
+		// Set icon for app
         java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
         ImageIcon Icon = new ImageIcon(IconURL);
         setIconImage(Icon.getImage());
         
-		//calculated variables for window height and width
+		// Calculated variables for window height and width
         int desiredHeight = (int) (dimensions.screenHeight * 0.8);
         int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 
@@ -114,7 +114,7 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 	    setLocationRelativeTo(null);
 	    setVisible(true);
 
-		//main panel
+		// Create a main panel 
 		contentPane = new JPanel();
 		contentPane = (JPanel) getContentPane();
 		contentPane.setBackground(backgroundColor);
@@ -122,14 +122,14 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		//panel for labels and buttons
+		// Create panel for labels and buttons
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds((int)(desiredWidth * 0.115), (int)(desiredHeight * 0.115), desiredWidth, desiredHeight);
         contentPane.add(panel_1);
 		panel_1.setBackground(new Color(69, 62, 130));
 		panel_1.setLayout(null);
 
-		//adding the logo
+		// Set the logo
         JLabel photoLabel = new JLabel("");
         Image IMG = new ImageIcon(this.getClass().getResource("Pictures/logo.png"))
         		.getImage().getScaledInstance((int)(desiredWidth * 0.125), (int)(desiredHeight * 0.11),Image.SCALE_SMOOTH);
@@ -137,7 +137,7 @@ public class RegisterPage extends JFrame implements GlobalDesign{
         photoLabel.setBounds((int)(desiredWidth * 0.01), (int)(desiredHeight * 0.05), (int)(desiredWidth * 0.115), (int)(desiredHeight * 0.115));
         panel_1.add(photoLabel);
 		
-        //adding label for title
+        // Add label for title 
         JLabel lblNewLabel = new JLabel("FLASH CARDS");
         lblNewLabel.setForeground(new Color(255, 255, 255));
         lblNewLabel.setFont(mainTitle);
@@ -145,20 +145,20 @@ public class RegisterPage extends JFrame implements GlobalDesign{
         panel_1.add(lblNewLabel);
 		
 		
-        //adding label for username
+        // Add label for username
         JLabel usernameText = new JLabel("Username:");
         usernameText.setFont(secFont);
         usernameText.setForeground(Color.WHITE);
         usernameText.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.235), (int)(desiredWidth * 0.26), (int)(desiredHeight * 0.035));
         panel_1.add(usernameText);
           
-		//username input
+        // Add username input
         user = new RoundTextField(0);
         user.setFont(inputText);
         user.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.285), (int)(desiredWidth * 0.55), (int)(desiredHeight * 0.04));
 		panel_1.add(user);
 		
-		//username placeholder
+		// Set text inside of username field
 		JLabel userPlaceholder = new JLabel("Enter your username");
 		userPlaceholder.setForeground(Color.GRAY);
 		panel_1.add(userPlaceholder);
@@ -182,7 +182,7 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		});
 	
         
-        //adding label for email
+        // Add label for email
       	JLabel emailText = new JLabel("Email:");
       	emailText.setFont(secFont);
       	emailText.setForeground(Color.WHITE);
@@ -190,19 +190,19 @@ public class RegisterPage extends JFrame implements GlobalDesign{
       	emailText.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.465), (int)(desiredWidth * 0.26), (int)(desiredHeight * 0.035));
         panel_1.add(emailText);
 		
-        //making round text field for email
+        // Add round text field for email
 		RoundTextField emailField = new RoundTextField(0);
 		emailField.setFont(inputText);
 		emailField.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.515), (int)(desiredWidth * 0.55), (int)(desiredHeight * 0.04));
 		panel_1.add(emailField);
 
         
-        //adding label for entering the email
+        // Add label for entering the email
 		JLabel emailPlaceholder = new JLabel("Enter your email");
 		emailPlaceholder.setForeground(Color.GRAY);
 		panel_1.add(emailPlaceholder); 
 		
-		//text "Enter your email" in textfield
+		// Set text "Enter your email" in textfield
 		emailField.setText("Enter your email");
 
 		emailField.addFocusListener(new FocusListener() {
@@ -221,26 +221,26 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		    }
 		});
 		
-		//adding label for password
+		// Add label for password
         JLabel textpass = new JLabel("Password:");
         textpass.setFont(secFont);
         textpass.setForeground(Color.WHITE);
         textpass.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.35), (int)(desiredWidth * 0.26), (int)(desiredHeight * 0.035));
         panel_1.add(textpass);
         
-        //making round password field
+        // Add round password field
 		RoundPasswordField pass = new RoundPasswordField(0);
 	    pass.setFont(inputText);
 	    pass.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.4), (int)(desiredWidth * 0.55), (int)(desiredHeight * 0.04));
 	    pass.setEchoChar('\u2022');
 	    panel_1.add(pass);
 	    
-	    //making label for entering the password
+	    // Add label for entering the password
 		JLabel passPlaceholder = new JLabel("Enter your password");
 		passPlaceholder.setForeground(Color.GRAY);
 		panel_1.add(passPlaceholder); 
 		
-		//text "Enter your password" in textfield
+		// Set text "Enter your password" in textfield
 		pass.setEchoChar((char) 0); 
 		pass.setText("Enter your password");
 
@@ -262,7 +262,7 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		    }
 		});
 
-		//password insert function
+		// Function for inserting password
 		pass.getDocument().addDocumentListener(new DocumentListener() {
 		    public void changedUpdate(DocumentEvent e) {
 		        updatePasswordVisibility();
@@ -286,7 +286,7 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		});
 
 
-        //message these fields can not be empty
+        // Set message these fields can not be empty
       	JLabel lblNewLabel_3 = new JLabel("");
       	lblNewLabel_3.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.565), (int)(desiredWidth * 0.7), (int)(desiredHeight * 0.035));
       	panel_1.add(lblNewLabel_3);
@@ -294,14 +294,14 @@ public class RegisterPage extends JFrame implements GlobalDesign{
       	lblNewLabel_3.setForeground(textRed);
       	
 		
-		//message Already have an account?
+		// Set message Already have an account?
         JLabel lblNewLabel_2 = new JLabel("Already have an account?");
         lblNewLabel_2.setFont(smallFont);
         lblNewLabel_2.setForeground(new Color(255, 255, 255));
         lblNewLabel_2.setBounds((int)(desiredWidth * 0.1), (int)(desiredHeight * 0.665), (int)(desiredWidth * 0.335), (int)(desiredHeight * 0.035));
         panel_1.add(lblNewLabel_2);
 		
-		//register button function
+		// Function for register button
 		RoundedButton registerBtn = new RoundedButton("Register");
 		registerBtn.setFont(buttonText);
 		registerBtn.setBounds((int)(desiredWidth * 0.4955), (int)(desiredHeight * 0.61), (int)(desiredWidth * 0.15), (int)(desiredHeight * 0.035));
@@ -338,7 +338,7 @@ public class RegisterPage extends JFrame implements GlobalDesign{
         user.addActionListener(textFieldListener);
         emailField.addActionListener(textFieldListener);
 		
-		//login button function
+		// Function for login button
 		RoundedButton loginBtn = new RoundedButton("Login");
 		loginBtn.setFont(buttonText);
 		loginBtn.addActionListener(new ActionListener() {
@@ -354,7 +354,7 @@ public class RegisterPage extends JFrame implements GlobalDesign{
 		
 	}
 	
-	 //launching a GUI application
+	 // launching a GUI application
 		public static void main(String[] args){
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {

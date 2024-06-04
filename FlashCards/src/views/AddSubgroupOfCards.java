@@ -43,12 +43,12 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
 
 
 	public AddSubgroupOfCards(SubgroupOfCardsPage parent) {
-		//set icon for app
+		// Set icon for app
     	java.net.URL IconURL = getClass().getResource("Pictures/AppIcon.png");
 	    ImageIcon Icon = new ImageIcon(IconURL);
 		setIconImage(Icon.getImage());
 		
-		//calculated variables for window height and width
+		// Calculated variables for window height and width
 	    int desiredHeight = (int) (dimensions.screenHeight * 0.435);
 	    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 		
@@ -64,7 +64,7 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
         setLocationRelativeTo(null);
         setVisible(true);  
      
-	    //main panel
+	    // Create a main panel
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		contentPane.setBackground(backgroundColor);
@@ -73,27 +73,27 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
 		contentPane.setLayout(new BorderLayout());
 		
 		
-		//toolbar panel on top of the window
+		// Add toolbar panel on top of the window
 		JPanel toolbarPanel = new JPanel(new BorderLayout());
 		toolbarPanel.setBackground(toolbarColor);
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 					
-		//class for font size
+		// Set class for font size
 		WindowElementResize.getFontForWindowSize(desiredHeight);
 		
-		//toolbar label (name of page)
+		// Set toolbar label (name of page)
 		JLabel mainTitleLabel = new JLabel(" New subgroup");      
 		mainTitleLabel.setFont(WindowElementResize.mainTitle);
 		mainTitleLabel.setForeground(Color.WHITE);
 		toolbarPanel.add(mainTitleLabel, BorderLayout.WEST);
 		
-		// panel for buttons in toolbar
+		// Create panel for buttons in toolbar
 		JPanel tbPane = new JPanel();
 		tbPane.setOpaque(false);
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
 		tbPane.setLayout(flowLayout);
 				
-		//exit button in toolbar
+		// Add exit button in toolbar
 		RoundButton exitButton = new RoundButton("",(int)(desiredWidth*0.05) ,(int)(desiredHeight*0.085));
 		exitButton.setButtonIcon("icons/CloseIcon.png", (int)(desiredWidth*0.05), (int)(desiredHeight*0.085));
 		exitButton.setBackground(toolbarColor);
@@ -110,34 +110,34 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
 		toolbarPanel.add(tbPane, BorderLayout.EAST);
 		contentPane.add(toolbarPanel, BorderLayout.NORTH);
 		
-		//panel for labels and buttons
+		// Create panel for labels and buttons
         JPanel centerPanel = new JPanel();
         centerPanel.setBounds(0, 0, desiredWidth, desiredHeight);
         contentPane.add(centerPanel);
         centerPanel.setBackground(new Color(69, 62, 130));
         centerPanel.setLayout(null);
         
-        //adding label for subgroup name
+        // Add label for subgroup name
         JLabel lblGroupName = new JLabel("Subroup name:");
         lblGroupName.setFont(secFont);
         lblGroupName.setForeground(Color.WHITE);
         lblGroupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.025), (int)(desiredWidth*0.3), (int)(desiredHeight*0.075));
         centerPanel.add(lblGroupName);
         
-        //message "these fields can not be empty"
+        // Set message "these fields can not be empty"
       	JLabel lblInfo = new JLabel("");
       	lblInfo.setBounds((int)(desiredWidth * 0.03), (int)(desiredHeight * 0.725), (int)(desiredWidth * 0.5), (int)(desiredHeight * 0.04));
       	centerPanel.add(lblInfo);
       	lblInfo.setFont(tinyFont);
       	lblInfo.setForeground(textRed);
         
-        //group name input
+        // Add group name input
         groupName = new RoundTextField(0);
         groupName.setFont(inputText);
         groupName.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.11), (int)(desiredWidth*0.8), (int)(desiredHeight*0.075));
         groupName.setText("Enter subgroup name");
         
-        //text inside of username field
+        // Set text inside of username field
         groupName.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (groupName.getText().equals("Enter subgroup name")) {
@@ -152,6 +152,7 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
             }
         });
         
+        // Function for inserting group name
         groupName.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e){
@@ -164,7 +165,7 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
                 	lblInfo.setText("");
                 }else {
                 	if(inputText.length() > charLimit) {
-                		//user tries to go over the limit, dont show letters
+                		// user tries to go over the limit, dont show letters
                 		// Remove the last character
                 		inputText = inputText.substring(0, inputText.length() - 1);
                 	}
@@ -177,7 +178,7 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
         
         centerPanel.add(groupName);
         
-        //adding label for subgroup color
+        // Add label for subgroup color
         JLabel lblGroupColor = new JLabel("Choose subgroup color:");
         lblGroupColor.setFont(secFont);
         lblGroupColor.setForeground(Color.WHITE);
@@ -189,14 +190,14 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
         colorfulButtons.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.3), (int)(desiredWidth*0.93), (int)(desiredHeight*0.3)); // Adjust the bounds as needed
         centerPanel.add(colorfulButtons);
         
-        //adding label for generating subgroups
+        // Add label for generating subgroups
         JLabel lblGenerate = new JLabel("Generate automatic subgroup from file:");
         lblGenerate.setFont(secFont);
         lblGenerate.setForeground(Color.WHITE);
         lblGenerate.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.575), (int)(desiredWidth*0.75), (int)(desiredHeight*0.085));
         centerPanel.add(lblGenerate);
         
-        //group name input
+        // Add field for generating groups
         generateSubgroup = new RoundTextField(0);
         generateSubgroup.setFont(inputText);
         generateSubgroup.setBounds((int)(desiredWidth*0.03), (int)(desiredHeight*0.675), (int)(desiredWidth*0.6), (int)(desiredHeight*0.075));
@@ -222,7 +223,7 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
         });
         centerPanel.add(generateSubgroup);
         
-        // button load
+        // Add load button
         RoundedButton btnLoad = new RoundedButton("Load");
         btnLoad.setFont(smallFont);
         btnLoad.setForeground(Color.BLACK);
@@ -296,12 +297,13 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
 		
 	}
 	
+	// Class for choosing costum colors
 	class ColorfulButtons extends JPanel {
 
 	    public ColorfulButtons() {
 	        setLayout(new FlowLayout(FlowLayout.LEFT)); // Buttons will be aligned to the left
 	       
-	      //calculated variables for window height and width
+	        // Calculated variables for window height and width
 		    int desiredHeight = (int) (dimensions.screenHeight * 0.435);
 		    int desiredWidth = (int) (dimensions.screenWidth * 0.4);
 			
@@ -334,19 +336,6 @@ public class AddSubgroupOfCards extends JFrame implements GlobalDesign{
 	    
 	}
 	
-/*
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AddSubgroupOfCards frame = new AddSubgroupOfCards(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
 }
 
 
