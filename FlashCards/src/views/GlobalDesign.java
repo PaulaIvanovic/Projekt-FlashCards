@@ -3,24 +3,30 @@ import java.awt.Color;
 import java.awt.Font;
 
 
-
 public interface GlobalDesign {
+	//get screen dimensions
 	ScreenDimensions dimensions = new ScreenDimensions();
+	
+	//define character limits
 	public int charLimit = 45;
 	public int cardQcharLimit = 150;
 	public int cardAcharLimit = 300;
 
+	//define used colors
 	public Color backgroundColor = new Color(68,62,130);
 	public Color toolbarColor = new Color(31,0,57);
 	public Color textEnter = new Color(166,166,166);
 	public Color textRed = new Color(255,124,124);
-	
 	public Color white = new Color(0xFFFFFF);
 	public Color groupDefaultColor = new Color(0x8CB459);
 	public Color cardDefaultColor = new Color(0xEFE078);
+	public Color transparent = new Color(0,0,0, 128);
 	
-	String groupDefaultName = "Default";
+	//define default group name
+	public String defaultGroupName = "Default";
+	public String defaultGroupColor = "0xFFFFFF";
 	
+	//define default font sizes
 	int mainTitleSize = (int) (dimensions.screenHeight * 0.06);
     int mainFontSize = (int) (dimensions.screenHeight * 0.04);
     int mediumFontSize = (int) (dimensions.screenHeight * 0.03);
@@ -29,6 +35,7 @@ public interface GlobalDesign {
     int inputTextSize = (int) (dimensions.screenHeight * 0.015);
     int tinyFontSize = (int) (dimensions.screenHeight * 0.0135);
     
+    //define default fonts
     public Font mainFont = new Font("Tahoma", Font.BOLD , mainFontSize);
     public Font mainTitle = new Font("Tahoma", Font.BOLD , mainTitleSize);
     public Font mediumFont = new Font("Tahoma", Font.PLAIN , mediumFontSize);
@@ -38,6 +45,7 @@ public interface GlobalDesign {
     public Font buttonText = new Font("Tahoma", Font.BOLD , inputTextSize);
     public Font tinyFont = new Font("Tahoma", Font.PLAIN , tinyFontSize);
 	
+    //define default profile pictures
     String[] profilePictures = {
             "default.png",
             "nika.png",
@@ -46,8 +54,7 @@ public interface GlobalDesign {
             "bedi.png",
             "mia2.png"
         };
-	public String defaultGroupName = "Default";
-	public String defaultGroupColor = "0xFFFFFF";
+
 	
 	//colors representing groups in group of cards display
 	public Color[] groupColorOptions = {
@@ -68,6 +75,22 @@ public interface GlobalDesign {
 			new Color(0x71D3DD), //aqua
 			new Color(0xFFFFFF), //white
 			};
+	
+	
+	//define text for popup info
+	
+	//group info
+	static final String GROUP_INFO = "<html><b>Information about the window:</b><br>"
+            + "This page portrays all your groups which contain your subgroups.<br>"
+            + "Here you can add, edit and find all the details about each group.<br>"
+            + "To get to your subgroups simply click on the group you want to open.</html>";
+	
+	//subgroup info
+	static final String SUBGROUP_INFO = "<html><b>Information about the window:</b><br>"
+            + "This page portrays all your subgroups which contain your cards.<br>"
+            + "Here you can add, edit and find all the details about each subgroup.<br>"
+            + "To get to your cards simply click on the subgroup you want to open.</html>";
+    
 
 
 }

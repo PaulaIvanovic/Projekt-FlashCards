@@ -232,6 +232,21 @@ public class Settings extends JFrame implements GlobalDesign{
             	userIcon.setBorder(null);
             	userIcon.setBackground(backgroundColor);
             	userIcon.setForeground(backgroundColor);
+            	
+            	String newUserPic = profilePictures[i-1];
+            	
+            	//listens for clicks on group to open its page
+            	userIcon.addActionListener(new ActionListener() {
+        			public void actionPerformed(ActionEvent e) {
+        				UserInfo.profilePic = newUserPic;
+        				contentPane.removeAll();
+                        // add your elements
+                        contentPane.revalidate();
+                        contentPane.repaint();
+                        updateView();
+        			}
+        		});
+            	
             	mainPanel.add(userIcon);
             	treshold=1;
         	}
@@ -246,7 +261,7 @@ public class Settings extends JFrame implements GlobalDesign{
 		
 		//text field for username
 		textField = new RoundTextField(0);
-		textField.setText("Current username"); 
+		textField.setText(UserInfo.username); 
 		textField.setEnabled(false);
 		textField.setFont(WindowElementResize.secFont);
 		textField.setBounds((int)(windowWidth*0.02), (int)(windowHeight*0.575), (int)(windowWidth*0.17), (int)(windowHeight*0.04));
@@ -273,7 +288,7 @@ public class Settings extends JFrame implements GlobalDesign{
 		//email text field
 		textField_1 = new RoundTextField(0);
 		textField_1.setEnabled(false);
-		textField_1.setText("This is your email");
+		textField_1.setText(UserInfo.email);
 		textField_1.setFont(WindowElementResize.secFont);
 		textField_1.setForeground(Color.BLACK);
 		textField_1.setBounds((int)(windowWidth*0.02), (int)(windowHeight*0.45), (int)(windowWidth*0.356), (int)(windowHeight*0.04));

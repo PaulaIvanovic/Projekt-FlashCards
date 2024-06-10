@@ -10,6 +10,7 @@ import views.GlobalDesign;
 
 public class UserInfo implements GlobalDesign{
 	public static String username;
+	public static String email;
 	public static String profilePic;
 	
 	public static String userID;
@@ -65,6 +66,7 @@ public class UserInfo implements GlobalDesign{
 			 if (u.rs.next()) {
 				 userID = u.rs.getString("iduser");
 				 this.profilePic = u.rs.getString("profilePic");
+				 email = u.rs.getString("email");
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
